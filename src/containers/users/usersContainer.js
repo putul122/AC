@@ -15,6 +15,7 @@ export function mapStateToProps (state, props) {
     selectedUser: state.usersReducer.selectedUser,
     roles: state.usersReducer.roles,
     userRoles: state.usersReducer.userRoles,
+    updatePayload: state.usersReducer.updatePayload,
     createUserResponse: state.usersReducer.createUserResponse,
     updateUserResponse: state.usersReducer.updateUserResponse,
     deleteUserResponse: state.usersReducer.deleteUserResponse,
@@ -37,6 +38,7 @@ export const propsMapping: Callbacks = {
   setCurrentPage: actionCreators.setCurrentPage,
   setUserActionSettings: actionCreators.setUserActionSettings,
   setRoleData: actionCreators.setRoleData,
+  setUpdatePayload: actionCreators.setUpdatePayload,
   resetResponse: actionCreators.resetResponse
 }
 

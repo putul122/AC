@@ -12,6 +12,7 @@ const SET_CURRENT_PAGE = 'UsersReducer/SET_CURRENT_PAGE'
 const SET_USER_ACTION_SETTINGS = 'UsersReducer/SET_USER_ACTION_SETTINGS'
 const SET_PER_PAGE = 'UsersReducer/SET_PER_PAGE'
 const SET_ROLE_DATA = 'UsersReducer/SET_ROLE_DATA'
+const SET_UPDATE_PAYLOAD = 'UsersReducer/SET_UPDATE_PAYLOAD'
 const RESET_RESPONSE = 'TemplateDetailReducer/RESET_RESPONSE'
 
 export const actions = {
@@ -26,7 +27,8 @@ export const actions = {
   SET_PER_PAGE,
   SET_ROLE_DATA,
   RESET_RESPONSE,
-  FETCH_ROLES_SUCCESS
+  FETCH_ROLES_SUCCESS,
+  SET_UPDATE_PAYLOAD
 }
 
 export const actionCreators = {
@@ -34,6 +36,7 @@ export const actionCreators = {
   setUserActionSettings: createAction(SET_USER_ACTION_SETTINGS),
   setPerPage: createAction(SET_PER_PAGE),
   setRoleData: createAction(SET_ROLE_DATA),
+  setUpdatePayload: createAction(SET_UPDATE_PAYLOAD),
   resetResponse: createAction(RESET_RESPONSE)
 }
 
@@ -41,6 +44,7 @@ export const initialState = {
   externalUsers: '',
   users: '',
   selectedUser: '',
+  updatePayload: [],
   userRoles: '',
   roles: '',
   createUserResponse: '',
@@ -113,6 +117,10 @@ export default handleActions(
     [FETCH_ROLES_SUCCESS]: (state, action) => ({
       ...state,
       roles: action.payload
+    }),
+    [SET_UPDATE_PAYLOAD]: (state, action) => ({
+      ...state,
+      updatePayload: action.payload
     })
   },
   initialState

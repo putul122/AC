@@ -25,7 +25,7 @@ export default function Users (props) {
   let userList = ''
   let userCount = ''
   let roleOptions = []
-  console.log('roles', searchTextBox, userName, email, props)
+  console.log('roles', searchTextBox, userName, email, props.updatePayload, props)
   if (props.roles && props.roles !== '') {
     roleOptions = props.roles.resources.map(function (data, index) {
       console.log(data)
@@ -66,18 +66,12 @@ export default function Users (props) {
   }
   let updateUser = function () {
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.data = []
     payload.userId = props.userActionSettings.updateUserData.id
-    payload.data = props.userRoles.map(function (data, index) {
-      let obj = {}
-      obj.op = 'add'
-      obj.path = '/roles/-'
-      obj.value = data
-      return obj
-    })
-    console.log('update payload', payload)
+    payload.data = props.updatePayload
+    console.log('update payload', props.updatePayload)
     props.updateUser(payload)
   }
   let openDeleteModal = function (data) {
@@ -157,8 +151,25 @@ export default function Users (props) {
       userRoles.push(props.userActionSettings.selectedRole.label)
       props.setRoleData(userRoles)
     }
+    if (props.userActionSettings.isUpdateModalOpen) {
+      let obj = {}
+      obj.op = 'add'
+      obj.path = '/roles/-'
+      obj.value = props.userActionSettings.selectedRole.label
+      let updatePayload = JSON.parse(JSON.stringify(props.updatePayload))
+      updatePayload.push(obj)
+      props.setUpdatePayload(updatePayload)
+    }
   }
   let removeRole = function (index) {
+    if (props.userActionSettings.isUpdateModalOpen) {
+      let obj = {}
+      obj.op = 'remove'
+      obj.path = '/roles/' + index
+      let updatePayload = JSON.parse(JSON.stringify(props.updatePayload))
+      updatePayload.push(obj)
+      props.setUpdatePayload(updatePayload)
+    }
     let userRoles = props.userRoles
     userRoles.splice(index, 1)
     props.setRoleData(userRoles)
@@ -559,13 +570,13 @@ export default function Users (props) {
                       <div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-2 col-form-label'>Full Name</label>
                         <div className='col-8'>
-                          <input className='form-control m-input' type='email' placeholder='Enter User Name' value={props.userActionSettings.updateUserData.first_name + ' ' + props.userActionSettings.updateUserData.last_name} onChange={editUsername} />
+                          <input className='form-control m-input' type='email' disabled placeholder='Enter User Name' value={props.userActionSettings.updateUserData.first_name + ' ' + props.userActionSettings.updateUserData.last_name} onChange={editUsername} />
                         </div>
                       </div>
                       <div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-2 col-form-label'>Email</label>
                         <div className='col-8'>
-                          <input className='form-control m-input' type='email' placeholder='Enter Email' value={props.userActionSettings.updateUserData.email} onChange={editEmail} />
+                          <input className='form-control m-input' type='email' disabled placeholder='Enter Email' value={props.userActionSettings.updateUserData.email} onChange={editEmail} />
                         </div>
                       </div>
                       <div className='form-group m-form__group row'>
@@ -650,6 +661,7 @@ export default function Users (props) {
     }
     Users.propTypes = {
     userActionSettings: PropTypes.any,
+    updatePayload: PropTypes.any,
     externalUsers: PropTypes.any,
     roles: PropTypes.any,
     userRoles: PropTypes.any,
