@@ -112,6 +112,7 @@ export default handleActions(
       createUserResponse: '',
       deleteUserResponse: '',
       updateUserResponse: '',
+      updatePayload: [],
       userRoles: ''
     }),
     [FETCH_ROLES_SUCCESS]: (state, action) => ({

@@ -61,6 +61,7 @@ export default function Users (props) {
     props.setUserActionSettings(userActionSettings)
   }
   let closeUpdateModal = function () {
+    props.setUpdatePayload([])
     let userActionSettings = {...props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
     props.setUserActionSettings(userActionSettings)
   }

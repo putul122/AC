@@ -7,14 +7,14 @@ import { actions as sagaActions } from '../../redux/sagas/'
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // authenticateUser: state.basicReducer.authenticateUser,
+    authenticateUser: state.basicReducer.authenticateUser,
     reviewsSummary: state.dashboardReducer.reviewsSummary,
     packages: state.basicReducer.packages
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchReviewsSummary: sagaActions.reviewActions.fetchReviewsSummary,
   fetchPackage: sagaActions.basicActions.fetchPackage
 }
@@ -48,7 +48,6 @@ export default compose(
       // mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('dashboard nextProps', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')

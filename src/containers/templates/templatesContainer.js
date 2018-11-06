@@ -1,13 +1,13 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import Templates from '../../components/templates/templatesComponent'
-// import { actions as sagaActions } from '../../redux/sagas/'
+import { actions as sagaActions } from '../../redux/sagas/'
 // import { actionCreators } from '../../redux/reducers/usersReducer/usersReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // authenticateUser: state.basicReducer.authenticateUser,
+    authenticateUser: state.basicReducer.authenticateUser
     // agreements: state.agreementsReducer.agreements,
     // agreementsSummary: state.agreementsReducer.agreementsSummary,
     // currentPage: state.agreementsReducer.currentPage,
@@ -18,7 +18,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication
   // fetchAgreements: sagaActions.agreementActions.fetchAgreements,
   // fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
   // addAgreement: sagaActions.agreementActions.addAgreement,
@@ -74,11 +74,11 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       // if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
       //   if (nextProps.addAgreementResponse.error_code === null) {
       //     let newAgreementId = nextProps.addAgreementResponse.resources[0].id

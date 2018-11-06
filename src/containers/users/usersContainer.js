@@ -74,7 +74,7 @@ export default compose(
       this.props.fetchExUsers && this.props.fetchExUsers()
       this.props.fetchUsers && this.props.fetchUsers()
       this.props.fetchRoles && this.props.fetchRoles()
-      // this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // // eslint-disable-next-line
       // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // let payload = {
@@ -92,11 +92,11 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.createUserResponse && nextProps.createUserResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()

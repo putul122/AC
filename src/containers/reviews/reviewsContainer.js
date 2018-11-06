@@ -19,6 +19,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   setAddReviewSettings: actionCreators.setAddReviewSettings,
   fetchReviewsSummary: sagaActions.reviewActions.fetchReviewsSummary,
@@ -61,11 +62,11 @@ export default compose(
      mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.reviews && nextProps.reviews !== this.props.reviews) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#softwareList')
