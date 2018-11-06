@@ -1,0 +1,15 @@
+a.disabled {
+    /* Make the disabled links grayish*/
+    color: gray;
+    pointer-events: none;
+}
+a:hover{
+    color: unset;
+    text-decoration: none;
+}
+h5{
+    font-weight: bold;
+}
+h3{
+    color:#5867dd;
+}

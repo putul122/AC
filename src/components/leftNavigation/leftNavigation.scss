@@ -1,0 +1,97 @@
+// .sidebarlink{
+//     text-align: center;
+//     margin-bottom: 10px;
+// }
+.fa{
+    font-size: 40px;
+    text-align: center;
+    // margin-right: 50px;
+}
+.logotext{
+    text-align: center;
+    padding-top: 25px;
+}
+.mainmenu:hover{
+    width:250px;
+    overflow:visible;
+}
+.mainmenu {
+    background:#FFFFFF;
+    // border-right:1px solid #e5e5e5;
+    // position:absolute;
+    top:0;
+    // bottom:0;
+    height:100%;
+    // left:0;
+    width:110px;
+    overflow:hidden;
+    -webkit-transition:width .05s linear;
+    transition:width .05s linear;
+    -webkit-transform:translateZ(0) scale(1,1);
+    // z-index:1000;
+    }
+.menudiv{
+ display: inline-flex
+}    
+.link{
+    color: #000000;
+    position:relative;
+    display:table-cell;
+    vertical-align:middle;
+}
+.mainmenu>ul {
+    // margin:7px 0;
+    }
+    
+    .mainmenu li {
+    position:relative;
+    display:block;
+    padding-top: 48px;
+    margin-left: 40px;
+    // width:250px;
+    }
+    
+    .mainmenu li>a {
+    position:relative;
+    display:table;
+    border-collapse:collapse;
+    border-spacing:0;
+    color:#999;
+     font-family: arial;
+    font-size: 14px;
+    text-decoration:none;
+    -webkit-transform:translateZ(0) scale(1,1);
+    -webkit-transition:all .1s linear;
+    transition:all .1s linear;
+      
+    }
+    .mainmenu li>a:hover {
+        color:#00c5dc;
+     }
+    //  .mainmenu li:hover {
+    //  background-color: #000000;
+    //  position:relative;
+    //  display:block;
+    //  padding-top: 40px;
+    //     }
+    
+    .mainmenu .nav-icon {
+    position:relative;
+    display:table-cell;
+    width:60px;
+    height:36px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:18px;
+    }
+    
+    .mainmenu .navtext {
+    position:relative;
+    display:table-cell;
+    vertical-align:middle;
+    font-size: 15px;
+    // width:190px;
+    font-family: 'Titillium Web', sans-serif;
+    padding-left: 46px;
+    }
+    

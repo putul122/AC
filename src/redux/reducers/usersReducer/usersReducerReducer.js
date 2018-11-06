@@ -1,0 +1,119 @@
+import { createAction, handleActions } from 'redux-actions'
+import {
+  FETCH_EX_USERS_SUCCESS,
+  FETCH_USERS_SUCCESS,
+  FETCH_USER_SUCCESS,
+  ADD_USER_SUCCESS,
+  UPDATE_USER_SUCCESS,
+  DELETE_USER_SUCCESS } from '../../sagas/user/userSaga'
+import {FETCH_ROLES_SUCCESS} from '../../sagas/basic/basicSaga'
+// Name Spaced Action Types
+const SET_CURRENT_PAGE = 'UsersReducer/SET_CURRENT_PAGE'
+const SET_USER_ACTION_SETTINGS = 'UsersReducer/SET_USER_ACTION_SETTINGS'
+const SET_PER_PAGE = 'UsersReducer/SET_PER_PAGE'
+const SET_ROLE_DATA = 'UsersReducer/SET_ROLE_DATA'
+const RESET_RESPONSE = 'TemplateDetailReducer/RESET_RESPONSE'
+
+export const actions = {
+  FETCH_EX_USERS_SUCCESS,
+  FETCH_USERS_SUCCESS,
+  FETCH_USER_SUCCESS,
+  ADD_USER_SUCCESS,
+  UPDATE_USER_SUCCESS,
+  DELETE_USER_SUCCESS,
+  SET_CURRENT_PAGE,
+  SET_USER_ACTION_SETTINGS,
+  SET_PER_PAGE,
+  SET_ROLE_DATA,
+  RESET_RESPONSE,
+  FETCH_ROLES_SUCCESS
+}
+
+export const actionCreators = {
+  setCurrentPage: createAction(SET_CURRENT_PAGE),
+  setUserActionSettings: createAction(SET_USER_ACTION_SETTINGS),
+  setPerPage: createAction(SET_PER_PAGE),
+  setRoleData: createAction(SET_ROLE_DATA),
+  resetResponse: createAction(RESET_RESPONSE)
+}
+
+export const initialState = {
+  externalUsers: '',
+  users: '',
+  selectedUser: '',
+  userRoles: '',
+  roles: '',
+  createUserResponse: '',
+  updateUserResponse: '',
+  deleteUserResponse: '',
+  currentPage: 1,
+  perPage: 10,
+  userActionSettings: {
+    selectedUser: null,
+    selectedEmail: '',
+    selectedRole: null,
+    isAddModalOpen: false,
+    isDeleteModalOpen: false,
+    deleteUserData: '',
+    isUpdateModalOpen: false,
+    updateUserData: '',
+    isConfirmationModalOpen: false
+  }
+}
+
+export default handleActions(
+  {
+    [FETCH_EX_USERS_SUCCESS]: (state, action) => ({
+      ...state,
+      externalUsers: action.payload
+    }),
+    [FETCH_USERS_SUCCESS]: (state, action) => ({
+        ...state,
+        users: action.payload
+    }),
+    [FETCH_USER_SUCCESS]: (state, action) => ({
+      ...state,
+      selectedUser: action.payload
+    }),
+    [ADD_USER_SUCCESS]: (state, action) => ({
+      ...state,
+      createUserResponse: action.payload
+    }),
+    [UPDATE_USER_SUCCESS]: (state, action) => ({
+      ...state,
+      updateUserResponse: action.payload
+    }),
+    [DELETE_USER_SUCCESS]: (state, action) => ({
+      ...state,
+      deleteUserResponse: action.payload
+    }),
+    [SET_CURRENT_PAGE]: (state, action) => ({
+    ...state,
+    currentPage: action.payload
+    }),
+    [SET_USER_ACTION_SETTINGS]: (state, action) => ({
+      ...state,
+      userActionSettings: action.payload
+    }),
+    [SET_PER_PAGE]: (state, action) => ({
+      ...state,
+      perPage: action.payload
+    }),
+    [SET_ROLE_DATA]: (state, action) => ({
+      ...state,
+      userRoles: action.payload
+    }),
+    [RESET_RESPONSE]: (state, action) => ({
+      ...state,
+      createUserResponse: '',
+      deleteUserResponse: '',
+      updateUserResponse: '',
+      userRoles: ''
+    }),
+    [FETCH_ROLES_SUCCESS]: (state, action) => ({
+      ...state,
+      roles: action.payload
+    })
+  },
+  initialState
+)

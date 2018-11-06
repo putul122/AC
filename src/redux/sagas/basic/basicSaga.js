@@ -1,0 +1,174 @@
+import axios from 'axios'
+import { takeLatest, call, put } from 'redux-saga/effects'
+import { createAction } from 'redux-actions'
+import api from '../../../constants'
+
+// Saga action strings
+export const FETCH_CLIENT_ACCESS_TOKEN = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN'
+export const FETCH_CLIENT_ACCESS_TOKEN_SUCCESS = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN_SUCCESS'
+export const FETCH_CLIENT_ACCESS_TOKEN_FAILURE = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN_FAILURE'
+export const FETCH_USER_AUTHENTICATION = 'saga/Basic/FETCH_USER_AUTHENTICATION'
+export const FETCH_USER_AUTHENTICATION_SUCCESS = 'saga/Basic/FETCH_USER_AUTHENTICATION_SUCCESS'
+export const FETCH_USER_AUTHENTICATION_FAILURE = 'saga/Basic/FETCH_USER_AUTHENTICATION_FAILURE'
+export const FETCH_BUSINESS_UNITS = 'saga/Basic/FETCH_BUSINESS_UNITS'
+export const FETCH_BUSINESS_UNITS_SUCCESS = 'saga/Basic/FETCH_BUSINESS_UNITS_SUCCESS'
+export const FETCH_BUSINESS_UNITS_FAILURE = 'saga/Basic/FETCH_BUSINESS_UNITS_FAILURE'
+export const UPDATE_NOTIFICATION_VIEW_STATUS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS'
+export const UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS'
+export const UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE'
+export const FETCH_PACKAGE = 'saga/Basic/FETCH_PACKAGE'
+export const FETCH_PACKAGE_SUCCESS = 'saga/Basic/FETCH_PACKAGE_SUCCESS'
+export const FETCH_PACKAGE_FAILURE = 'saga/Basic/FETCH_PACKAGE_FAILURE'
+export const FETCH_COMPONENT_TYPE_COMPONENTS = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS'
+export const FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS'
+export const FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE'
+export const FETCH_COMPONENT_TYPE_RELATIONSHIPS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS'
+export const FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS'
+export const FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE'
+export const FETCH_ROLES = 'saga/Basic/FETCH_ROLES'
+export const FETCH_ROLES_SUCCESS = 'saga/Basic/FETCH_ROLES_SUCCESS'
+export const FETCH_ROLES_FAILURE = 'saga/Basic/FETCH_ROLES_FAILURE'
+
+export const actionCreators = {
+  fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
+  fetchClientAccessTokenSuccess: createAction(FETCH_CLIENT_ACCESS_TOKEN_SUCCESS),
+  fetchClientAccessTokenFailure: createAction(FETCH_CLIENT_ACCESS_TOKEN_FAILURE),
+  fetchUserAuthentication: createAction(FETCH_USER_AUTHENTICATION),
+  fetchUserAuthenticationSuccess: createAction(FETCH_USER_AUTHENTICATION_SUCCESS),
+  fetchUserAuthenticationFailure: createAction(FETCH_USER_AUTHENTICATION_FAILURE),
+  fetchBusinessUnits: createAction(FETCH_BUSINESS_UNITS),
+  fetchBusinessUnitsSuccess: createAction(FETCH_BUSINESS_UNITS_SUCCESS),
+  fetchBusinessUnitsFailure: createAction(FETCH_BUSINESS_UNITS_FAILURE),
+  updateNotificationViewStatus: createAction(UPDATE_NOTIFICATION_VIEW_STATUS),
+  updateNotificationViewStatusSuccess: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS),
+  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE),
+  fetchPackage: createAction(FETCH_PACKAGE),
+  fetchPackageSuccess: createAction(FETCH_PACKAGE_SUCCESS),
+  fetchPackageFailure: createAction(FETCH_PACKAGE_FAILURE),
+  fetchComponentTypeComponents: createAction(FETCH_COMPONENT_TYPE_COMPONENTS),
+  fetchComponentTypeComponentsSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS),
+  fetchComponentTypeComponentsFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE),
+  fetchcomponentTypeRelationships: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS),
+  fetchcomponentTypeRelationshipsSuccess: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS),
+  fetchcomponentTypeRelationshipsFailure: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE),
+  fetchRoles: createAction(FETCH_ROLES),
+  fetchRolesSuccess: createAction(FETCH_ROLES_SUCCESS),
+  fetchRolesFailure: createAction(FETCH_ROLES_FAILURE)
+}
+
+export default function * watchBasic () {
+  yield [
+    takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
+    takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
+    takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits),
+    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
+    takeLatest(FETCH_PACKAGE, getPackage),
+    takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
+    takeLatest(FETCH_COMPONENT_TYPE_RELATIONSHIPS, getComponentTypeRelationships),
+    takeLatest(FETCH_ROLES, getRoles)
+  ]
+}
+
+export function * getClientAccessToken (action) {
+  try {
+    const clientAccessToken = yield call(
+      axios.post,
+      api.clientAccessToken,
+      action.payload
+    )
+    yield put(actionCreators.fetchClientAccessTokenSuccess(clientAccessToken.data))
+  } catch (error) {
+    yield put(actionCreators.fetchClientAccessTokenFailure(error))
+  }
+}
+
+export function * getUserAuthentication (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const userAuthentication = yield call(
+      axios.get,
+      api.authenticateUser
+    )
+    yield put(actionCreators.fetchUserAuthenticationSuccess(userAuthentication.data))
+  } catch (error) {
+    yield put(actionCreators.fetchUserAuthenticationFailure(error))
+  }
+}
+
+export function * getBusinessUnits (action) {
+  try {
+    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const businessUnits = yield call(
+      axios.get,
+      api.getBusinessUnits
+    )
+    yield put(actionCreators.fetchBusinessUnitsSuccess(businessUnits.data))
+  } catch (error) {
+    yield put(actionCreators.fetchBusinessUnitsFailure(error))
+  }
+}
+
+export function * updateNotificationViewStatus (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const updateNotificationViewStatus = yield call(
+      axios.patch,
+      api.updateNotificationViewStatus
+    )
+    yield put(actionCreators.updateNotificationViewStatusSuccess(updateNotificationViewStatus.data))
+  } catch (error) {
+    yield put(actionCreators.updateNotificationViewStatusFailure(error))
+  }
+}
+
+export function * getPackage (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
+    const packages = yield call(
+      axios.get,
+      api.getPackage
+    )
+    yield put(actionCreators.fetchPackageSuccess(packages.data))
+  } catch (error) {
+    yield put(actionCreators.fetchPackageFailure(error))
+  }
+}
+
+export function * getComponentTypeComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload)
+    )
+    yield put(actionCreators.fetchComponentTypeComponentsSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentTypeComponentsFailure(error))
+  }
+}
+
+export function * getComponentTypeRelationships (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypeRelationships = yield call(
+      axios.get,
+      api.getComponentRelationships(action.payload)
+    )
+    yield put(actionCreators.fetchcomponentTypeRelationshipsSuccess(componentTypeRelationships.data))
+  } catch (error) {
+    yield put(actionCreators.fetchcomponentTypeRelationshipsFailure(error))
+  }
+}
+
+export function * getRoles (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const roles = yield call(
+      axios.get,
+      api.getRoles
+    )
+    yield put(actionCreators.fetchRolesSuccess(roles.data))
+  } catch (error) {
+    yield put(actionCreators.fetchRolesFailure(error))
+  }
+}
