@@ -13,89 +13,92 @@ export default function Dashboard (props) {
   let pieChartData = {}
   let datasets = []
   if (props.reviewsSummary && props.reviewsSummary !== '') {
-    reviewsInDraft = props.reviewsSummary.count_by_status[0].New
-    reviewsInProgress = props.reviewsSummary.count_by_status[0].InReview
-    reviewsCompleted = props.reviewsSummary.count_by_status[0].Reviewed
-    let labels = []
-    let obj1 = {
-      label: 'Compliant Review',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(75,192,192,0.4)',
-      borderColor: 'rgba(75,192,192,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(75,192,192,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10
-    }
-    let obj1data = []
-    for (let x in props.reviewsSummary.compliant_count_by_month[0]) {
-      if (props.reviewsSummary.compliant_count_by_month[0].hasOwnProperty(x)) {
-        labels.push(x)
-        obj1data.push(props.reviewsSummary.compliant_count_by_month[0][x])
+    if (props.reviewsSummary.resources.length > 0) {
+      reviewsInDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
+      reviewsInProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress']
+      reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
+      let labels = []
+      let obj1 = {
+        label: 'Compliant Review',
+        fill: false,
+        lineTension: 0.1,
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: 'rgba(75,192,192,1)',
+        pointBackgroundColor: '#fff',
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10
       }
-    }
-    obj1.data = obj1data
-    datasets.push(obj1)
-    lineData.labels = labels
-    let obj2 = {
-      label: 'Non Compliant Review',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: '"rgba(225,0,0,0.4)"',
-      borderColor: 'red',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'red',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'red',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10
-    }
-    let obj2data = []
-    for (let x in props.reviewsSummary.non_compliant_count_by_month[0]) {
-      if (props.reviewsSummary.non_compliant_count_by_month[0].hasOwnProperty(x)) {
-        obj2data.push(props.reviewsSummary.non_compliant_count_by_month[0][x])
+      let obj1data = []
+      for (let x in props.reviewsSummary.resources[0].compliant_by_month[0]) {
+        if (props.reviewsSummary.resources[0].compliant_by_month[0].hasOwnProperty(x)) {
+          labels.push(x)
+          obj1data.push(props.reviewsSummary.resources[0].compliant_by_month[0][x])
+        }
       }
-    }
-    obj2.data = obj2data
-    datasets.push(obj2)
-    lineData.datasets = datasets
-    let countByTemplate = props.reviewsSummary.count_by_template[0]
-    let pieLabels = []
-    let pieData = []
-    let colorData = []
-    let datasetObject = {}
-    let idx = 0
-    for (let keyField in countByTemplate) {
-      if (countByTemplate.hasOwnProperty(keyField)) {
-        pieLabels.push(keyField)
-        pieData.push(countByTemplate[keyField])
-        colorData.push(doughnutColor[idx++])
+      obj1.data = obj1data
+      datasets.push(obj1)
+      lineData.labels = labels
+      let obj2 = {
+        label: 'Non Compliant Review',
+        fill: false,
+        lineTension: 0.1,
+        backgroundColor: '"rgba(225,0,0,0.4)"',
+        borderColor: 'red',
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: 'red',
+        pointBackgroundColor: '#fff',
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: 'red',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10
       }
+      let obj2data = []
+      for (let x in props.reviewsSummary.resources[0].non_compliant_by_month[0]) {
+        if (props.reviewsSummary.resources[0].non_compliant_by_month[0].hasOwnProperty(x)) {
+          obj2data.push(props.reviewsSummary.resources[0].non_compliant_by_month[0][x])
+        }
+      }
+      obj2.data = obj2data
+      datasets.push(obj2)
+      lineData.datasets = datasets
+      let countByCategory = props.reviewsSummary.resources[0].count_by_category
+      let pieLabels = []
+      let pieData = []
+      let colorData = []
+      let datasetObject = {}
+      let idx = 0
+      for (let keyField in countByCategory) {
+        if (countByCategory.hasOwnProperty(keyField)) {
+          pieLabels.push(keyField)
+          pieData.push(countByCategory[keyField])
+          colorData.push(doughnutColor[idx++])
+        }
+      }
+      pieChartData.labels = pieLabels
+      pieChartData.legend = false
+      pieChartData.datasets = []
+      datasetObject.data = pieData
+      datasetObject.backgroundColor = colorData
+      datasetObject.hoverBackgroundColor = colorData
+      pieChartData.datasets.push(datasetObject)
+      console.log('pieChartData', pieChartData)
     }
-    pieChartData.labels = pieLabels
-    pieChartData.legend = false
-    pieChartData.datasets = []
-    datasetObject.data = pieData
-    datasetObject.backgroundColor = colorData
-    datasetObject.hoverBackgroundColor = colorData
-    pieChartData.datasets.push(datasetObject)
   }
   return (
     <div className=''>
