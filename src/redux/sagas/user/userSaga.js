@@ -57,7 +57,7 @@ export default function * watchUserActions () {
 
 export function * getExUsers (action) {
   try {
-    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const exUsers = yield call(
       axios.get,
       api.getExternalUsers,
