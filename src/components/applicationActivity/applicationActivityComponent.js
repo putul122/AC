@@ -45,7 +45,7 @@ export default function ApplicationActivity (props) {
             })
           }
           return (<li>
-            <img src={userIconlink} alt={message.author.name} />{message.author.name} {ReactHtmlParser(messageContent)}
+            <img src={userIconlink} alt={message.author.name} />{message.author} {ReactHtmlParser(messageContent)}
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)
         })

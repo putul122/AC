@@ -2,27 +2,21 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import styles from './reviewsComponent.scss'
+import Select from 'react-select'
+import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
-// import Softwares from '../../mockData/mockGetSoftwares'
-const formatAmount = (x) => {
-  let parts = x.toString().split('.')
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-  if (typeof parts[1] !== 'undefined') {
-    parts[1] = parts[1].substring(0, 2)
-  }
-  return parts.join('.')
-}
+ReactModal.setAppElement('#root')
 
 export default function Reviewslists (props) {
 console.log('JSON data for Reviews', props.reviewsSummary.count_by_status)
 console.log('reviewlist', props.reviews)
 // let softwareCount
-let reviewsData
+let reviewName = ''
+let reviewDescription = ''
 let reviewsinDraft
 let reviewsinProgress
 let reviewsCompleted
-// let reviewsCancelled
-let totalCost = ''
+let reviewsCancelled
 let searchTextBox
 let reviewList = ''
 let totalNoPages
@@ -34,14 +28,77 @@ let pageArray = []
 let listPage = []
 let paginationLimit = 6
 let totalReview
-// let softwareagreementList
+let templateOptions = ''
+console.log(reviewName, reviewDescription)
+if (props.componentTypeComponents && props.componentTypeComponents !== '') {
+  if (props.componentTypeComponents.error_code === null) {
+    templateOptions = props.componentTypeComponents.resources.map(function (user, index) {
+      if (user.name !== null && user.id !== null) {
+        user.value = user.id
+        user.label = user.name
+        return user
+      } else {
+        return false
+      }
+    })
+  } else {}
+}
+let addReview = function () {
+  let name = reviewName.value
+  let description = reviewDescription.value
+  let payload = {}
+  payload.name = name
+  payload.description = description
+  if (props.addReviewSettings.templateSelected) {
+    payload.review_template_id = props.addReviewSettings.templateSelected.id
+  }
+  props.createReviews(payload)
+  console.log('add payload', payload)
+}
+let closeModal = function () {
+  let addReviewSettings = {...props.addReviewSettings, 'isModalOpen': false}
+  props.setAddReviewSettings(addReviewSettings)
+}
+let openAddReview = function () {
+  let addReviewSettings = {...props.addReviewSettings, isModalOpen: true}
+  props.setAddReviewSettings(addReviewSettings)
+}
+let handleTemplateSelect = function (newValue: any, actionMeta: any) {
+  console.group('Value Changed first select')
+  console.log(newValue)
+  console.log(`action: ${actionMeta.action}`)
+  console.groupEnd()
+  if (actionMeta.action === 'select-option') {
+    // email = newValue.email
+    let addReviewSettings = {...props.addReviewSettings, 'templateSelected': newValue}
+    props.setAddReviewSettings(addReviewSettings)
+  }
+  if (actionMeta.action === 'clear') {
+    let addReviewSettings = {...props.addReviewSettings, 'templateSelected': null}
+    props.setAddReviewSettings(addReviewSettings)
+  }
+}
 if (props.reviews && props.reviews !== '') {
   let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
   reviewList = sortedArray.map(function (data, index) {
+    let link = ''
+    if (data.stage === 'In Progress') {
+      link = '/conduct_review/'
+    } else if (data.stage === 'Draft') {
+      link = '/review_draft/'
+    } else if (data.stage === 'Completed') {
+      link = '/reviews/'
+    } else if (data.stage === 'Approval') {
+      link = '/review_approval/'
+    } else if (data.stage === 'Cancelled') {
+      link = '/reviews/'
+    } else if (data.stage === 'Acceptance') {
+      link = '/accept_review/'
+    }
     return (
       <tbody>
         <tr key={index}>
-          <td><a href={'/viewreview/' + data.id} >{data.name}</a></td>
+          <td><a href={link + data.id} >{data.name}</a></td>
           <td>{''}</td>
           <td>{data.stage}</td>
           <td>{''}</td>
@@ -168,10 +225,12 @@ let handleNext = function (event) {
   })
 }
 if (props.reviewsSummary && props.reviewsSummary !== '') {
-  reviewsData = props.reviewsSummary.count_by_status
-  reviewsinDraft = reviewsData[0].New
-  reviewsinProgress = reviewsData[0].InReview
-  reviewsCompleted = reviewsData[0].Reviewed
+  if (props.reviewsSummary.resources.length > 0) {
+    reviewsinDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
+    reviewsinProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress']
+    reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
+    reviewsCancelled = props.reviewsSummary.resources[0].count_by_stage['Cancelled']
+  }
 }
 console.log('******', reviewsinDraft)
 let handleBlurdropdownChange = function (event) {
@@ -189,7 +248,7 @@ return (
         <h2>Reviews</h2>
       </div>
       <div className='col-md-3'>
-        <button type='button' className='btn btn-outline-info btn-sm'>Add Review</button>&nbsp;
+        <button type='button' onClick={openAddReview} className='btn btn-outline-info btn-sm'>Add Review</button>&nbsp;
       </div>
     </div>
     <div className='row' id='softwareSummary'>
@@ -349,7 +408,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews Cancelled</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'R' + formatAmount(totalCost)}</h5>
+                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCancelled}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -368,7 +427,7 @@ return (
         <div className='col-md-12'>
           <div className='m_datatable' id='scrolling_vertical'>
             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-              <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}}>
+              <div >
                 <div className='m-portlet'>
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
@@ -403,20 +462,22 @@ return (
                         </div>
                       </div>
                     </div>
-                    <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
-                      <thead>
-                        <tr role='row'>
-                          <th className='' style={{width: '61.25px'}}><h5>Name</h5></th>
-                          <th className='' style={{width: '58.25px'}}><h5>Review Category</h5></th>
-                          <th className='' style={{width: '108.25px'}}><h5>Stage</h5></th>
-                          <th className='' style={{width: '137.25px'}}><h5>Reviewer</h5></th>
-                          <th className='' style={{width: '171.25px'}}><h5>Approver</h5></th>
-                        </tr>
-                      </thead>
-                      {/* <tbody> */}
-                      {reviewList}
-                      {/* </tbody> */}
-                    </table>
+                    <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '100vh'}}>
+                      <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
+                        <thead>
+                          <tr role='row'>
+                            <th className=''><h5>Name</h5></th>
+                            <th className=''><h5>Review Category</h5></th>
+                            <th className=''><h5>Stage</h5></th>
+                            <th className=''><h5>Reviewer</h5></th>
+                            <th className=''><h5>Approver</h5></th>
+                          </tr>
+                        </thead>
+                        {/* <tbody> */}
+                        {reviewList}
+                        {/* </tbody> */}
+                      </table>
+                    </div>
                     <div className='row'>
                       <div className='col-md-12' id='scrolling_vertical'>
                         <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
@@ -448,6 +509,65 @@ return (
       </div>
     </div>
     {/* The table structure ends */}
+    <div>
+      <ReactModal isOpen={props.addReviewSettings.isModalOpen}
+        onRequestClose={closeModal}
+        className='modal-dialog modal-lg'
+        style={{'content': {'top': '20%'}}}
+        >
+        {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+        <div className={''}>
+          <div className=''>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h4 className='modal-title' id='exampleModalLabel'>Add Review</h4>
+                <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                  <span aria-hidden='true'>×</span>
+                </button>
+              </div>
+              <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>
+                <div className='col-md-12'>
+                  {/* {messageBlock} */}
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name</label>
+                    <div className='col-8'>
+                      <input className='form-control m-input' type='email' placeholder='Enter Review Name' ref={input => (reviewName = input)} id='example-userName-input' />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Description</label>
+                    <div className='col-8'>
+                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                      <textarea className='form-control m-input m-input--air' ref={input => (reviewDescription = input)} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Select Template</label>
+                    <div className='col-8'>
+                      <Select
+                        // className='col-7 input-sm m-input'
+                        placeholder='Select Templates'
+                        isClearable
+                        // defaultValue={dvalue}
+                        // value={props.userActionSettings.selectedRole}
+                        onChange={handleTemplateSelect}
+                        isSearchable={false}
+                        name={'templateSelected'}
+                        options={templateOptions}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='modal-footer'>
+                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={addReview} className='btn btn-outline-info btn-sm' >Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ReactModal>
+    </div>
   </div>
       )
     }
@@ -455,5 +575,7 @@ return (
   reviewsSummary: PropTypes.any,
   reviews: PropTypes.any,
   currentPage: PropTypes.any,
+  addReviewSettings: PropTypes.any,
+  componentTypeComponents: PropTypes.any,
   perPage: PropTypes.any
  }

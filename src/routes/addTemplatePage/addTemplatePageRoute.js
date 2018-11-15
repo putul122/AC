@@ -1,7 +1,7 @@
 import React from 'react'
-import Header from '../../containers/header/headerContainer.js'
-import LeftNavigation from '../../components/leftNavigation/leftNavigation.js'
-import AddTemplate from '../../containers/addTemplate/addTemplateContainer.js'
+import Header from '../../containers/header/headerContainer'
+import LeftNavigation from '../../components/leftNavigation/leftNavigation'
+import AddTemplate from '../../containers/addTemplate/addTemplateContainer'
 
 class AddTemplatePageRoute extends React.Component {
   render () {

@@ -1,6 +1,7 @@
 import watchBasic, {actionCreators as basicActions} from './basic/basicSaga'
 import watchApplications, {actionCreators as applicationActions} from './application/applicationSaga'
 import watchReviews, {actionCreators as reviewActions} from './review/reviewSaga'
+import watchTemplates, {actionCreators as templateActions} from './template/templateSaga'
 import watchSoftwares, {actionCreators as softwareActions} from './software/softwareSaga'
 import watchEntitlements, {actionCreators as entitlementActions} from './entitlement/entitlementSaga'
 import watchLoginUser, {actionCreators as loginActions} from './login/loginSaga'
@@ -15,7 +16,8 @@ export const actions = {
   entitlementActions,
   loginActions,
   applicationActivityActions,
-  userActions
+  userActions,
+  templateActions
 }
 export default function * rootSaga () {
   yield [
@@ -26,6 +28,7 @@ export default function * rootSaga () {
     watchEntitlements(),
     watchLoginUser(),
     watchApplicationActivity(),
-    watchUserActions()
+    watchUserActions(),
+    watchTemplates()
   ]
 }

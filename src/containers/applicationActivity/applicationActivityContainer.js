@@ -29,7 +29,10 @@ export default compose(
       this.props.activityMessage && this.props.activityMessage()
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.notificationReceived && nextProps.isMessageSlideOpen) {
+      // if (nextProps.notificationReceived && nextProps.isMessageSlideOpen) {
+      //   this.props.activityMessage && this.props.activityMessage()
+      // }
+      if (nextProps.notificationReceived) {
         this.props.activityMessage && this.props.activityMessage()
       }
     }

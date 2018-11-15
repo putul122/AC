@@ -10,6 +10,7 @@ export function mapStateToProps (state, props) {
   return {
     authenticateUser: state.basicReducer.authenticateUser,
     componentTypeComponents: state.basicReducer.componentTypeComponents,
+    createReviewResponse: state.reviewsReducer.createReviewResponse,
     addReviewSettings: state.reviewsReducer.addReviewSettings,
     reviews: state.reviewsReducer.reviews,
     reviewsSummary: state.reviewsReducer.reviewsSummary,
@@ -24,8 +25,10 @@ export const propsMapping: Callbacks = {
   setAddReviewSettings: actionCreators.setAddReviewSettings,
   fetchReviewsSummary: sagaActions.reviewActions.fetchReviewsSummary,
   fetchReviews: sagaActions.reviewActions.fetchReviews,
+  createReviews: sagaActions.reviewActions.createReviews,
   setCurrentPage: actionCreators.setCurrentPage,
-  setPerPage: actionCreators.setPerPage
+  setPerPage: actionCreators.setPerPage,
+  resetResponse: actionCreators.resetResponse
 }
 
 // If you want to use the function mapping
@@ -34,6 +37,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
@@ -43,7 +64,7 @@ export default compose(
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
       let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-          return obj.key === 'Review'
+          return obj.key === 'Review Template'
       }), 'component_type')
       console.log('component_type iddddd', componentTypeId)
       this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
@@ -62,6 +83,12 @@ export default compose(
      mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('component will receive props', nextProps)
+      let payload = {
+        'search': '',
+        'page_size': 10,
+        'page': 1
+      }
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -84,6 +111,21 @@ export default compose(
           'page': 1
         }
         this.props.fetchReviews && this.props.fetchReviews(payload)
+      }
+      if (nextProps.createReviewResponse && nextProps.createReviewResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let addReviewSettings = {...this.props.addReviewSettings, 'isModalOpen': false, 'templateSelected': null}
+        this.props.setAddReviewSettings(addReviewSettings)
+        if (nextProps.createReviewResponse.error_code === null) {
+          this.props.fetchReviews && this.props.fetchReviews(payload)
+          // eslint-disable-next-line
+          toastr.success('Review added' , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.createReviewResponse.error_message, nextProps.createReviewResponse.error_code)
+        }
+        this.props.resetResponse()
       }
     }
   })

@@ -1,15 +1,62 @@
 import React from 'react'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 // import _ from 'lodash'
 // import styles from './addTemplateComponent.scss'
 // import moment from 'moment'
 // import debounce from 'lodash/debounce'
-import Select from 'react-select'
-import ReactModal from 'react-modal'
-ReactModal.setAppElement('#root')
 
 export default function ConductReview (props) {
   let reviewName = ''
+  let Artefact = ''
+  let Category = ''
+  let handleReturnToDraft = function (event) {
+    let returnToDraft = !props.returnToDraft
+    props.setReturnDraft(returnToDraft)
+  }
+  let handleCancelReview = function (event) {
+    let cancelReview = !props.cancelReview
+    props.setCancelReview(cancelReview)
+  }
+  if (props.reviewData && props.reviewData !== null & props.reviewData.error_code === null) {
+    reviewName = props.reviewData.resources[0].name
+      // Description = props.reviewData.resources[0].description
+      Category = props.reviewData.resources[0].review_category
+      // Reviewer = props.reviewData.resources[0].reviewer
+      // Approver = props.reviewData.resources[0].approver
+      Artefact = props.reviewData.resources[0].review_artefact_name
+  }
+  let saveReview = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let updatePayload = []
+    // if (props.isApproved) {
+    //   if (props.isApproved === 'Rejected') {
+    //     let obj = {}
+    //     obj.op = 'replace'
+    //     obj.path = '/reject_reason'
+    //     obj.value = props.rejectedReason
+    //     updatePayload.push(obj)
+    //   }
+    // }
+    console.log('update payload', updatePayload)
+    props.updateReviews(updatePayload)
+  }
+  let submitReview = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let updatePayload = []
+    // if (props.isApproved) {
+    //   if (props.isApproved === 'Rejected') {
+    //     let obj = {}
+    //     obj.op = 'replace'
+    //     obj.path = '/reject_reason'
+    //     obj.value = props.rejectedReason
+    //     updatePayload.push(obj)
+    //   }
+    // }
+    console.log('update payload', updatePayload)
+    props.updateReviews(updatePayload)
+  }
   console.log(reviewName)
     return (
       <div>
@@ -22,7 +69,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Name</b></label>
                     <div className='col-8'>
-                      <span className='m-input' >C12345 HLD Review</span>
+                      <span className='m-input' >{reviewName}</span>
                     </div>
                   </div>
                 </div>
@@ -35,7 +82,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Type</b></label>
                     <div className='col-8'>
-                      <span lassName='m-input'>Application Architecture Compliance Review</span>
+                      <span lassName='m-input'>{Category}</span>
                     </div>
                   </div>
                 </div>
@@ -45,7 +92,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                     <div className='col-8'>
-                      <span lassName='m-input' >C12345</span>
+                      <span lassName='m-input' >{Artefact}</span>
                     </div>
                   </div>
                 </div>
@@ -119,116 +166,57 @@ export default function ConductReview (props) {
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-12'>
-                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='m-checkbox m-checkbox--danger'>
-                  <input type='checkbox' /> <b>Return to Draft</b>
+                {/* m-checkbox m-checkbox--danger */}
+                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                  <input type='checkbox' checked={props.returnToDraft} onChange={handleReturnToDraft} /> <b>Return to Draft</b>
                   <span />
                 </label>
               </div>
-              <div className='col-md-12'>
+              {props.returnToDraft && (<div className='col-md-12'>
                 <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason*</label>
+                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
                   <div className='col-8'>
                     {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
                     <textarea className='form-control m-input m-input--air' id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                   </div>
                 </div>
-              </div>
+              </div>)}
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-12'>
-                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='m-checkbox m-checkbox--danger'>
-                  <input type='checkbox' /> <b>Cancel Review</b>
+                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                  <input type='checkbox' checked={props.cancelReview} onChange={handleCancelReview} /> <b>Cancel Review</b>
                   <span />
                 </label>
               </div>
-              <div className='col-md-12'>
+              {props.cancelReview && (<div className='col-md-12'>
                 <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason*</label>
+                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Cancel Reason<span className='text-danger'>*</span></label>
                   <div className='col-8'>
                     {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
                     <textarea className='form-control m-input m-input--air' id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                   </div>
                 </div>
-              </div>
+              </div>)}
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-6' />
               <div className='col-6 float-right'>
                 <div className='pull-right'>
-                  <button onClick={''} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
-                  <button onClick={''} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
-                  <button onClick={''} className='btn btn-outline-info btn-sm'>Submit</button>
+                  <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
+                  <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
+                  <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div>
-          <ReactModal isOpen={''}
-            onRequestClose={''}
-            className='modal-dialog'
-            style={{'content': {'top': '20%'}}}
-            >
-            <div className={''}>
-              <div className=''>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Connect Artefact</h6>
-                    <button type='button' onClick={''} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                  </div>
-                  <div className='modal-body'>
-                    <div className='col-lg-12'>
-                      <div className='form-group m-form__group row'>
-                        <label htmlFor='example-email-input' className='col-6 col-form-label'>Select Relationship & Artefact Type</label>
-                        <div className='col-6'>
-                          <Select
-                            // className='col-7 input-sm m-input'
-                            placeholder='Select Relationship & Artefact Type'
-                            isClearable
-                            // defaultValue={dvalue}
-                            // value={props.userActionSettings.selectedRole}
-                            // onChange={handleTemplateSelect}
-                            isSearchable={false}
-                            name={'templateSelected'}
-                            // options={templateOptions}
-                          />
-                        </div>
-                      </div>
-                      <div className='form-group m-form__group row'>
-                        <label htmlFor='example-email-input' className='col-6 col-form-label'>Select Artefact</label>
-                        <div className='col-6'>
-                          <Select
-                            // className='col-7 input-sm m-input'
-                            placeholder='Select Artefact'
-                            isClearable
-                            // defaultValue={dvalue}
-                            // value={props.userActionSettings.selectedRole}
-                            // onChange={handleTemplateSelect}
-                            isSearchable={false}
-                            name={'templateSelected'}
-                            // options={templateOptions}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='modal-footer'>
-                    <button type='button' onClick={''} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                    <button type='button' className={'btn btn-sm btn-outline-info'} onClick={''}>Connect</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ReactModal>
-        </div>
       </div>
       )
     }
     ConductReview.propTypes = {
-    // agreementsSummary: PropTypes.any,
-    // currentPage: PropTypes.any,
-    // addAgreementSettings: PropTypes.any,
-    // perPage: PropTypes.any
+    reviewData: PropTypes.any,
+    returnToDraft: PropTypes.any,
+    cancelReview: PropTypes.any,
+    updateReviews: PropTypes.func
  }

@@ -1,36 +1,36 @@
 import { createAction, handleActions } from 'redux-actions'
 import {FETCH_REVIEW_BY_ID_SUCCESS, UPDATE_REVIEWS_SUCCESS} from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
-const RESET_RESPONSE = 'ReviewApprovalReducer/RESET_RESPONSE'
-const SET_APPROVAL = 'ReviewApprovalReducer/SET_APPROVAL'
-const SET_REJECTED_REASON = 'ReviewApprovalReducer/SET_REJECTED_REASON'
+const RESET_RESPONSE = 'ConductReviewReducer/RESET_RESPONSE'
+const SET_RETURN_DRAFT = 'ConductReviewReducer/SET_RETURN_DRAFT'
+const SET_CANCEL_REVIEW = 'ConductReviewReducer/SET_CANCEL_REVIEW'
 
 export const actions = {
   RESET_RESPONSE,
-  SET_APPROVAL,
+  SET_RETURN_DRAFT,
   FETCH_REVIEW_BY_ID_SUCCESS,
   UPDATE_REVIEWS_SUCCESS,
-  SET_REJECTED_REASON
+  SET_CANCEL_REVIEW
 }
 
 export const actionCreators = {
   resetResponse: createAction(RESET_RESPONSE),
-  setApproval: createAction(SET_APPROVAL),
-  setRejectedReason: createAction(SET_REJECTED_REASON)
+  setReturnDraft: createAction(SET_RETURN_DRAFT),
+  setCancelReview: createAction(SET_CANCEL_REVIEW)
 }
 
 export const initialState = {
   updateReviewResponse: '',
-  rejectedReason: '',
-  isApproved: null,
+  returnToDraft: false,
+  cancelReview: false,
   reviewData: ''
 }
 
 export default handleActions(
   {
-    [SET_APPROVAL]: (state, action) => ({
+    [SET_RETURN_DRAFT]: (state, action) => ({
         ...state,
-        isApproved: action.payload
+        returnToDraft: action.payload
     }),
     [FETCH_REVIEW_BY_ID_SUCCESS]: (state, action) => ({
       ...state,
@@ -44,9 +44,9 @@ export default handleActions(
       ...state,
       updateReviewResponse: ''
     }),
-    [SET_REJECTED_REASON]: (state, action) => ({
+    [SET_CANCEL_REVIEW]: (state, action) => ({
       ...state,
-      rejectedReason: action.payload
+      cancelReview: action.payload
     })
   },
   initialState

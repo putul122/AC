@@ -77,7 +77,7 @@ export default function Dashboard (props) {
       obj2.data = obj2data
       datasets.push(obj2)
       lineData.datasets = datasets
-      let countByCategory = props.reviewsSummary.resources[0].count_by_category
+      let countByCategory = props.reviewsSummary.resources[0].count_by_category[0]
       let pieLabels = []
       let pieData = []
       let colorData = []

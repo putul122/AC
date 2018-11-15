@@ -22,12 +22,15 @@ export const FETCH_PACKAGE_FAILURE = 'saga/Basic/FETCH_PACKAGE_FAILURE'
 export const FETCH_COMPONENT_TYPE_COMPONENTS = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS'
 export const FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS'
 export const FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE'
-export const FETCH_COMPONENT_TYPE_RELATIONSHIPS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS'
-export const FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS'
-export const FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE'
+export const FETCH_COMPONENT_TYPE_RELATIONS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONS'
+export const FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS'
+export const FETCH_COMPONENT_TYPE_RELATIONS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_RELATIONS_FAILURE'
 export const FETCH_ROLES = 'saga/Basic/FETCH_ROLES'
 export const FETCH_ROLES_SUCCESS = 'saga/Basic/FETCH_ROLES_SUCCESS'
 export const FETCH_ROLES_FAILURE = 'saga/Basic/FETCH_ROLES_FAILURE'
+export const UPDATE_COMPONENT_RELATIONSHIPS = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS'
+export const UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS'
+export const UPDATE_COMPONENT_RELATIONSHIPS_FAILURE = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -48,12 +51,15 @@ export const actionCreators = {
   fetchComponentTypeComponents: createAction(FETCH_COMPONENT_TYPE_COMPONENTS),
   fetchComponentTypeComponentsSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS),
   fetchComponentTypeComponentsFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENTS_FAILURE),
-  fetchcomponentTypeRelationships: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS),
-  fetchcomponentTypeRelationshipsSuccess: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS_SUCCESS),
-  fetchcomponentTypeRelationshipsFailure: createAction(FETCH_COMPONENT_TYPE_RELATIONSHIPS_FAILURE),
+  fetchcomponentTypeRelations: createAction(FETCH_COMPONENT_TYPE_RELATIONS),
+  fetchcomponentTypeRelationsSuccess: createAction(FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS),
+  fetchcomponentTypeRelationsFailure: createAction(FETCH_COMPONENT_TYPE_RELATIONS_FAILURE),
   fetchRoles: createAction(FETCH_ROLES),
   fetchRolesSuccess: createAction(FETCH_ROLES_SUCCESS),
-  fetchRolesFailure: createAction(FETCH_ROLES_FAILURE)
+  fetchRolesFailure: createAction(FETCH_ROLES_FAILURE),
+  updateComponentRelationships: createAction(UPDATE_COMPONENT_RELATIONSHIPS),
+  updateComponentRelationshipsSuccess: createAction(UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS),
+  updateComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_RELATIONSHIPS_FAILURE)
 }
 
 export default function * watchBasic () {
@@ -64,8 +70,9 @@ export default function * watchBasic () {
     takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
     takeLatest(FETCH_PACKAGE, getPackage),
     takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
-    takeLatest(FETCH_COMPONENT_TYPE_RELATIONSHIPS, getComponentTypeRelationships),
-    takeLatest(FETCH_ROLES, getRoles)
+    takeLatest(FETCH_COMPONENT_TYPE_RELATIONS, getComponentTypeRelations),
+    takeLatest(FETCH_ROLES, getRoles),
+    takeLatest(UPDATE_COMPONENT_RELATIONSHIPS, updateComponentRelationships)
   ]
 }
 
@@ -147,16 +154,16 @@ export function * getComponentTypeComponents (action) {
   }
 }
 
-export function * getComponentTypeRelationships (action) {
+export function * getComponentTypeRelations (action) {
   try {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
-    const componentTypeRelationships = yield call(
+    const componentTypeRelations = yield call(
       axios.get,
-      api.getComponentRelationships(action.payload)
+      api.getComponentTypeConstraints(action.payload)
     )
-    yield put(actionCreators.fetchcomponentTypeRelationshipsSuccess(componentTypeRelationships.data))
+    yield put(actionCreators.fetchcomponentTypeRelationsSuccess(componentTypeRelations.data))
   } catch (error) {
-    yield put(actionCreators.fetchcomponentTypeRelationshipsFailure(error))
+    yield put(actionCreators.fetchcomponentTypeRelationsFailure(error))
   }
 }
 
@@ -170,5 +177,19 @@ export function * getRoles (action) {
     yield put(actionCreators.fetchRolesSuccess(roles.data))
   } catch (error) {
     yield put(actionCreators.fetchRolesFailure(error))
+  }
+}
+
+export function * updateComponentRelationships (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentRelationships = yield call(
+      axios.patch,
+      api.updateComponentRelationships(action.payload.componentId),
+      action.payload.relationship
+    )
+    yield put(actionCreators.updateComponentRelationshipsSuccess(componentRelationships.data))
+  } catch (error) {
+    yield put(actionCreators.updateComponentRelationshipsFailure(error))
   }
 }

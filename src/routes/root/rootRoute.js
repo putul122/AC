@@ -207,13 +207,13 @@ export default class Root extends Component {
             <Route exact path='/account' component={(props) => this.loadView('account', props)} />
             <Route exact path='/handleAzure' component={(props) => this.loadView('handleAzure', props)} />
             <Route exact path='/reviews' component={(props) => this.loadView('reviews', props)} />
-            <Route exact path='/review_draft' component={(props) => this.loadView('review_draft', props)} />
-            <Route exact path='/review_approval' component={(props) => this.loadView('review_approval', props)} />
-            <Route exact path='/conduct_review' component={(props) => this.loadView('conduct_review', props)} />
+            <Route exact path='/review_draft/:id' component={(props) => this.loadView('review_draft', props)} />
+            <Route exact path='/review_approval/:id' component={(props) => this.loadView('review_approval', props)} />
+            <Route exact path='/conduct_review/:id' component={(props) => this.loadView('conduct_review', props)} />
             <Route exact path='/checkitems' component={(props) => this.loadView('checkitems', props)} />
-            <Route exact path='/reviewacceptance' component={(props) => this.loadView('acceptReview', props)} />
+            <Route exact path='/accept_review/:id' component={(props) => this.loadView('acceptReview', props)} />
             <Route exact path='/addcheckitem' component={(props) => this.loadView('addcheckItem', props)} />
-            <Route exact path='/viewreview/:id' component={(props) => this.loadView('viewReview', props)} />
+            <Route exact path='/reviews/:id' component={(props) => this.loadView('viewReview', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

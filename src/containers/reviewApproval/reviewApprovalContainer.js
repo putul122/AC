@@ -2,15 +2,26 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import ReviewApproval from '../../components/reviewApproval/reviewApprovalComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/usersReducer/usersReducerReducer'
+import { actionCreators } from '../../redux/reducers/reviewApprovalReducer/reviewApprovalReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
-  return {}
+  return {
+    authenticateUser: state.basicReducer.authenticateUser,
+    reviewData: state.reviewApprovalReducer.reviewData,
+    isApproved: state.reviewApprovalReducer.isApproved,
+    updateReviewResponse: state.reviewApprovalReducer.updateReviewResponse,
+    rejectedReason: state.reviewApprovalReducer.rejectedReason
+  }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchReviewById: sagaActions.reviewActions.fetchReviewById,
+  updateReviews: sagaActions.reviewActions.updateReviews,
+  setApproval: actionCreators.setApproval,
+  resetResponse: actionCreators.resetResponse,
+  setRejectedReason: actionCreators.setRejectedReason
 }
 
 // If you want to use the function mapping
@@ -42,16 +53,13 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      // this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      // // eslint-disable-next-line
-      // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // let payload = {
-      //   'search': '',
-      //   'page_size': 10,
-      //   'page': 1
-      // }
-      // this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {
+        'review_id': this.props.match.params.id
+      }
+      this.props.fetchReviewById && this.props.fetchReviewById(payload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -60,11 +68,28 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.reviewData && nextProps.reviewData !== '' && nextProps.reviewData !== this.props.reviewData) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+      }
+      if (nextProps.updateReviewResponse && nextProps.updateReviewResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.updateReviewResponse.error_code === null) {
+          // this.props.fetchUsers && this.props.fetchUsers()
+          // eslint-disable-next-line
+          toastr.success('Successfully updated Review ' +  nextProps.updateReviewResponse.resources[0].id , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
     }
   })
 )(ReviewApproval)

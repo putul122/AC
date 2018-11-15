@@ -21,8 +21,14 @@ const api = {
   getComponentTypeComponents: function (componentTypeId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/components'
   },
+  getComponentTypeConstraints: function (componentTypeId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/constraints'
+  },
   updateComponent: function (payload) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId
+  },
+  updateComponentRelationships: function (componentId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/component_relationships'
   },
   getDiscussions: 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions',
   getDiscussionMessages: function (id) {
@@ -38,7 +44,13 @@ const api = {
   getReviews: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviews',
   getReviewsSummary: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewsSummary',
   getReview: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReview/',
-  createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions'
+  createReview: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReview',
+  updateReview: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReview',
+  createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
+  getReviewTemplates: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplates',
+  getReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplate',
+  createReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReviewTemplate',
+  updateReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReviewTemplate'
 }
 
 export default api

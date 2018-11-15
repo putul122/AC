@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../../components/headerComponent/headerComponent'
+import Header from '../../containers/header/headerContainer'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation'
 import TemplateDetail from '../../containers/templateDetail/templateDetailContainer'
 

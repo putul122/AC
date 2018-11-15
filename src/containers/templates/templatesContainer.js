@@ -2,29 +2,23 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import Templates from '../../components/templates/templatesComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/usersReducer/usersReducerReducer'
+import { actionCreators } from '../../redux/reducers/templateReducer/templateReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    authenticateUser: state.basicReducer.authenticateUser
-    // agreements: state.agreementsReducer.agreements,
-    // agreementsSummary: state.agreementsReducer.agreementsSummary,
-    // currentPage: state.agreementsReducer.currentPage,
-    // addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
-    // addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
-    // perPage: state.agreementsReducer.perPage
+    authenticateUser: state.basicReducer.authenticateUser,
+    templates: state.templatesReducer.templates,
+    currentPage: state.templatesReducer.currentPage,
+    perPage: state.templatesReducer.perPage
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication
-  // fetchAgreements: sagaActions.agreementActions.fetchAgreements,
-  // fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
-  // addAgreement: sagaActions.agreementActions.addAgreement,
-  // setCurrentPage: actionCreators.setCurrentPage,
-  // setPerPage: actionCreators.setPerPage,
-  // setAddAgreementSettings: actionCreators.setAddAgreementSettings
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchTemplates: sagaActions.templateActions.fetchTemplates,
+  setCurrentPage: actionCreators.setCurrentPage,
+  setPerPage: actionCreators.setPerPage
 }
 
 // If you want to use the function mapping
@@ -34,38 +28,32 @@ export const propsMapping: Callbacks = {
 //   }
 // }
 // eslint-disable-next-line
-// toastr.options = {
-//   'closeButton': false,
-//   'debug': false,
-//   'newestOnTop': false,
-//   'progressBar': false,
-//   'positionClass': 'toast-bottom-full-width',
-//   'preventDuplicates': false,
-//   'onclick': null,
-//   'showDuration': '300',
-//   'hideDuration': '1000',
-//   'timeOut': '4000',
-//   'extendedTimeOut': '1000',
-//   'showEasing': 'swing',
-//   'hideEasing': 'linear',
-//   'showMethod': 'fadeIn',
-//   'hideMethod': 'fadeOut'
-// }
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      // this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      // // eslint-disable-next-line
-      // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // let payload = {
-      //   'search': '',
-      //   'page_size': 10,
-      //   'page': 1
-      // }
-      // this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      this.props.fetchTemplates && this.props.fetchTemplates()
     },
     componentDidMount: function () {
       // eslint-disable-next-line
