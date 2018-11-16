@@ -4,11 +4,18 @@ import PropTypes from 'prop-types'
 // import styles from './addTemplateComponent.scss'
 // import moment from 'moment'
 // import debounce from 'lodash/debounce'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import Discussion from '../../containers/discussion/discussionContainer'
 
 export default function ConductReview (props) {
   let reviewName = ''
   let Artefact = ''
   let Category = ''
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   let handleReturnToDraft = function (event) {
     let returnToDraft = !props.returnToDraft
     props.setReturnDraft(returnToDraft)
@@ -60,6 +67,15 @@ export default function ConductReview (props) {
   console.log(reviewName)
     return (
       <div>
+        <div className='row clearfix'>
+          <div className='col-xs-4 col-sm-6 col-md-8' />
+          <div className='col-xs-8 col-sm-6 col-md-4'>
+            <span className='pull-right' >
+              <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
+            </span>
+          </div>
+        </div>
+        <br />
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
           <div className='m-portlet__body'>
             <div className='row' style={{width: '100%'}}>
@@ -211,12 +227,15 @@ export default function ConductReview (props) {
             </div>
           </div>
         </div>
+        <Discussion name={reviewName} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={reviewName} type='Component' {...props} />
       </div>
       )
     }
     ConductReview.propTypes = {
-    reviewData: PropTypes.any,
-    returnToDraft: PropTypes.any,
-    cancelReview: PropTypes.any,
-    updateReviews: PropTypes.func
- }
+      match: PropTypes.any,
+      reviewData: PropTypes.any,
+      returnToDraft: PropTypes.any,
+      cancelReview: PropTypes.any,
+      updateReviews: PropTypes.func
+  }

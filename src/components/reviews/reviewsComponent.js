@@ -5,6 +5,8 @@ import styles from './reviewsComponent.scss'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import Discussion from '../../containers/discussion/discussionContainer'
 ReactModal.setAppElement('#root')
 
 export default function Reviewslists (props) {
@@ -29,7 +31,17 @@ let listPage = []
 let paginationLimit = 6
 let totalReview
 let templateOptions = ''
+let appPackage = JSON.parse(localStorage.getItem('packages'))
+let componentTypes = appPackage.resources[0].component_types
+let componentId = _.result(_.find(componentTypes, function (obj) {
+  return obj.key === 'Review'
+}), 'component_type')
+let contextId = componentId
 console.log(reviewName, reviewDescription)
+let openDiscussionModal = function (event) {
+  event.preventDefault()
+  props.setDiscussionModalOpenStatus(true)
+}
 if (props.componentTypeComponents && props.componentTypeComponents !== '') {
   if (props.componentTypeComponents.error_code === null) {
     templateOptions = props.componentTypeComponents.resources.map(function (user, index) {
@@ -243,12 +255,15 @@ let handledropdownChange = function (event) {
 
 return (
   <div>
-    <div className='row'>
-      <div className='col-md-9'>
+    <div className='row clearfix'>
+      <div className='col-xs-4 col-sm-6 col-md-8'>
         <h2>Reviews</h2>
       </div>
-      <div className='col-md-3'>
-        <button type='button' onClick={openAddReview} className='btn btn-outline-info btn-sm'>Add Review</button>&nbsp;
+      <div className='col-xs-8 col-sm-6 col-md-4'>
+        <span className='pull-right' >
+          <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>&nbsp;
+          <button type='button' onClick={openAddReview} className='btn btn-outline-info btn-sm'>Add</button>&nbsp;
+        </span>
       </div>
     </div>
     <div className='row' id='softwareSummary'>
@@ -568,6 +583,8 @@ return (
         </div>
       </ReactModal>
     </div>
+    <Discussion name={'Reviews'} TypeKey='Review' type='ComponentType' {...props} />
+    <NewDiscussion contextId={contextId} name={'Reviews'} type='ComponentType' {...props} />
   </div>
       )
     }

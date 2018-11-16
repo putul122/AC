@@ -4,6 +4,7 @@ import ViewReview from '../../components/viewReview/viewReviewComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/viewReviewReducer/viewReviewReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -34,7 +35,8 @@ export const propsMapping: Callbacks = {
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setPrincipleModalOpenStatus: actionCreators.setPrincipleModalOpenStatus,
-  setStandardModalOpenStatus: actionCreators.setStandardModalOpenStatus
+  setStandardModalOpenStatus: actionCreators.setStandardModalOpenStatus,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

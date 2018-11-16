@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import ConductReview from '../../components/conductReview/conductReviewComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/conductReviewReducer/conductReviewReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -21,7 +22,8 @@ export const propsMapping: Callbacks = {
   updateReviews: sagaActions.reviewActions.updateReviews,
   setReturnDraft: actionCreators.setReturnDraft,
   resetResponse: actionCreators.resetResponse,
-  setCancelReview: actionCreators.setCancelReview
+  setCancelReview: actionCreators.setCancelReview,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

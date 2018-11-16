@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 // import styles from './addTemplateComponent.scss'
 // import moment from 'moment'
 // import debounce from 'lodash/debounce'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
+import Discussion from '../../containers/discussion/discussionContainer'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
@@ -13,6 +15,11 @@ export default function ReviewDraft (props) {
   let relationsOptions = []
   let artefactsOptions = []
   let checkItemList = ''
+  let contextId = props.match.params.id
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
+  }
   if (props.reviewArtefacts && props.reviewArtefacts !== '') {
     if (props.reviewArtefacts.error_code === null) {
       artefactsOptions = props.reviewArtefacts.resources.map(function (data, index) {
@@ -240,6 +247,15 @@ export default function ReviewDraft (props) {
   console.log(props)
     return (
       <div>
+        <div className='row clearfix'>
+          <div className='col-xs-4 col-sm-6 col-md-8' />
+          <div className='col-xs-8 col-sm-6 col-md-4'>
+            <span className='pull-right' >
+              <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
+            </span>
+          </div>
+        </div>
+        <br />
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
           <div className='m-portlet__body'>
             <div className='row' style={{width: '100%'}}>
@@ -439,10 +455,13 @@ export default function ReviewDraft (props) {
             </div>
           </ReactModal>
         </div>
+        <Discussion name={props.draftEdit.name} type='Component' {...props} />
+        <NewDiscussion contextId={contextId} name={props.draftEdit.name} type='Component' {...props} />
       </div>
       )
     }
     ReviewDraft.propTypes = {
+    match: PropTypes.any,
     connectArtefactSettings: PropTypes.any,
     selectedCheckItem: PropTypes.any,
     // eslint-disable-next-line

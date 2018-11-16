@@ -9,8 +9,11 @@ import templatesReducer from './templateReducer/templateReducerReducer'
 import reviewsReducer from './reviewsReducer/reviewsReducerReducer'
 import viewReviewReducer from './viewReviewReducer/viewReviewReducerReducer'
 import conductReviewReducer from './conductReviewReducer/conductReviewReducerReducer'
+import acceptReviewReducer from './acceptReviewReducer/acceptReviewReducerReducer'
 import reviewApprovalReducer from './reviewApprovalReducer/reviewApprovalReducerReducer'
 import reviewDraftReducer from './reviewDraftReducer/reviewDraftReducerReducer'
+import discussionReducer from './discussionReducer/discussionReducerReducer'
+import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -21,7 +24,10 @@ export default combineReducers({
     templatesReducer,
     reviewsReducer,
     conductReviewReducer,
+    acceptReviewReducer,
     reviewApprovalReducer,
     reviewDraftReducer,
-    viewReviewReducer
+    viewReviewReducer,
+    discussionReducer,
+    newDiscussionReducer
 })

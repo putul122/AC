@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import ReviewApproval from '../../components/reviewApproval/reviewApprovalComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/reviewApprovalReducer/reviewApprovalReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -21,7 +22,8 @@ export const propsMapping: Callbacks = {
   updateReviews: sagaActions.reviewActions.updateReviews,
   setApproval: actionCreators.setApproval,
   resetResponse: actionCreators.resetResponse,
-  setRejectedReason: actionCreators.setRejectedReason
+  setRejectedReason: actionCreators.setRejectedReason,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

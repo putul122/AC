@@ -4,6 +4,7 @@ import _ from 'lodash'
 import ReviewDraft from '../../components/reviewDraft/reviewDraftComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/reviewDraftReducer/reviewDraftReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -35,7 +36,8 @@ export const propsMapping: Callbacks = {
   updateReviews: sagaActions.reviewActions.updateReviews,
   fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   fetchcomponentTypeRelations: sagaActions.basicActions.fetchcomponentTypeRelations,
-  updateComponentRelationships: sagaActions.basicActions.updateComponentRelationships
+  updateComponentRelationships: sagaActions.basicActions.updateComponentRelationships,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping
