@@ -153,8 +153,8 @@ export default compose(
       if (nextProps.updateTemplateResponse && nextProps.updateTemplateResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
-        // this.props.setUserActionSettings(userActionSettings)
+        let editTemplateSettings = {...this.props.editTemplateSettings, 'isEditFlag': false}
+        this.props.setEditTemplateSettings(editTemplateSettings)
         if (nextProps.updateTemplateResponse.error_code === null) {
           let payload = {}
           payload.review_template_id = this.props.match.params.id
