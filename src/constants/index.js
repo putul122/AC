@@ -21,6 +21,9 @@ const api = {
   getComponentTypeComponents: function (componentTypeId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/components'
   },
+  getComponentTypeProperties: function (componentTypeId) {
+    return 'https://model-eco-dev.ecoconductor.com/component_types/' + componentTypeId + '/component_type_properties'
+  },
   getComponentTypeConstraints: function (componentTypeId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/constraints'
   },
@@ -50,7 +53,12 @@ const api = {
   getReviewTemplates: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplates',
   getReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplate',
   createReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReviewTemplate',
-  updateReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReviewTemplate'
+  updateReviewTemplate: function (reviewTemplateId) {
+    return 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReviewTemplate?review_template_id=' + reviewTemplateId
+  },
+  deleteReviewTemplate: function (componentId) {
+    return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
+  }
 }
 
 export default api

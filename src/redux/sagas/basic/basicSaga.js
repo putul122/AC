@@ -31,6 +31,9 @@ export const FETCH_ROLES_FAILURE = 'saga/Basic/FETCH_ROLES_FAILURE'
 export const UPDATE_COMPONENT_RELATIONSHIPS = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS'
 export const UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS'
 export const UPDATE_COMPONENT_RELATIONSHIPS_FAILURE = 'saga/Basic/UPDATE_COMPONENT_RELATIONSHIPS_FAILURE'
+export const FETCH_COMPONENT_TYPE_PROPERTIES = 'saga/Basic/FETCH_COMPONENT_TYPE_PROPERTIES'
+export const FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS'
+export const FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -59,7 +62,10 @@ export const actionCreators = {
   fetchRolesFailure: createAction(FETCH_ROLES_FAILURE),
   updateComponentRelationships: createAction(UPDATE_COMPONENT_RELATIONSHIPS),
   updateComponentRelationshipsSuccess: createAction(UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS),
-  updateComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_RELATIONSHIPS_FAILURE)
+  updateComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_RELATIONSHIPS_FAILURE),
+  fetchComponentTypeProperties: createAction(FETCH_COMPONENT_TYPE_PROPERTIES),
+  fetchComponentTypePropertiesSuccess: createAction(FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS),
+  fetchComponentTypePropertiesFailure: createAction(FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE)
 }
 
 export default function * watchBasic () {
@@ -72,7 +78,8 @@ export default function * watchBasic () {
     takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
     takeLatest(FETCH_COMPONENT_TYPE_RELATIONS, getComponentTypeRelations),
     takeLatest(FETCH_ROLES, getRoles),
-    takeLatest(UPDATE_COMPONENT_RELATIONSHIPS, updateComponentRelationships)
+    takeLatest(UPDATE_COMPONENT_RELATIONSHIPS, updateComponentRelationships),
+    takeLatest(FETCH_COMPONENT_TYPE_PROPERTIES, getComponentTypeProperties)
   ]
 }
 
@@ -191,5 +198,18 @@ export function * updateComponentRelationships (action) {
     yield put(actionCreators.updateComponentRelationshipsSuccess(componentRelationships.data))
   } catch (error) {
     yield put(actionCreators.updateComponentRelationshipsFailure(error))
+  }
+}
+
+export function * getComponentTypeProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypeProperties = yield call(
+      axios.get,
+      api.getComponentTypeProperties(action.payload)
+    )
+    yield put(actionCreators.fetchComponentTypePropertiesSuccess(componentTypeProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentTypePropertiesFailure(error))
   }
 }

@@ -19,6 +19,9 @@ export const CREATE_TEMPLATES_FAILURE = 'saga/template/CREATE_TEMPLATES_FAILURE'
 export const UPDATE_TEMPLATES = 'saga/template/UPDATE_TEMPLATES'
 export const UPDATE_TEMPLATES_SUCCESS = 'saga/template/UPDATE_TEMPLATES_SUCCESS'
 export const UPDATE_TEMPLATES_FAILURE = 'saga/template/UPDATE_TEMPLATES_FAILURE'
+export const DELETE_TEMPLATE = 'saga/template/DELETE_TEMPLATE'
+export const DELETE_TEMPLATE_SUCCESS = 'saga/template/DELETE_TEMPLATE_SUCCESS'
+export const DELETE_TEMPLATE_FAILURE = 'saga/template/DELETE_TEMPLATE_FAILURE'
 
 export const actionCreators = {
   fetchTemplates: createAction(FETCH_TEMPLATES),
@@ -35,7 +38,10 @@ export const actionCreators = {
   createTemplatesFailure: createAction(CREATE_TEMPLATES_FAILURE),
   updateTemplates: createAction(UPDATE_TEMPLATES),
   updateTemplatesSuccess: createAction(UPDATE_TEMPLATES_SUCCESS),
-  updateTemplatesFailure: createAction(UPDATE_TEMPLATES_FAILURE)
+  updateTemplatesFailure: createAction(UPDATE_TEMPLATES_FAILURE),
+  deleteTemplate: createAction(DELETE_TEMPLATE),
+  deleteTemplateSuccess: createAction(DELETE_TEMPLATE_SUCCESS),
+  deleteTemplateFailure: createAction(DELETE_TEMPLATE_FAILURE)
 }
 
 export default function * watchTemplates () {
@@ -44,7 +50,8 @@ export default function * watchTemplates () {
       takeLatest(FETCH_TEMPLATES_SUMMARY, getTemplatesSummary),
       takeLatest(FETCH_TEMPLATE_BY_ID, getTemplateById),
       takeLatest(CREATE_TEMPLATES, createTemplates),
-      takeLatest(UPDATE_TEMPLATES, updateTemplate)
+      takeLatest(UPDATE_TEMPLATES, updateTemplate),
+      takeLatest(DELETE_TEMPLATE, deleteTemplate)
     ]
 }
 
@@ -102,16 +109,31 @@ export function * createTemplates (action) {
     yield put(actionCreators.createTemplatesFailure(error))
   }
 }
+
 export function * updateTemplate (action) {
   try {
+    console.log(action)
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const template = yield call(
       axios.patch,
-      api.updateReviewTemplate,
-      action.payload
+      api.updateReviewTemplate(action.payload.urlPart.review_template_id),
+      action.payload.payloadPart
     )
     yield put(actionCreators.updateTemplatesSuccess(template.data))
   } catch (error) {
     yield put(actionCreators.updateTemplatesFailure(error))
+  }
+}
+
+export function * deleteTemplate (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const template = yield call(
+      axios.delete,
+      api.deleteReviewTemplate(action.payload)
+    )
+    yield put(actionCreators.deleteTemplateSuccess(template.data))
+  } catch (error) {
+    yield put(actionCreators.deleteTemplateFailure(error))
   }
 }

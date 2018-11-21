@@ -52,8 +52,13 @@ export default compose(
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      this.props.fetchTemplates && this.props.fetchTemplates()
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {
+        'search': '',
+        'page_size': this.props.perPage,
+        'page': 1
+      }
+      this.props.fetchTemplates && this.props.fetchTemplates(payload)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -67,41 +72,25 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      // if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
-      //   if (nextProps.addAgreementResponse.error_code === null) {
-      //     let newAgreementId = nextProps.addAgreementResponse.resources[0].id
-      //     // eslint-disable-next-line
-      //     mApp && mApp.unblockPage()
-      //     // eslint-disable-next-line
-      //     toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-      //     this.props.history.push('/agreements/' + newAgreementId)
-      //     // location.reload()
-      //   } else {
-      //     // eslint-disable-next-line
-      //     toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
-      //   }
-      //   this.props.resetResponse()
-      // }
-      // if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementSummary')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.agreements && nextProps.agreements !== this.props.agreements) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementList')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-      //   // eslint-disable-next-line
-      //   mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      //   let payload = {
-      //     'search': '',
-      //     'page_size': nextProps.perPage,
-      //     'page': 1
-      //   }
-      //   this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // }
+      if (nextProps.templates && nextProps.templates !== this.props.templates) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.templates.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.templates.error_message, nextProps.templates.error_code)
+        }
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        this.props.setCurrentPage(1)
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchTemplates && this.props.fetchTemplates(payload)
+      }
     }
   })
 )(Templates)

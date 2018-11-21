@@ -259,8 +259,8 @@ export default function ReviewDraft (props) {
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
           <div className='m-portlet__body'>
             <div className='row' style={{width: '100%'}}>
-              <div className='col-md-6'>
-                <div className='col-12'>
+              <div className='col-md-6 col-12'>
+                <div className='m-form m-form--state m-form--fit m-form--label-align-right'>
                   {/* {messageBlock} */}
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
@@ -308,10 +308,10 @@ export default function ReviewDraft (props) {
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
                     <div className='col-8'>
                       <div className='row'>
-                        <div className='col-md-6'><span>Connect to Artefact</span></div>
-                        <div className='col-md-6'>
+                        <div className='col-md-5'><span>Connect to Artefact</span></div>
+                        <div className='col-md-7'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
-                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
+                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
                         </div>
                         {/* <div className='col-md-5 float-right'>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>

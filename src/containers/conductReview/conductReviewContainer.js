@@ -78,6 +78,10 @@ export default compose(
       if (nextProps.reviewData && nextProps.reviewData !== '' && nextProps.reviewData !== this.props.reviewData) {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
+        if (nextProps.reviewData.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.reviewData.error_message, nextProps.reviewData.error_code)
+        }
       }
       if (nextProps.updateReviewResponse && nextProps.updateReviewResponse !== '') {
         // eslint-disable-next-line

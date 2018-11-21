@@ -1,32 +1,35 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import _ from 'lodash'
 import AddTemplate from '../../components/addTemplate/addTemplateComponent'
-// import { actions as sagaActions } from '../../redux/sagas/'
-// import { actionCreators } from '../../redux/reducers/agreementsReducer/agreementsReducerReducer'
-// import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actions as sagaActions } from '../../redux/sagas/'
+import { actionCreators } from '../../redux/reducers/addTemplateReducer/addTemplateReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // authenticateUser: state.basicReducer.authenticateUser,
-    // agreements: state.agreementsReducer.agreements,
-    // agreementsSummary: state.agreementsReducer.agreementsSummary,
-    // currentPage: state.agreementsReducer.currentPage,
-    // addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
-    // addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
-    // perPage: state.agreementsReducer.perPage
+    authenticateUser: state.basicReducer.authenticateUser,
+    componentTypeProperties: state.addTemplateReducer.componentTypeProperties,
+    templateCategories: state.addTemplateReducer.templateCategories,
+    templateCheckItems: state.addTemplateReducer.templateCheckItems,
+    selectedCategory: state.addTemplateReducer.selectedCategory,
+    selectedCheckItem: state.addTemplateReducer.selectedCheckItem,
+    checkItems: state.addTemplateReducer.checkItems,
+    addTemplateValue: state.addTemplateReducer.addTemplateValue,
+    addTemplateResponse: state.addTemplateReducer.addTemplateResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-  // fetchAgreements: sagaActions.agreementActions.fetchAgreements,
-  // fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
-  // addAgreement: sagaActions.agreementActions.addAgreement,
-  // setCurrentPage: actionCreators.setCurrentPage,
-  // setPerPage: actionCreators.setPerPage,
-  // setAddAgreementSettings: actionCreators.setAddAgreementSettings,
-  // setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
+  createTemplates: sagaActions.templateActions.createTemplates,
+  setTemplateCategoryData: actionCreators.setTemplateCategoryData,
+  setAddTemplateValue: actionCreators.setAddTemplateValue,
+  setCheckItemsData: actionCreators.setCheckItemsData,
+  setSelectedCategory: actionCreators.setSelectedCategory,
+  setSelectedCheckItem: actionCreators.setSelectedCheckItem
 }
 
 // If you want to use the function mapping
@@ -58,16 +61,19 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      // this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      // // eslint-disable-next-line
+       // eslint-disable-next-line
       // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // let payload = {
-      //   'search': '',
-      //   'page_size': this.props.perPage,
-      //   'page': 1
-      // }
-      // this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+          return obj.key === 'Check Item Template'
+      }), 'component_type')
+      let componentTypeIdForCategory = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Review Template'
+      }), 'component_type')
+      console.log('component_type iddddd', componentTypeId)
+      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
+      this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForCategory)
     },
     componentDidMount: function () {
       // // eslint-disable-next-line
@@ -76,46 +82,44 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
-      // if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
-      //   if (nextProps.addAgreementResponse.error_code === null) {
-      //     let newAgreementId = nextProps.addAgreementResponse.resources[0].id
-      //     // eslint-disable-next-line
-      //     mApp && mApp.unblockPage()
-      //     // eslint-disable-next-line
-      //     toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-      //     this.props.history.push('/agreements/' + newAgreementId)
-      //     // location.reload()
-      //   } else {
-      //     // eslint-disable-next-line
-      //     toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
-      //   }
-      //   this.props.resetResponse()
-      // }
-      // if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementSummary')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.agreements && nextProps.agreements !== this.props.agreements) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementList')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-      //   // eslint-disable-next-line
-      //   mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      //   let payload = {
-      //     'search': '',
-      //     'page_size': nextProps.perPage,
-      //     'page': 1
-      //   }
-      //   this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '') {
+        if (nextProps.componentTypeProperties.error_code === null) {
+          let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let componentTypeProperties = appPackage.resources[0].component_type_properties
+          let propertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review Template~Review Category'
+          }), 'component_type_property')
+          let valueSet = _.result(_.find(propertiesData, function (obj) {
+            return obj.id === propertyId
+          }), 'value_set')
+          console.log('valueset', valueSet)
+          this.props.setTemplateCategoryData(valueSet.values)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
+        }
+      }
+
+      if (nextProps.addTemplateResponse && nextProps.addTemplateResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
+        // this.props.setUserActionSettings(userActionSettings)
+        if (nextProps.addTemplateResponse.error_code === null) {
+          // eslint-disable-next-line
+          toastr.success('Successfully added Template ' +  nextProps.addTemplateResponse.resources[0].id , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addTemplateResponse.error_message, nextProps.addTemplateResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
     }
   })
 )(AddTemplate)

@@ -99,10 +99,18 @@ export default compose(
       if (nextProps.reviews && nextProps.reviews !== this.props.reviews) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#softwareList')
+        if (nextProps.reviews.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.reviews.error_message, nextProps.reviews.error_code)
+        }
       }
       if (nextProps.reviewsSummary && nextProps.reviewsSummary !== this.props.reviewsSummary) {
         // eslint-disable-next-line
         mApp && mApp.unblock('#softwareSummary')
+        if (nextProps.reviewsSummary.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.reviewsSummary.error_message, nextProps.reviewsSummary.error_code)
+        }
       }
       if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
         // eslint-disable-next-line
@@ -122,7 +130,8 @@ export default compose(
         if (nextProps.createReviewResponse.error_code === null) {
           this.props.fetchReviews && this.props.fetchReviews(payload)
           // eslint-disable-next-line
-          toastr.success('Review added' , 'Nice!')
+          toastr.success('New Review added' , 'Nice!')
+          this.props.history.push('/review_draft/' + nextProps.createReviewResponse.resources[0].id)
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.createReviewResponse.error_message, nextProps.createReviewResponse.error_code)

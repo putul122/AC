@@ -106,6 +106,8 @@ if (props.reviews && props.reviews !== '') {
       link = '/reviews/'
     } else if (data.stage === 'Acceptance') {
       link = '/accept_review/'
+    } else {
+      link = '/review_draft/'
     }
     return (
       <tbody>
@@ -147,26 +149,20 @@ listPage = _.filter(pageArray, function (group) {
 
 let handleInputChange = debounce((e) => {
   console.log(e)
-  const value = searchTextBox.value
-  reviewList = ''
-  let payload = {
-    'search': value || '',
-    'page_size': 10,
-    'page': currentPage
-  }
-  // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+  if (searchTextBox) {
+    let payload = {
+      'search': searchTextBox.value || '',
+      'page_size': 10,
+      'page': currentPage
+    }
     props.fetchReviews(payload)
     // eslint-disable-next-line
     mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // eslint-disable-next-line
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // props.setComponentTypeLoading(true)
-  // }
-  listPage = _.filter(pageArray, function (group) {
-    let found = _.filter(group, {'number': currentPage})
-    if (found.length > 0) { return group }
-  })
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }
 }, 500)
 let handlePage = function (page) {
   if (page === 1) {
@@ -174,7 +170,6 @@ let handlePage = function (page) {
   } else if (page === totalNoPages) {
     nextClass = 'm-datatable__pager-link--disabled'
   }
-  reviewList = ''
   let payload = {
     'search': searchTextBox.value ? searchTextBox.value : '',
     'page_size': 10,
@@ -206,7 +201,7 @@ let handlePrevious = function (event) {
   // eslint-disable-next-line
   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
   // eslint-disable-next-line
-    props.setCurrentPage(currentPage - 1)
+  props.setCurrentPage(currentPage - 1)
   }
   listPage = _.filter(pageArray, function (group) {
     let found = _.filter(group, {'number': currentPage - 1})
@@ -224,7 +219,6 @@ let handleNext = function (event) {
       'page_size': 10,
       'page': currentPage + 1
     }
-    reviewList = ''
     props.fetchReviews(payload)
    // eslint-disable-next-line
    mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})

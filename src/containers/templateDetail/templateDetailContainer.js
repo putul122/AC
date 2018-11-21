@@ -1,30 +1,44 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import TemplateDetail from '../../components/templateDetail/templateDetailComponent'
-// import { actions as sagaActions } from '../../redux/sagas/'
+import _ from 'lodash'
+import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/templateDetailReducer/templateDetailReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
     authenticateUser: state.basicReducer.authenticateUser,
-    template: state.templateDetailReducer.template,
+    templateData: state.templateDetailReducer.templateData,
     templateCategories: state.templateDetailReducer.templateCategories,
     templateCheckItems: state.templateDetailReducer.templateCheckItems,
+    componentTypeProperties: state.templateDetailReducer.componentTypeProperties,
+    selectedCategory: state.templateDetailReducer.selectedCategory,
+    selectedCheckItem: state.templateDetailReducer.selectedCheckItem,
+    checkItems: state.templateDetailReducer.checkItems,
+    updateTemplateValue: state.templateDetailReducer.updateTemplateValue,
     editTemplateSettings: state.templateDetailReducer.editTemplateSettings,
     updateTemplateResponse: state.templateDetailReducer.updateTemplateResponse,
-    deleteTemplateResponse: state.templateDetailReducer.deleteTemplateResponse
+    deleteTemplateResponse: state.templateDetailReducer.deleteTemplateResponse,
+    payload: state.templateDetailReducer.payload
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-  // fetchAgreements: sagaActions.agreementActions.fetchAgreements,
-  // fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
-  // addAgreement: sagaActions.agreementActions.addAgreement,
-  // setCurrentPage: actionCreators.setCurrentPage,
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
+  fetchTemplateById: sagaActions.templateActions.fetchTemplateById,
+  deleteTemplate: sagaActions.templateActions.deleteTemplate,
+  updateTemplates: sagaActions.templateActions.updateTemplates,
   setEditTemplateSettings: actionCreators.setEditTemplateSettings,
-  resetResponse: actionCreators.resetResponse
+  resetResponse: actionCreators.resetResponse,
+  setTemplateCategoryData: actionCreators.setTemplateCategoryData,
+  setUpdateTemplateValue: actionCreators.setUpdateTemplateValue,
+  setCheckItemsData: actionCreators.setCheckItemsData,
+  setSelectedCategory: actionCreators.setSelectedCategory,
+  setSelectedCheckItem: actionCreators.setSelectedCheckItem,
+  setPayload: actionCreators.setPayload
 }
 
 // If you want to use the function mapping
@@ -56,16 +70,23 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      // this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // // eslint-disable-next-line
       // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // let payload = {
-      //   'search': '',
-      //   'page_size': this.props.perPage,
-      //   'page': 1
-      // }
-      // this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+          return obj.key === 'Check Item Template'
+      }), 'component_type')
+      let componentTypeIdForCategory = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Review Template'
+      }), 'component_type')
+      console.log('component_type iddddd', componentTypeId)
+      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
+      this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForCategory)
+      let payload = {}
+      payload.review_template_id = this.props.match.params.id
+      this.props.fetchTemplateById && this.props.fetchTemplateById(payload)
     },
     componentDidMount: function () {
       // // eslint-disable-next-line
@@ -74,46 +95,78 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
-      // if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-      //   if (!nextProps.authenticateUser.resources[0].result) {
-      //     this.props.history.push('/')
-      //   }
-      // }
-      // if (nextProps.addAgreementResponse && nextProps.addAgreementResponse !== '') {
-      //   if (nextProps.addAgreementResponse.error_code === null) {
-      //     let newAgreementId = nextProps.addAgreementResponse.resources[0].id
-      //     // eslint-disable-next-line
-      //     mApp && mApp.unblockPage()
-      //     // eslint-disable-next-line
-      //     toastr.success('We\'ve added the ' +  nextProps.addAgreementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-      //     this.props.history.push('/agreements/' + newAgreementId)
-      //     // location.reload()
-      //   } else {
-      //     // eslint-disable-next-line
-      //     toastr.error(nextProps.addAgreementResponse.error_message, nextProps.addAgreementResponse.error_code)
-      //   }
-      //   this.props.resetResponse()
-      // }
-      // if (nextProps.agreementsSummary && nextProps.agreementsSummary !== this.props.agreementsSummary) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementSummary')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.agreements && nextProps.agreements !== this.props.agreements) {
-      //   // eslint-disable-next-line
-      //   mApp && mApp.unblock('#agreementList')
-      //   // mApp && mApp.unblockPage()
-      // }
-      // if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-      //   // eslint-disable-next-line
-      //   mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      //   let payload = {
-      //     'search': '',
-      //     'page_size': nextProps.perPage,
-      //     'page': 1
-      //   }
-      //   this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // }
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+
+      if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
+        if (nextProps.componentTypeProperties.error_code === null) {
+          let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let componentTypeProperties = appPackage.resources[0].component_type_properties
+          let propertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review Template~Review Category'
+          }), 'component_type_property')
+          let valueSet = _.result(_.find(propertiesData, function (obj) {
+            return obj.id === propertyId
+          }), 'value_set')
+          console.log('valueset', valueSet)
+          this.props.setTemplateCategoryData(valueSet.values)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
+        }
+      }
+
+      if (nextProps.templateData && nextProps.templateData !== '' && nextProps.templateData.error_code === null && nextProps.templateData !== this.props.templateData) {
+        let updateTemplateValue = this.props.updateTemplateValue
+        updateTemplateValue.name = nextProps.templateData.resources[0].name || ''
+        updateTemplateValue.description = nextProps.templateData.resources[0].description || ''
+        updateTemplateValue.originalCheckItems = nextProps.templateData.resources[0].check_items || []
+        this.props.setUpdateTemplateValue(updateTemplateValue)
+        if (nextProps.templateData.resources[0].check_items.length > 0) {
+          let checkItems = nextProps.templateData.resources[0].check_items.map(function (data, index) {
+            data.type = 'OLD'
+            return data
+          })
+          this.props.setCheckItemsData(checkItems)
+        }
+      }
+
+      if (nextProps.deleteTemplateResponse && nextProps.deleteTemplateResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let editTemplateSettings = {...this.props.editTemplateSettings, 'isDeleteModalOpen': false}
+        this.props.setEditTemplateSettings(editTemplateSettings)
+        if (nextProps.deleteTemplateResponse.error_code === null) {
+          // eslint-disable-next-line
+          toastr.success('Successfully deleted Template ' +  nextProps.deleteTemplateResponse.resources[0].name , 'Removed')
+          this.props.history.push('/templates')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteTemplateResponse.error_message, nextProps.deleteTemplateResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
+      if (nextProps.updateTemplateResponse && nextProps.updateTemplateResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
+        // this.props.setUserActionSettings(userActionSettings)
+        if (nextProps.updateTemplateResponse.error_code === null) {
+          let payload = {}
+          payload.review_template_id = this.props.match.params.id
+          this.props.fetchTemplateById && this.props.fetchTemplateById(payload)
+          // eslint-disable-next-line
+          toastr.success('Successfully updated Template Id ' +  nextProps.updateTemplateResponse.resources[0].review_template_id , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateTemplateResponse.error_message, nextProps.updateTemplateResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
     }
   })
 )(TemplateDetail)

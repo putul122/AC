@@ -1,40 +1,88 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import _ from 'lodash'
-// import styles from './userComponent.scss'
+import _ from 'lodash'
+import styles from './templatesComponent.scss'
 // import moment from 'moment'
 import debounce from 'lodash/debounce'
 
 export default function Templates (props) {
   let searchTextBox = ''
   let userName = ''
+  let templateList = ''
+  let noOfTemplates = ''
   let email = ''
-  let listPage = ''
-  let currentPage = ''
+  let totalNoPages
+  let perPage = props.perPage
+  let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
+  let pageArray = []
+  let listPage = []
+  let paginationLimit = 6
+  let hidePagination = false
   console.log(searchTextBox, userName, email)
+  if (props.templates && props.templates !== '') {
+    if (!props.templates.error_code && props.templates.resources.length > 0) {
+      let sortedArray = _.orderBy(props.templates.resources, ['name'], ['asc'])
+      templateList = sortedArray.map(function (data, index) {
+        let link = '/templates/' + data.id
+        return (
+          <tbody>
+            <tr key={index}>
+              <td><a href={link} >{data.name}</a></td>
+              <td>{data.review_category}</td>
+              <td>{data.check_items.length}</td>
+            </tr>
+          </tbody>
+        )
+      })
+    } else {
+      hidePagination = true
+      templateList = []
+      templateList.push((
+        <tr key={0}>
+          <td colSpan='3'>{'No data to display'}</td>
+        </tr>
+      ))
+    }
+    noOfTemplates = props.templates.total_count
+    totalNoPages = Math.ceil(noOfTemplates / perPage)
+  }
+  if (currentPage === 1) {
+    previousClass = 'm-datatable__pager-link--disabled'
+  }
+  if (currentPage === totalNoPages) {
+    nextClass = 'm-datatable__pager-link--disabled'
+  }
+  let i = 1
+  while (i <= totalNoPages) {
+    let pageParameter = {}
+    pageParameter.number = i
+    pageParameter.class = ''
+    pageArray.push(pageParameter)
+    i++
+  }
+  pageArray = _.chunk(pageArray, paginationLimit)
+  listPage = _.filter(pageArray, function (group) {
+    let found = _.filter(group, {'number': currentPage})
+    if (found.length > 0) { return group }
+  })
   let handleInputChange = debounce((e) => {
-    console.log(e)
-    // const value = searchTextBox.value
-    // agreementsList = ''
-    // let payload = {
-    //   'search': value || '',
-    //   'page_size': props.perPage,
-    //   'page': currentPage
-    // }
-    // // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // props.setComponentTypeLoading(true)
-    // // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage})
-    //   if (found.length > 0) { return group }
-    // })
+    console.log(e, searchTextBox)
+    if (searchTextBox) {
+      let payload = {
+        'search': searchTextBox.value || '',
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      props.fetchTemplates && props.fetchTemplates(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
+    }
   }, 500)
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
@@ -44,74 +92,68 @@ export default function Templates (props) {
     props.setPerPage(parseInt(event.target.value))
   }
   let handlePrevious = function (event) {
-    // event.preventDefault()
-    // if (currentPage === 1) {
-    //   previousClass = styles.disabled
-    // } else {
-    //   let payload = {
-    //     'search': searchTextBox.value ? searchTextBox.value : '',
-    //     'page_size': props.perPage,
-    //     'page': currentPage - 1
-    //   }
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   props.setCurrentPage(currentPage - 1)
-    // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage - 1})
-    //   if (found.length > 0) { return group }
-    // })
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage - 1
+      }
+      props.fetchTemplates && props.fetchTemplates(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage - 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage - 1})
+      if (found.length > 0) { return group }
+    })
   }
 
   let handleNext = function (event) {
     event.preventDefault()
-    // if (currentPage === totalNoPages) {
-    //   nextClass = styles.disabled
-    // } else {
-    //   let payload = {
-    //     'search': searchTextBox.value ? searchTextBox.value : '',
-    //     'page_size': props.perPage,
-    //     'page': currentPage + 1
-    //   }
-    //   agreementsList = ''
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   props.setCurrentPage(currentPage + 1)
-    // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage + 1})
-    //   if (found.length > 0) { return group }
-    // })
+    if (currentPage === totalNoPages) {
+      nextClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage + 1
+      }
+      props.fetchTemplates && props.fetchTemplates(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage + 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage + 1})
+      if (found.length > 0) { return group }
+    })
   }
   let handlePage = function (page) {
-    // if (page === 1) {
-    //   previousClass = 'm-datatable__pager-link--disabled'
-    // } else if (page === totalNoPages) {
-    //   nextClass = 'm-datatable__pager-link--disabled'
-    // }
-    // // agreementsList = ''
-    // let payload = {
-    //   'search': searchTextBox.value ? searchTextBox.value : '',
-    //   'page_size': props.perPage,
-    //   'page': page
-    // }
-    // props.fetchAgreements(payload)
-    // // eslint-disable-next-line
-    // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // // eslint-disable-next-line
-    // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // props.setCurrentPage(page)
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+    }
+    props.fetchTemplates && props.fetchTemplates(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
 
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': page})
-    //   if (found.length > 0) { return group }
-    // })
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
   }
     return (
       <div>
@@ -154,7 +196,7 @@ export default function Templates (props) {
                         </span>
                         <span className='m-widget17__subtitle'>
                           <h3>Number of Templates</h3>
-                          <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{'2'}</h5>
+                          <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{noOfTemplates}</h5>
                         </span>
                         {/* <span className='m-widget17__desc'>
                           <h1>{softwareCount}</h1>
@@ -217,21 +259,10 @@ export default function Templates (props) {
                                 <th className=''><h5># Check Items</h5></th>
                               </tr>
                             </thead>
-                            <tbody>
-                              <tr role='row'>
-                                <td className=''><a href='/templates/1'>Template 1</a></td>
-                                <td className=''>Review Category</td>
-                                <td className=''>1</td>
-                              </tr>
-                              <tr role='row'>
-                                <td className=''><a href='/templates/2'>Template 2</a></td>
-                                <td className=''>Review Category</td>
-                                <td className=''>2</td>
-                              </tr>
-                            </tbody>
+                            {templateList}
                           </table>
                         </div>
-                        <div className='row'>
+                        {props.templates.error_code === null && !hidePagination && (<div className='row'>
                           <div className='col-md-12' id='scrolling_vertical'>
                             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
                               <div className='m-datatable__pager m-datatable--paging-loaded clearfix'>
@@ -252,7 +283,7 @@ export default function Templates (props) {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div>)}
                       </div>
                     </div>
                   </div>
@@ -265,8 +296,8 @@ export default function Templates (props) {
       )
     }
     Templates.propTypes = {
-    // agreements: PropTypes.any,
-    // agreementsSummary: PropTypes.any,
+    templates: PropTypes.any,
+    currentPage: PropTypes.any,
     // currentPage: PropTypes.any,
     // addAgreementSettings: PropTypes.any,
     perPage: PropTypes.any

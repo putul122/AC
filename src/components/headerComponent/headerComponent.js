@@ -1,9 +1,12 @@
 import React from 'react'
-// import styles from './headerComponent.scss'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
 import * as signalR from '@aspnet/signalr'
 import { authContext } from '../../config/adal'
+const notificationAlert = {
+  background: '#ff006c',
+  border: '1px solid #ff006c'
+}
 let userToken = localStorage.getItem('userAccessToken')
 var connection = new signalR.HubConnectionBuilder()
           .withUrl('https://notification-eco-dev.ecoconductor.com/notification', {
@@ -23,9 +26,13 @@ export default function HeaderComponent (props) {
     let isQuickSlideOpen = props.isQuickSlideOpen
     let isLoginSlideOpen = props.isLoginSlideOpen
     let loginSlideClass = 'm-dropdown--close'
-    console.log('***', props.setQuickslideFlag)
-    console.log('%%%%', props.setLoginslideFlag)
     let notificationFlag = props.notificationFlag
+    let notificationStyle = {}
+    if (props.notificationFlag) {
+      notificationStyle = notificationAlert
+    } else {
+      notificationStyle = {}
+    }
     connection.on('ReceiveMessage', (payload) => {
       payload = JSON.parse(payload)
       if (payload.notify) {
@@ -87,9 +94,9 @@ export default function HeaderComponent (props) {
                     <ul className='m-topbar__nav m-nav m-nav--inline'>
                       <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
                         <a href='javascript:void(0);' className='m-nav__link m-dropdown__toggle' onClick={openQuickSlide} id='m_topbar_notification_icon'>
-                          {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--danger'><i className='flaticon-exclamation-2' /></span>)}
+                          {/* {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--danger'><i className='flaticon-exclamation-2' /></span>)} */}
                           <span className='m-nav__link-icon m-topbar__usericon'>
-                            <span className='m-nav__link-icon-wrapper'><i className='flaticon-music-2' /></span>
+                            <span className='m-nav__link-icon-wrapper' style={notificationStyle}><i className='flaticon-music-2' /></span>
                           </span>
                         </a>
                       </li>
@@ -168,7 +175,6 @@ export default function HeaderComponent (props) {
   }
 
 HeaderComponent.propTypes = {
-  setQuickslideFlag: PropTypes.func,
   updateNotificationViewStatus: PropTypes.func,
   isQuickSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,

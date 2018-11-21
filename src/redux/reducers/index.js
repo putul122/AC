@@ -5,6 +5,7 @@ import usersReducer from './usersReducer/usersReducerReducer'
 import loginReducer from './loginReducer/loginReducerReducer'
 import applicationActivityReducer from './applicationActivityReducer/applicationActivityReducerReducer'
 import templateDetailReducer from './templateDetailReducer/templateDetailReducerReducer'
+import addTemplateReducer from './addTemplateReducer/addTemplateReducerReducer'
 import templatesReducer from './templateReducer/templateReducerReducer'
 import reviewsReducer from './reviewsReducer/reviewsReducerReducer'
 import viewReviewReducer from './viewReviewReducer/viewReviewReducerReducer'
@@ -21,6 +22,7 @@ export default combineReducers({
     loginReducer,
     applicationActivityReducer,
     templateDetailReducer,
+    addTemplateReducer,
     templatesReducer,
     reviewsReducer,
     conductReviewReducer,

@@ -2,7 +2,8 @@ import { createAction, handleActions } from 'redux-actions'
 import {
     FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
     FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS,
-    UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS
+    UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS,
+    FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
 } from '../../sagas/basic/basicSaga'
 import {
   FETCH_REVIEW_BY_ID_SUCCESS,
@@ -15,6 +16,7 @@ const RESET_RESPONSE = 'ReviewDraftReducer/RESET_RESPONSE'
 const SET_SELECTED_CHECK_ITEM = 'ReviewDraftReducer/SET_SELECTED_CHECK_ITEM'
 const SET_DRAFT_EDIT_DATA = 'ReviewDraftReducer/SET_DRAFT_EDIT_DATA'
 const SET_UPDATE_PAYLOAD = 'ReviewDraftReducer/SET_UPDATE_PAYLOAD'
+const SET_CATEGORY_DATA = 'ReviewDraftReducer/SET_CATEGORY_DATA'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -27,7 +29,9 @@ export const actions = {
   SET_DRAFT_EDIT_DATA,
   SET_UPDATE_PAYLOAD,
   UPDATE_REVIEWS_SUCCESS,
-  UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS
+  UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS,
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+  SET_CATEGORY_DATA
 }
 
 export const actionCreators = {
@@ -35,12 +39,15 @@ export const actionCreators = {
   resetResponse: createAction(RESET_RESPONSE),
   setSelectedCheckItem: createAction(SET_SELECTED_CHECK_ITEM),
   setDraftEditData: createAction(SET_DRAFT_EDIT_DATA),
-  setUpdatePayload: createAction(SET_UPDATE_PAYLOAD)
+  setUpdatePayload: createAction(SET_UPDATE_PAYLOAD),
+  setCategoryData: createAction(SET_CATEGORY_DATA)
 }
 
 export const initialState = {
   connectArtefact: '',
   componentTypeRelations: '',
+  componentTypeProperties: '',
+  reviewCategories: '',
   reviewArtefacts: '',
   reviewCheckitems: '',
   updateReviewResponse: '',
@@ -112,6 +119,14 @@ export default handleActions(
     [UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
       ...state,
       connectArtefactResponse: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeProperties: action.payload
+    }),
+    [SET_CATEGORY_DATA]: (state, action) => ({
+      ...state,
+      reviewCategories: action.payload
     })
   },
   initialState

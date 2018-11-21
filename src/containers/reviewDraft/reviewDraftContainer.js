@@ -20,7 +20,9 @@ export function mapStateToProps (state, props) {
     connectArtefactResponse: state.reviewDraftReducer.connectArtefactResponse,
     selectedCheckItem: state.reviewDraftReducer.selectedCheckItem,
     connectArtefactSettings: state.reviewDraftReducer.connectArtefactSettings,
-    updatePayload: state.reviewDraftReducer.updatePayload
+    updatePayload: state.reviewDraftReducer.updatePayload,
+    componentTypeProperties: state.reviewDraftReducer.componentTypeProperties,
+    reviewCategories: state.reviewDraftReducer.reviewCategories
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -31,12 +33,14 @@ export const propsMapping: Callbacks = {
   setSelectedCheckItem: actionCreators.setSelectedCheckItem,
   resetResponse: actionCreators.resetResponse,
   setDraftEditData: actionCreators.setDraftEditData,
+  setCategoryData: actionCreators.setCategoryData,
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   fetchReviewArtefacts: sagaActions.reviewActions.fetchReviewArtefacts,
   updateReviews: sagaActions.reviewActions.updateReviews,
   fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   fetchcomponentTypeRelations: sagaActions.basicActions.fetchcomponentTypeRelations,
   updateComponentRelationships: sagaActions.basicActions.updateComponentRelationships,
+  fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
@@ -82,10 +86,11 @@ export default compose(
           return obj.key === 'Check Item'
       }), 'component_type')
       this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeIdForComponents)
-      let componentTypeIdForRelations = _.result(_.find(componentTypes, function (obj) {
+      let componentTypeIdForReview = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Review'
       }), 'component_type')
-      this.props.fetchcomponentTypeRelations && this.props.fetchcomponentTypeRelations(componentTypeIdForRelations)
+      this.props.fetchcomponentTypeRelations && this.props.fetchcomponentTypeRelations(componentTypeIdForReview)
+      this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForReview)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -113,6 +118,24 @@ export default compose(
           draftEdit.isCancel = nextProps.reviewData.resources[0].cancel_reason !== null || false
           draftEdit.cancelReason = nextProps.reviewData.resources[0].cancel_reason
           this.props.setDraftEditData(draftEdit)
+        }
+      }
+      if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
+        if (nextProps.componentTypeProperties.error_code === null) {
+          let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let componentTypeProperties = appPackage.resources[0].component_type_properties
+          let propertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review~Review Category'
+          }), 'component_type_property')
+          let valueSet = _.result(_.find(propertiesData, function (obj) {
+            return obj.id === propertyId
+          }), 'value_set')
+          console.log('valueset', valueSet)
+          this.props.setCategoryData(valueSet.values)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
         }
       }
       if (nextProps.updateReviewResponse && nextProps.updateReviewResponse !== '') {
