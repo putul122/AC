@@ -48,7 +48,9 @@ const api = {
   getReviewsSummary: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewsSummary',
   getReview: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReview/',
   createReview: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReview',
-  updateReview: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReview',
+  updateReview: function (reviewId) {
+    return 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReview?review_id=' + reviewId
+  },
   createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
   getReviewTemplates: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplates',
   getReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplate',

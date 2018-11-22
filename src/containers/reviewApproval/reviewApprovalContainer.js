@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     reviewData: state.reviewApprovalReducer.reviewData,
     isApproved: state.reviewApprovalReducer.isApproved,
     updateReviewResponse: state.reviewApprovalReducer.updateReviewResponse,
-    rejectedReason: state.reviewApprovalReducer.rejectedReason
+    rejectedReason: state.reviewApprovalReducer.rejectedReason,
+    validationClass: state.reviewApprovalReducer.validationClass
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -23,6 +24,7 @@ export const propsMapping: Callbacks = {
   setApproval: actionCreators.setApproval,
   resetResponse: actionCreators.resetResponse,
   setRejectedReason: actionCreators.setRejectedReason,
+  setValidationClass: actionCreators.setValidationClass,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
@@ -89,7 +91,7 @@ export default compose(
         if (nextProps.updateReviewResponse.error_code === null) {
           // this.props.fetchUsers && this.props.fetchUsers()
           // eslint-disable-next-line
-          toastr.success('Successfully updated Review ' +  nextProps.updateReviewResponse.resources[0].id , 'Nice!')
+          toastr.success('Successfully updated Review ID' +  nextProps.updateReviewResponse.resources[0].review_id , 'Nice!')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)

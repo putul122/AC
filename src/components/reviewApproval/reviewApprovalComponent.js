@@ -6,6 +6,12 @@ import PropTypes from 'prop-types'
 // import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+// const CANCELLED = 128
+// const COMPLETED = 129
+const DRAFT = 218
+// const APPROVAL = 219
+const IN_PROGRESS = 220
+// const ACCEPTANCE = 221
 
 export default function ReviewApproval (props) {
   console.log(props)
@@ -24,6 +30,9 @@ export default function ReviewApproval (props) {
     let isApproved = value
     console.log(value)
     props.setApproval(isApproved)
+    let validationClass = {...props.validationClass}
+    validationClass.approval = 'form-group m-form__group row'
+    props.setValidationClass(validationClass)
   }
   let saveReview = function (event) {
     // eslint-disable-next-line
@@ -43,28 +52,43 @@ export default function ReviewApproval (props) {
   }
   let submitReview = function (event) {
     let updatePayload = []
+    if (props.isApproved === null) {
+      let validationClass = {...props.validationClass}
+      validationClass.approval = 'form-group m-form__group row has-danger'
+      props.setValidationClass(validationClass)
+    }
     if (props.isApproved) {
       if (props.isApproved === 'Approved') {
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = 'In Progress'
+        obj.value = IN_PROGRESS
         updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
-        props.updateReviews(updatePayload)
+        let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
       } else if (props.isApproved === 'Rejected') {
         if (props.rejectedReason !== '' && props.rejectedReason !== null) {
           let obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = 'Draft'
+          obj.value = DRAFT
           updatePayload.push(obj)
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           console.log('update payload', updatePayload)
-          props.updateReviews(updatePayload)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+        } else {
+          let validationClass = {...props.validationClass}
+          validationClass.rejectReason = 'form-group m-form__group row has-danger'
+          props.setValidationClass(validationClass)
         }
       }
     }
@@ -72,6 +96,11 @@ export default function ReviewApproval (props) {
   let handleRejectedReason = function (event) {
     let rejectedReason = event.target.value
     props.setRejectedReason(rejectedReason)
+    if (rejectedReason !== '') {
+      let validationClass = {...props.validationClass}
+      validationClass.rejectReason = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
+    }
   }
   if (props.reviewData && props.reviewData !== null & props.reviewData.error_code === null) {
     reviewName = props.reviewData.resources[0].name
@@ -82,7 +111,7 @@ export default function ReviewApproval (props) {
     Artefact = props.reviewData.resources[0].review_artefact_name
   }
     return (
-      <div>
+      <div className=''>
         <div className='row clearfix'>
           <div className='col-xs-4 col-sm-6 col-md-8' />
           <div className='col-xs-8 col-sm-6 col-md-4'>
@@ -180,9 +209,9 @@ export default function ReviewApproval (props) {
                 </div>
               </div>
             </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-12 m-form__content'>
-                <div className='form-group m-form__group row'>
+            <div className='row ' style={{width: '100%'}}>
+              <div className='col-12 m-form m-form--state m-form--fit'>
+                <div className={props.validationClass.approval}>
                   <label htmlFor='example-email-input' className='col-3 col-form-label'>Review Approved<span className='text-danger' >*</span></label>
                   <div className='col-9 float-right'>
                     <div className='m-radio-inline'>
@@ -197,7 +226,7 @@ export default function ReviewApproval (props) {
                     </div>
                   </div>
                 </div>
-                {props.isApproved === 'Rejected' && (<div className='form-group m-form__group row'>
+                {props.isApproved === 'Rejected' && (<div className={props.validationClass.rejectReason}>
                   <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
                   <div className='col-8'>
                     {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
@@ -228,5 +257,7 @@ export default function ReviewApproval (props) {
       reviewData: PropTypes.any,
       isApproved: PropTypes.any,
       setRejectedReason: PropTypes.func,
-      rejectedReason: PropTypes.any
+      rejectedReason: PropTypes.any,
+      validationClass: PropTypes.any,
+      setValidationClass: PropTypes.func
  }

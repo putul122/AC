@@ -114,8 +114,8 @@ export function * updateReview (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const review = yield call(
       axios.patch,
-      api.updateReview,
-      action.payload
+      api.updateReview(action.payload.reviewId),
+      action.payload.data
     )
     yield put(actionCreators.updateReviewsSuccess(review.data))
   } catch (error) {
