@@ -1,17 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import _ from 'lodash'
+import _ from 'lodash'
 // import styles from './addTemplateComponent.scss'
 // import moment from 'moment'
 // import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
-// const CANCELLED = 128
-// const COMPLETED = 129
-const DRAFT = 218
-// const APPROVAL = 219
-const IN_PROGRESS = 220
-// const ACCEPTANCE = 221
 
 export default function ReviewApproval (props) {
   console.log(props)
@@ -21,6 +15,7 @@ export default function ReviewApproval (props) {
   let Reviewer = ''
   let Approver = ''
   let Artefact = ''
+  let checkItemList = ''
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -42,13 +37,16 @@ export default function ReviewApproval (props) {
       if (props.isApproved === 'Rejected') {
         let obj = {}
         obj.op = 'replace'
-        obj.path = '/reject_reason'
+        obj.path = '/reason'
         obj.value = props.rejectedReason
         updatePayload.push(obj)
       }
     }
     console.log('update payload', updatePayload)
-    props.updateReviews(updatePayload)
+    let payload = {}
+    payload.reviewId = contextId
+    payload.data = updatePayload
+    props.updateReviews(payload)
   }
   let submitReview = function (event) {
     let updatePayload = []
@@ -59,10 +57,20 @@ export default function ReviewApproval (props) {
     }
     if (props.isApproved) {
       if (props.isApproved === 'Approved') {
+        let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'In Progress'
+        }), 'id')
+        // set Approved stage
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = IN_PROGRESS
+        obj.value = inProgressId
+        updatePayload.push(obj)
+        // set Approved status
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/status'
+        obj.value = 'Approved'
         updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -73,10 +81,26 @@ export default function ReviewApproval (props) {
           props.updateReviews(payload)
       } else if (props.isApproved === 'Rejected') {
         if (props.rejectedReason !== '' && props.rejectedReason !== null) {
+          let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Draft'
+          }), 'id')
+          // set Not Approved stage
           let obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = DRAFT
+          obj.value = draftId
+          updatePayload.push(obj)
+          // set Not Approved status
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/status'
+          obj.value = 'Rejected'
+          updatePayload.push(obj)
+          // set Not Approved reason
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/reason'
+          obj.value = props.rejectedReason
           updatePayload.push(obj)
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -109,6 +133,15 @@ export default function ReviewApproval (props) {
     Reviewer = props.reviewData.resources[0].reviewer
     Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
+    if (props.reviewData.resources[0].check_items.length > 0) {
+      checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
+        return (<span className='m-list-search__result-item' key={index}>
+          <span className='m-list-search__result-item-text'>{data.name}</span>
+        </span>)
+      })
+    } else {
+      checkItemList = ''
+    }
   }
     return (
       <div className=''>
@@ -195,12 +228,7 @@ export default function ReviewApproval (props) {
                             <span className='m-list-search__result-category m-list-search__result-category--first'>
                                         Selected Check Items
                                     </span>
-                            <span className='m-list-search__result-item'>
-                              <div className='form-group m-form__group row'>
-                                <label htmlFor='example-email-input' className='col-7 col-form-label'>Has Cloud Solution been considered</label>
-                                <div className='col-5 float-right' />
-                              </div>
-                            </span>
+                            {checkItemList}
                           </div>
                         </div>
                       </div>
@@ -256,8 +284,8 @@ export default function ReviewApproval (props) {
       match: PropTypes.any,
       reviewData: PropTypes.any,
       isApproved: PropTypes.any,
-      setRejectedReason: PropTypes.func,
+      // setRejectedReason: PropTypes.func,
       rejectedReason: PropTypes.any,
-      validationClass: PropTypes.any,
-      setValidationClass: PropTypes.func
+      validationClass: PropTypes.any
+      // setValidationClass: PropTypes.func
  }

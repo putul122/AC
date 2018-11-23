@@ -17,6 +17,10 @@ const SET_SELECTED_CHECK_ITEM = 'ReviewDraftReducer/SET_SELECTED_CHECK_ITEM'
 const SET_DRAFT_EDIT_DATA = 'ReviewDraftReducer/SET_DRAFT_EDIT_DATA'
 const SET_UPDATE_PAYLOAD = 'ReviewDraftReducer/SET_UPDATE_PAYLOAD'
 const SET_CATEGORY_DATA = 'ReviewDraftReducer/SET_CATEGORY_DATA'
+const SET_REVIEW_PROPERTY = 'ReviewDraftReducer/SET_REVIEW_PROPERTY'
+const SET_VALIDATION_CLASS = 'ReviewDraftReducer/SET_VALIDATION_CLASS'
+const SET_SELECTED_CATEGORY = 'ReviewDraftReducer/SET_SELECTED_CATEGORY'
+const SET_FIRST_LOAD = 'ReviewDraftReducer/SET_FIRST_LOAD'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -31,7 +35,11 @@ export const actions = {
   UPDATE_REVIEWS_SUCCESS,
   UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS,
   FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
-  SET_CATEGORY_DATA
+  SET_CATEGORY_DATA,
+  SET_REVIEW_PROPERTY,
+  SET_VALIDATION_CLASS,
+  SET_SELECTED_CATEGORY,
+  SET_FIRST_LOAD
 }
 
 export const actionCreators = {
@@ -40,7 +48,11 @@ export const actionCreators = {
   setSelectedCheckItem: createAction(SET_SELECTED_CHECK_ITEM),
   setDraftEditData: createAction(SET_DRAFT_EDIT_DATA),
   setUpdatePayload: createAction(SET_UPDATE_PAYLOAD),
-  setCategoryData: createAction(SET_CATEGORY_DATA)
+  setCategoryData: createAction(SET_CATEGORY_DATA),
+  setReviewProperty: createAction(SET_REVIEW_PROPERTY),
+  setValidationClass: createAction(SET_VALIDATION_CLASS),
+  setSelectedCategory: createAction(SET_SELECTED_CATEGORY),
+  setFirstLoad: createAction(SET_FIRST_LOAD)
 }
 
 export const initialState = {
@@ -53,8 +65,14 @@ export const initialState = {
   updateReviewResponse: '',
   connectArtefactResponse: '',
   reviewData: '',
+  firstLoad: true,
   selectedCheckItem: null,
+  selectedCategory: null,
   updatePayload: [],
+  reviewProperties: {
+    category: [],
+    stages: []
+  },
   draftEdit: {
     name: '',
     description: '',
@@ -65,6 +83,7 @@ export const initialState = {
     cancelReason: '',
     checkItems: []
   },
+  validationClass: 'form-group m-form__group row',
   connectArtefactSettings: {
     isConnected: false,
     isModalOpen: false,
@@ -90,7 +109,8 @@ export default handleActions(
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       updateReviewResponse: '',
-      connectArtefactResponse: ''
+      connectArtefactResponse: '',
+      componentTypeProperties: ''
     }),
     [SET_SELECTED_CHECK_ITEM]: (state, action) => ({
         ...state,
@@ -127,6 +147,22 @@ export default handleActions(
     [SET_CATEGORY_DATA]: (state, action) => ({
       ...state,
       reviewCategories: action.payload
+    }),
+    [SET_REVIEW_PROPERTY]: (state, action) => ({
+      ...state,
+      reviewProperties: action.payload
+    }),
+    [SET_VALIDATION_CLASS]: (state, action) => ({
+      ...state,
+      validationClass: action.payload
+    }),
+    [SET_SELECTED_CATEGORY]: (state, action) => ({
+      ...state,
+      selectedCategory: action.payload
+    }),
+    [SET_FIRST_LOAD]: (state, action) => ({
+      ...state,
+      firstLoad: action.payload
     })
   },
   initialState

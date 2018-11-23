@@ -73,6 +73,8 @@ export default function AddTemplate (props) {
     props.setCheckItemsData(checkItems)
   }
   let saveTemplate = function (event) {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.name = props.addTemplateValue.name
     payload.description = ''
@@ -87,7 +89,6 @@ export default function AddTemplate (props) {
       payload.check_items = []
     }
     props.createTemplates(payload)
-    console.log('payload', payload)
   }
     return (
       <div>

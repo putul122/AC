@@ -56,6 +56,8 @@ if (props.componentTypeComponents && props.componentTypeComponents !== '') {
   } else {}
 }
 let addReview = function () {
+  // eslint-disable-next-line
+  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
   let name = reviewName.value
   let description = reviewDescription.value
   let payload = {}

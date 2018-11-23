@@ -1,10 +1,12 @@
 import { createAction, handleActions } from 'redux-actions'
+import { FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS } from '../../sagas/basic/basicSaga'
 import {FETCH_REVIEW_BY_ID_SUCCESS, UPDATE_REVIEWS_SUCCESS} from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const RESET_RESPONSE = 'ReviewApprovalReducer/RESET_RESPONSE'
 const SET_APPROVAL = 'ReviewApprovalReducer/SET_APPROVAL'
 const SET_REJECTED_REASON = 'ReviewApprovalReducer/SET_REJECTED_REASON'
 const SET_VALIDATION_CLASS = 'ReviewApprovalReducer/SET_VALIDATION_CLASS'
+const SET_REVIEW_PROPERTY = 'ReviewApprovalReducer/SET_REVIEW_PROPERTY'
 
 export const actions = {
   RESET_RESPONSE,
@@ -12,24 +14,32 @@ export const actions = {
   FETCH_REVIEW_BY_ID_SUCCESS,
   UPDATE_REVIEWS_SUCCESS,
   SET_REJECTED_REASON,
-  SET_VALIDATION_CLASS
+  SET_VALIDATION_CLASS,
+  SET_REVIEW_PROPERTY,
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
 }
 
 export const actionCreators = {
   resetResponse: createAction(RESET_RESPONSE),
   setApproval: createAction(SET_APPROVAL),
   setRejectedReason: createAction(SET_REJECTED_REASON),
-  setValidationClass: createAction(SET_VALIDATION_CLASS)
+  setValidationClass: createAction(SET_VALIDATION_CLASS),
+  setReviewProperty: createAction(SET_REVIEW_PROPERTY)
 }
 
 export const initialState = {
   updateReviewResponse: '',
+  componentTypeProperties: '',
   rejectedReason: '',
   isApproved: null,
   reviewData: '',
   validationClass: {
     approval: 'form-group m-form__group row',
     rejectReason: 'form-group m-form__group row'
+  },
+  reviewProperties: {
+    category: [],
+    stages: []
   }
 }
 
@@ -58,6 +68,14 @@ export default handleActions(
     [SET_VALIDATION_CLASS]: (state, action) => ({
       ...state,
       validationClass: action.payload
+    }),
+    [SET_REVIEW_PROPERTY]: (state, action) => ({
+      ...state,
+      reviewProperties: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeProperties: action.payload
     })
   },
   initialState

@@ -208,6 +208,7 @@ export default function TemplateDetail (props) {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
+                      <a href='/templates' className='btn btn-outline-info btn-sm'>Close</a>&nbsp;&nbsp;
                       <button onClick={editTemplate} className='btn btn-outline-info btn-sm'>Edit Template</button>&nbsp;&nbsp;
                       <button onClick={openDeleteModal} className='btn btn-outline-info btn-sm'>Delete Template</button>
                     </div>

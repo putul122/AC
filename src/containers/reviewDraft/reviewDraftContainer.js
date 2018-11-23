@@ -22,7 +22,11 @@ export function mapStateToProps (state, props) {
     connectArtefactSettings: state.reviewDraftReducer.connectArtefactSettings,
     updatePayload: state.reviewDraftReducer.updatePayload,
     componentTypeProperties: state.reviewDraftReducer.componentTypeProperties,
-    reviewCategories: state.reviewDraftReducer.reviewCategories
+    reviewCategories: state.reviewDraftReducer.reviewCategories,
+    reviewProperties: state.reviewDraftReducer.reviewProperties,
+    validationClass: state.reviewDraftReducer.validationClass,
+    selectedCategory: state.reviewDraftReducer.selectedCategory,
+    firstLoad: state.reviewDraftReducer.firstLoad
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -34,6 +38,10 @@ export const propsMapping: Callbacks = {
   resetResponse: actionCreators.resetResponse,
   setDraftEditData: actionCreators.setDraftEditData,
   setCategoryData: actionCreators.setCategoryData,
+  setReviewProperty: actionCreators.setReviewProperty,
+  setValidationClass: actionCreators.setValidationClass,
+  setSelectedCategory: actionCreators.setSelectedCategory,
+  setFirstLoad: actionCreators.setFirstLoad,
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   fetchReviewArtefacts: sagaActions.reviewActions.fetchReviewArtefacts,
   updateReviews: sagaActions.reviewActions.updateReviews,
@@ -73,6 +81,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      console.log('props', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -99,6 +108,7 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('nextProps', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -109,30 +119,60 @@ export default compose(
         mApp && mApp.unblockPage()
         if (!nextProps.reviewData.errorCode && nextProps.reviewData.resources && nextProps.reviewData.resources.length > 0) {
           let draftEdit = {...this.props.draftEdit}
-          draftEdit.name = nextProps.reviewData.resources[0].name
-          draftEdit.description = nextProps.reviewData.resources[0].description
-          draftEdit.category = nextProps.reviewData.resources[0].review_category
-          draftEdit.reviewer = nextProps.reviewData.resources[0].reviewer
-          draftEdit.approver = nextProps.reviewData.resources[0].approver
-          draftEdit.checkItems = nextProps.reviewData.resources[0].check_items
-          draftEdit.isCancel = nextProps.reviewData.resources[0].cancel_reason !== null || false
-          draftEdit.cancelReason = nextProps.reviewData.resources[0].cancel_reason
+          draftEdit.name = nextProps.reviewData.resources[0].name || ''
+          draftEdit.description = nextProps.reviewData.resources[0].description || ''
+          draftEdit.category = nextProps.reviewData.resources[0].review_category_id || ''
+          draftEdit.reviewer = nextProps.reviewData.resources[0].reviewer || ''
+          draftEdit.approver = nextProps.reviewData.resources[0].approver || ''
+          let checkItems = nextProps.reviewData.resources[0].check_items || []
+          if (checkItems.length > 0) {
+            checkItems = checkItems.map(function (data, index) {
+              data.type = 'OLD'
+              return data
+            })
+          }
+          draftEdit.checkItems = checkItems
+          draftEdit.isCancel = nextProps.reviewData.resources[0].status === 'Cancelled' || false
+          draftEdit.cancelReason = nextProps.reviewData.resources[0].reason || ''
           this.props.setDraftEditData(draftEdit)
         }
       }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
         if (nextProps.componentTypeProperties.error_code === null) {
-          let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          // let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          let reviewProperties = {...this.props.reviewProperties}
           let appPackage = JSON.parse(localStorage.getItem('packages'))
           let componentTypeProperties = appPackage.resources[0].component_type_properties
-          let propertyId = _.result(_.find(componentTypeProperties, function (obj) {
+          let categoryPropertyId = _.result(_.find(componentTypeProperties, function (obj) {
             return obj.key === 'Review~Review Category'
           }), 'component_type_property')
-          let valueSet = _.result(_.find(propertiesData, function (obj) {
-            return obj.id === propertyId
-          }), 'value_set')
-          console.log('valueset', valueSet)
-          this.props.setCategoryData(valueSet.values)
+          let stagePropertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review~Stage'
+          }), 'component_type_property')
+          if (nextProps.componentTypeProperties.resources.length > 0) {
+            nextProps.componentTypeProperties.resources.forEach(function (data, index) {
+              console.log('data-------------', data)
+              let category = _.result(_.find(data.properties, function (obj) {
+                return obj.id === categoryPropertyId
+              }), 'value_set')
+              console.log('valueset ----', category)
+              if (category) {
+                console.log(category.values, 'inside if')
+                reviewProperties.category = category.values || []
+               //  this.props.setCategoryData(valueSet.values)
+              }
+              let stages = _.result(_.find(data.properties, function (obj) {
+                return obj.id === stagePropertyId
+              }), 'value_set')
+              console.log('valueset ----', stages)
+              if (stages) {
+                console.log(stages.values, 'inside if stages')
+                reviewProperties.stages = stages.values || []
+               //  this.props.setCategoryData(valueSet.values)
+              }
+            })
+          }
+          this.props.setReviewProperty && this.props.setReviewProperty(reviewProperties)
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
@@ -144,7 +184,7 @@ export default compose(
         if (nextProps.updateReviewResponse.error_code === null) {
           // this.props.fetchUsers && this.props.fetchUsers()
           // eslint-disable-next-line
-          toastr.success('Successfully updated Review ' +  nextProps.updateReviewResponse.resources[0].id , 'Nice!')
+          toastr.success('Successfully updated Review Id' +  nextProps.updateReviewResponse.resources[0].review_id , 'Nice!')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
@@ -170,6 +210,26 @@ export default compose(
         let componentTypeIdForArtefact = nextProps.connectArtefactSettings.selectedRelations.id
         this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeIdForArtefact)
       }
+      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.firstLoad) {
+        console.log('inside if -----------------------------------reviewProperties', nextProps, nextProps.reviewData)
+        if (nextProps.reviewData && nextProps.reviewData !== null & nextProps.reviewData.error_code === null) {
+          let defaultCategoryId = nextProps.reviewData.resources[0].review_category_id
+          let defaultCategoryObject = _.find(nextProps.reviewProperties.category, function (obj) {
+            return obj.id === defaultCategoryId
+          })
+          console.log('defaultcategoryObject', defaultCategoryObject)
+          defaultCategoryObject = defaultCategoryObject || null
+          if (defaultCategoryObject) {
+            defaultCategoryObject.label = defaultCategoryObject.name
+            nextProps.setSelectedCategory(defaultCategoryObject)
+            nextProps.setFirstLoad(false)
+          }
+        }
+      }
+      // if (nextProps.selectedCategory && nextProps.selectedCategory !== null) {
+      //   console.log('00000000000000000000', nextProps)
+      //   alert(JSON.parse(this.props.selectedCategory))
+      // }
     }
   })
 )(ReviewDraft)

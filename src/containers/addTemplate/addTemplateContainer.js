@@ -118,7 +118,8 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.addTemplateResponse.error_message, nextProps.addTemplateResponse.error_code)
         }
-        this.props.resetResponse()
+        // this.props.resetResponse()
+        this.props.history.push('/templates')
       }
     }
   })

@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
+import _ from 'lodash'
 import ConductReview from '../../components/conductReview/conductReviewComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/conductReviewReducer/conductReviewReducerReducer'
@@ -12,7 +13,11 @@ export function mapStateToProps (state, props) {
     reviewData: state.conductReviewReducer.reviewData,
     returnToDraft: state.conductReviewReducer.returnToDraft,
     updateReviewResponse: state.conductReviewReducer.updateReviewResponse,
-    cancelReview: state.conductReviewReducer.cancelReview
+    componentTypeProperties: state.conductReviewReducer.componentTypeProperties,
+    cancelReview: state.conductReviewReducer.cancelReview,
+    reviewProperties: state.conductReviewReducer.reviewProperties,
+    checkboxSelected: state.conductReviewReducer.checkboxSelected,
+    reason: state.conductReviewReducer.reason
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -23,6 +28,10 @@ export const propsMapping: Callbacks = {
   setReturnDraft: actionCreators.setReturnDraft,
   resetResponse: actionCreators.resetResponse,
   setCancelReview: actionCreators.setCancelReview,
+  setReviewProperty: actionCreators.setReviewProperty,
+  setCheckbox: actionCreators.setCheckbox,
+  setReason: actionCreators.setReason,
+  fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
@@ -62,6 +71,12 @@ export default compose(
         'review_id': this.props.match.params.id
       }
       this.props.fetchReviewById && this.props.fetchReviewById(payload)
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeIdForReview = _.result(_.find(componentTypes, function (obj) {
+        return obj.key === 'Review'
+      }), 'component_type')
+      this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForReview)
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -95,6 +110,47 @@ export default compose(
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
+        if (nextProps.componentTypeProperties.error_code === null) {
+          // let propertiesData = nextProps.componentTypeProperties.resources[0].properties
+          let reviewProperties = {...this.props.reviewProperties}
+          let appPackage = JSON.parse(localStorage.getItem('packages'))
+          let componentTypeProperties = appPackage.resources[0].component_type_properties
+          let categoryPropertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review~Review Category'
+          }), 'component_type_property')
+          let stagePropertyId = _.result(_.find(componentTypeProperties, function (obj) {
+            return obj.key === 'Review~Stage'
+          }), 'component_type_property')
+          if (nextProps.componentTypeProperties.resources.length > 0) {
+            nextProps.componentTypeProperties.resources.forEach(function (data, index) {
+              console.log('data-------------', data)
+              let category = _.result(_.find(data.properties, function (obj) {
+                return obj.id === categoryPropertyId
+              }), 'value_set')
+              console.log('valueset ----', category)
+              if (category) {
+                console.log(category.values, 'inside if')
+                reviewProperties.category = category.values || []
+               //  this.props.setCategoryData(valueSet.values)
+              }
+              let stages = _.result(_.find(data.properties, function (obj) {
+                return obj.id === stagePropertyId
+              }), 'value_set')
+              console.log('valueset ----', stages)
+              if (stages) {
+                console.log(stages.values, 'inside if stages')
+                reviewProperties.stages = stages.values || []
+               //  this.props.setCategoryData(valueSet.values)
+              }
+            })
+          }
+          this.props.setReviewProperty && this.props.setReviewProperty(reviewProperties)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
+        }
       }
     }
   })

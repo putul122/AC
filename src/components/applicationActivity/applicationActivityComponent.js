@@ -8,7 +8,7 @@ const liStyle = {
   margin: '0 0 6px 0'
 }
 export default function ApplicationActivity (props) {
-  console.log('activity message props', props.activityMessages, props.notificationReceived, props)
+  console.log('activity message props', props.notificationReceived)
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
   let parseMessage = function (result) {
@@ -33,7 +33,7 @@ export default function ApplicationActivity (props) {
         //   contextHyperLink = '/components/' + messageGroup[0].discussion.context.id
         // }
         let messageList = messageGroup.map(function (message, i) {
-          console.log('----------------> message', message)
+          // console.log('----------------> message', message)
           // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
           let userIconlink = message.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + message.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
           let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
@@ -55,7 +55,6 @@ export default function ApplicationActivity (props) {
                 let msgContextHyperLink = 'javascript:void(0);'
                 if (message.references.length > 0) {
                   message.references.forEach(function (reference, index) {
-                    console.log(reference)
                     let originalArtefactName = parts[0].replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
                     if (reference.name === originalArtefactName) {
                       if (reference.artefact_type.key === 'ComponentType') {
@@ -67,7 +66,7 @@ export default function ApplicationActivity (props) {
                     }
                   })
                 }
-                console.log('reference data', parts, msgContextHyperLink)
+                // console.log('reference data', parts, msgContextHyperLink)
                 messageContent = messageContent.replace(match, `<a href="${msgContextHyperLink}" >#` + parts[0] + `</a>`)
                 messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
               } else if (parts[1] === 'Tag') {
@@ -84,8 +83,7 @@ export default function ApplicationActivity (props) {
             messageTime = moment(message.created).format('DD MMM h:mA')
           }
           let timeContent = '<span class="pull-right">' + messageTime + '</span>'
-          console.log(ReactHtmlParser(messageContent + timeContent))
-          return (<li>
+          return (<li key={'child_' + index + '_' + i}>
             <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser('<span style="font-zise:10px">' + message.author.name + '</span>' + ':')} {ReactHtmlParser(messageContent + timeContent)}
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)

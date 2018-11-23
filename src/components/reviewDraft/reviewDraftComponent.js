@@ -1,17 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import _ from 'lodash'
-// import styles from './addTemplateComponent.scss'
-// import moment from 'moment'
-// import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import Select from 'react-select'
+import _ from 'lodash'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function ReviewDraft (props) {
+  console.log('review draft', props)
+  let reviewStatus = ''
+  let reviewReason = ''
   let checkItemsOptions = []
+  let categoryOptions = []
   let relationsOptions = []
   let artefactsOptions = []
   let checkItemList = ''
@@ -19,6 +20,26 @@ export default function ReviewDraft (props) {
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
+    reviewStatus = props.reviewData.resources[0].status
+    reviewReason = props.reviewData.resources[0].reason
+  }
+  if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
+    categoryOptions = props.reviewProperties.category.map(function (data, index) {
+      data.label = data.name
+      return data
+    })
+    // if (reviewData && reviewData !== '' & reviewData.error_code === null) {
+    //   let defaultCategoryId = reviewData.resources[0].review_category_id
+    //   let defaultcategoryObject = _.find(categoryOptions, function (obj) {
+    //     return obj.id === defaultCategoryId
+    //   })
+    //   if (defaultcategoryObject) {
+    //     defaultcategoryObject.label = defaultcategoryObject.name
+    //   }
+    //   props.setSelectedCategory(defaultcategoryObject)
+    // }
   }
   if (props.reviewArtefacts && props.reviewArtefacts !== '') {
     if (props.reviewArtefacts.error_code === null) {
@@ -40,6 +61,7 @@ export default function ReviewDraft (props) {
     if (props.reviewCheckitems.error_code === null) {
       checkItemsOptions = props.reviewCheckitems.resources.map(function (data, index) {
         data.label = data.name
+        data.type = 'NEW'
         return data
       })
       console.log('check opt', checkItemsOptions)
@@ -50,6 +72,11 @@ export default function ReviewDraft (props) {
     let draftEdit = {...props.draftEdit}
     draftEdit.cancelReason = event.target.value
     props.setDraftEditData(draftEdit)
+    if (event.target.value !== '') {
+      let validationClass = props.validationClass
+      validationClass = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
+    }
   }
   let handleNameChange = function (event) {
     console.log('event', event.target)
@@ -63,11 +90,22 @@ export default function ReviewDraft (props) {
     draftEdit.description = event.target.value
     props.setDraftEditData(draftEdit)
   }
-  let handleCategoryChange = function (event) {
-    console.log('event', event.target)
-    let draftEdit = {...props.draftEdit}
-    draftEdit.category = event.target.value
-    props.setDraftEditData(draftEdit)
+  // let handleCategoryChange = function (event) {
+  //   console.log('event', event.target)
+  //   let draftEdit = {...props.draftEdit}
+  //   draftEdit.category = event.target.value
+  //   props.setDraftEditData(draftEdit)
+  // }
+  let handleCategorySelect = function (newValue: any, actionMeta: any) {
+    console.log('cat select', newValue)
+    if (actionMeta.action === 'select-option') {
+      let selectedCategory = newValue
+      props.setSelectedCategory(selectedCategory)
+    }
+    if (actionMeta.action === 'clear') {
+      let selectedCategory = null
+      props.setSelectedCategory(selectedCategory)
+    }
   }
   let handleReviewerChange = function (event) {
     console.log('event', event.target)
@@ -130,39 +168,32 @@ export default function ReviewDraft (props) {
     props.setConnectArtefactSettings(connectArtefactSettings)
   }
   let addcheckItem = function () {
-    let selectedCheckItem = null
-    props.setSelectedCheckItem(selectedCheckItem)
     let checkItems = props.draftEdit.checkItems || []
     console.log(props)
     if (props.selectedCheckItem !== null) {
-      checkItems.push(props.selectedCheckItem.label)
+      checkItems.push(props.selectedCheckItem)
       let draftEdit = {...props.draftEdit}
       draftEdit.checkItems = checkItems
       props.setDraftEditData(draftEdit)
+    }
+    let selectedCheckItem = null
+    props.setSelectedCheckItem(selectedCheckItem)
+  }
+  let removeCheckItem = function (index) {
+    let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
+    let checkItems = draftEdit.checkItems
+    let removeCheckItem = checkItems.splice(index, 1)
+    if (removeCheckItem[0].type === 'OLD') {
       let obj = {}
-      obj.op = 'add'
-      obj.path = '/check_items/-'
-      obj.value = props.selectedCheckItem.label
+      obj.op = 'remove'
+      obj.path = '/check_items/' + index
       let updatePayload = JSON.parse(JSON.stringify(props.updatePayload))
       updatePayload.push(obj)
       props.setUpdatePayload(updatePayload)
     }
-  }
-  let removeCheckItem = function (index) {
-    // if (props.userActionSettings.isUpdateModalOpen) {
-    //   let obj = {}
-    //   obj.op = 'remove'
-    //   obj.path = '/roles/' + index
-    //   let updatePayload = JSON.parse(JSON.stringify(props.updatePayload))
-    //   updatePayload.push(obj)
-    //   props.setUpdatePayload(updatePayload)
-    // }
-    let checkItems = props.draftEdit.checkItems || []
-    let removeCheckItem = checkItems.splice(index, 1)
-    console.log('removeCheckItem', removeCheckItem)
-    let draftEdit = {...props.draftEdit}
-    draftEdit.checkItems = checkItems
-    props.setDraftEditData(draftEdit)
+    let draftEdit1 = {...props.draftEdit}
+    draftEdit1.checkItems = checkItems
+    props.setDraftEditData(draftEdit1)
   }
   let saveReview = function (event) {
     // eslint-disable-next-line
@@ -170,58 +201,141 @@ export default function ReviewDraft (props) {
     let updatePayload = []
     let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
     delete draftEdit.checkItems
+    delete draftEdit.isCancel
+    delete draftEdit.cancelReason
     for (let x in draftEdit) {
       if (draftEdit.hasOwnProperty(x)) {
-        let obj = {}
-        obj.op = 'replace'
-        obj.path = '/' + x
-        obj.value = props.draftEdit[x]
-        updatePayload.push(obj)
+        if (x === 'category') {
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/review_category'
+          obj.value = props.selectedCategory.id || props.draftEdit.category
+          updatePayload.push(obj)
+        } else {
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/' + x
+          obj.value = props.draftEdit[x]
+          updatePayload.push(obj)
+        }
       }
     }
-
+    // set reason in payload
+    let obj = {}
+    obj.op = 'replace'
+    obj.path = '/reason'
+    obj.value = props.draftEdit.cancelReason
+    updatePayload.push(obj)
     if (props.updatePayload.length > 0) {
       updatePayload = updatePayload.concat(props.updatePayload)
     }
-    console.log('update payload', updatePayload)
-    props.updateReviews(updatePayload)
+    if (props.draftEdit.checkItems.length > 0) {
+      props.draftEdit.checkItems.forEach(function (data, index) {
+        if (data.type === 'NEW') {
+          let obj = {}
+          obj.op = 'add'
+          obj.path = '/check_items/-'
+          obj.value = data.id
+          updatePayload.push(obj)
+        }
+      })
+    }
+    let payload = {}
+    payload.reviewId = parseInt(contextId)
+    payload.data = updatePayload
+    console.log('update payload', payload)
+    props.updateReviews(payload)
   }
   let submitReview = function (event) {
     let updatePayload = []
     let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
     delete draftEdit.checkItems
+    delete draftEdit.isCancel
+    delete draftEdit.cancelReason
     for (let x in draftEdit) {
       if (draftEdit.hasOwnProperty(x)) {
-        let obj = {}
-        obj.op = 'replace'
-        obj.path = '/' + x
-        obj.value = props.draftEdit[x]
-        updatePayload.push(obj)
+        if (x === 'category') {
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/review_category'
+          obj.value = props.selectedCategory.id || props.draftEdit.category
+          updatePayload.push(obj)
+        } else {
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/' + x
+          obj.value = props.draftEdit[x]
+          updatePayload.push(obj)
+        }
       }
     }
+    // set reason in payload
+    let obj = {}
+    obj.op = 'replace'
+    obj.path = '/reason'
+    obj.value = props.draftEdit.cancelReason
+    updatePayload.push(obj)
 
     if (props.updatePayload.length > 0) {
       updatePayload = updatePayload.concat(props.updatePayload)
     }
-
-    let obj = {}
-    obj.op = 'replace'
-    obj.path = '/stage'
-    obj.value = 'Approval'
-    updatePayload.push(obj)
-
+    if (props.draftEdit.checkItems.length > 0) {
+      props.draftEdit.checkItems.forEach(function (data, index) {
+        if (data.type === 'NEW') {
+          let obj = {}
+          obj.op = 'add'
+          obj.path = '/check_items/-'
+          obj.value = data.id
+          updatePayload.push(obj)
+        }
+      })
+    }
     if (props.draftEdit.isCancel) {
       if (props.draftEdit.cancelReason !== null && props.draftEdit.cancelReason !== '') {
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
-        props.updateReviews(updatePayload)
+        // set stage to approval
+        let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Completed'
+        }), 'id')
+        let obj = {}
+        obj.op = 'replace'
+        obj.path = '/stage'
+        obj.value = completedId
+        updatePayload.push(obj)
+        // set status to Cancelled
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/status'
+        obj.value = 'Cancelled'
+        updatePayload.push(obj)
+        let payload = {}
+        payload.reviewId = contextId
+        payload.data = updatePayload
+        props.updateReviews(payload)
+      } else {
+        let validationClass = props.validationClass
+        validationClass = 'form-group m-form__group row has-danger'
+        props.setValidationClass(validationClass)
       }
     } else {
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // set stage to approval
+      let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+        return obj.name === 'Approval'
+      }), 'id')
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/stage'
+      obj.value = approvalId
+      updatePayload.push(obj)
       console.log('update payload', updatePayload)
-      props.updateReviews(updatePayload)
+      let payload = {}
+      payload.reviewId = contextId
+      payload.data = updatePayload
+      props.updateReviews(payload)
     }
   }
   let connectArtefact = function (event) {
@@ -235,8 +349,8 @@ export default function ReviewDraft (props) {
   if (props.draftEdit.checkItems) {
     if (props.draftEdit.checkItems.length > 0) {
       checkItemList = props.draftEdit.checkItems.map(function (data, index) {
-        return (<span className='m-list-search__result-item'>
-          <span className='m-list-search__result-item-text'>{data}</span>
+        return (<span className='m-list-search__result-item' key={index}>
+          <span className='m-list-search__result-item-text'>{data.name}</span>
           <button type='button' onClick={() => { removeCheckItem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
         </span>)
       })
@@ -260,7 +374,7 @@ export default function ReviewDraft (props) {
           <div className='m-portlet__body'>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-6 col-12'>
-                <div className='m-form m-form--state m-form--fit m-form--label-align-right'>
+                <div className='m-form m-form--state m-form--fit'>
                   {/* {messageBlock} */}
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
@@ -278,18 +392,18 @@ export default function ReviewDraft (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Category</label>
                     <div className='col-8'>
-                      {/* <Select
+                      <Select
                         // className='col-7 input-sm m-input'
                         placeholder='Select Category'
                         isClearable
-                        // defaultValue={dvalue}
-                        // value={props.userActionSettings.selectedRole}
-                        // onChange={handleTemplateSelect}
+                        // defaultValue={props.selectedCategory}
+                        value={props.selectedCategory}
+                        onChange={handleCategorySelect}
                         isSearchable={false}
-                        name={'templateSelected'}
-                        // options={templateOptions}
-                      /> */}
-                      <input className='form-control m-input' type='text' onChange={handleCategoryChange} placeholder='Enter Category' value={props.draftEdit.category} />
+                        name={'categorySelected'}
+                        options={categoryOptions}
+                      />
+                      {/* <input className='form-control m-input' type='text' onChange={handleCategoryChange} placeholder='Enter Category' value={props.draftEdit.category} /> */}
                     </div>
                   </div>
                   <div className='form-group m-form__group row'>
@@ -326,21 +440,21 @@ export default function ReviewDraft (props) {
                       </div>
                     </div>
                   </div>
-                  {props.draftEdit.isCancel && (<div className='form-group m-form__group row'>
+                  {props.draftEdit.isCancel && (<div className={props.validationClass}>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Cancel Reason</label>
                     <div className='col-8'>
                       {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
                       <textarea className='form-control m-input m-input--air' value={props.draftEdit.cancelReason} onChange={handleCancelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                     </div>
                   </div>)}
-                  <div className='form-group m-form__group row'>
+                  {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
-                    <div className='col-8'>{''}</div>
-                  </div>
-                  <div className='form-group m-form__group row'>
+                    <div className='col-8'>{reviewStatus}</div>
+                  </div>)}
+                  {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
-                    <div className='col-8'>{''}</div>
-                  </div>
+                    <div className='col-8'>{reviewReason}</div>
+                  </div>)}
                 </div>
               </div>
               <div className='col-md-6'>
@@ -460,7 +574,8 @@ export default function ReviewDraft (props) {
       </div>
       )
     }
-    ReviewDraft.propTypes = {
+  ReviewDraft.propTypes = {
+    reviewData: PropTypes.any,
     match: PropTypes.any,
     connectArtefactSettings: PropTypes.any,
     selectedCheckItem: PropTypes.any,
@@ -469,5 +584,11 @@ export default function ReviewDraft (props) {
     reviewCheckitems: PropTypes.any,
     draftEdit: PropTypes.any,
     componentTypeRelations: PropTypes.any,
-    reviewArtefacts: PropTypes.any
+    reviewArtefacts: PropTypes.any,
+    reviewProperties: PropTypes.any,
+    validationClass: PropTypes.any,
+    selectedCategory: PropTypes.any
+    // firstLoad: PropTypes.any,
+    // setSelectedCategory: PropTypes.func
+    // setFirstLoad: PropTypes.func
  }
