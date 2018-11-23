@@ -208,11 +208,6 @@ export default function ConductReview (props) {
       payload.data = updatePayload
       props.updateReviews(payload)
     }
-    let payload = {}
-    payload.reviewId = contextId
-    payload.data = updatePayload
-    console.log('update payload', payload)
-    // props.updateReviews(payload)
     if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '') {
       let discussionPayload = {}
       if (props.checkboxSelected.draft) {

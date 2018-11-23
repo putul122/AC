@@ -107,7 +107,6 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         if (nextProps.updateReviewResponse.error_code === null) {
-          // this.props.fetchUsers && this.props.fetchUsers()
           // eslint-disable-next-line
           toastr.success('Successfully updated Review ' +  nextProps.updateReviewResponse.resources[0].id , 'Nice!')
         } else {

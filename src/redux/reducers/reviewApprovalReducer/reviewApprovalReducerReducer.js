@@ -1,6 +1,7 @@
 import { createAction, handleActions } from 'redux-actions'
 import { FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS } from '../../sagas/basic/basicSaga'
 import {FETCH_REVIEW_BY_ID_SUCCESS, UPDATE_REVIEWS_SUCCESS} from '../../sagas/review/reviewSaga'
+import { CREATE_DISCUSSION_SUCCESS } from '../../sagas/discussion/discussionSaga'
 // Name Spaced Action Types
 const RESET_RESPONSE = 'ReviewApprovalReducer/RESET_RESPONSE'
 const SET_APPROVAL = 'ReviewApprovalReducer/SET_APPROVAL'
@@ -16,7 +17,8 @@ export const actions = {
   SET_REJECTED_REASON,
   SET_VALIDATION_CLASS,
   SET_REVIEW_PROPERTY,
-  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+  CREATE_DISCUSSION_SUCCESS
 }
 
 export const actionCreators = {
@@ -29,6 +31,7 @@ export const actionCreators = {
 
 export const initialState = {
   updateReviewResponse: '',
+  createDiscussionResponse: '',
   componentTypeProperties: '',
   rejectedReason: '',
   isApproved: null,
@@ -76,6 +79,10 @@ export default handleActions(
     [FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS]: (state, action) => ({
       ...state,
       componentTypeProperties: action.payload
+    }),
+    [CREATE_DISCUSSION_SUCCESS]: (state, action) => ({
+      ...state,
+      createDiscussionResponse: action.payload
     })
   },
   initialState

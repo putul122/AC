@@ -1,5 +1,5 @@
 import React from 'react'
-// import _ from 'lodash'
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 // import styles from './acceptReviewComponent.scss'
 // import debounce from 'lodash/debounce'
@@ -10,6 +10,7 @@ export default function ReviewAcceptance (props) {
   let reviewName = ''
   let Artefact = ''
   let Category = ''
+  let checkItemList = ''
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -17,8 +18,10 @@ export default function ReviewAcceptance (props) {
   }
   let onRadioChange = function (value) {
     let isAccepeted = value
-    console.log(value)
     props.setAcceptance(isAccepeted)
+    let validationClass = {...props.validationClass}
+    validationClass.acceptance = 'form-group m-form__group row'
+    props.setValidationClass(validationClass)
   }
   if (props.reviewData && props.reviewData !== null & props.reviewData.error_code === null) {
     reviewName = props.reviewData.resources[0].name
@@ -27,6 +30,32 @@ export default function ReviewAcceptance (props) {
     // Reviewer = props.reviewData.resources[0].reviewer
     // Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
+    if (props.reviewData.resources[0].check_items.length > 0) {
+      checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
+        return (<span className='m-list-search__result-item' key={index}>
+          <div className='form-group m-form__group row'>
+            <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
+            <div className='col-8 float-left' >
+              <div className='m-radio-inline pull-left'>
+                <label htmlFor='example-email-input' className='m-radio'>
+                  <input type='radio' name='example_8' value='1' /> Yes
+                  <span />
+                </label>
+                <label htmlFor='example-email-input' className='m-radio'>
+                  <input type='radio' name='example_8' value='2' /> No
+                  <span />
+                </label>
+                <label htmlFor='example-email-input' className=''>
+                  <span>No affordable options available</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </span>)
+      })
+    } else {
+      checkItemList = ''
+    }
   }
   let saveReview = function (event) {
     // eslint-disable-next-line
@@ -34,58 +63,117 @@ export default function ReviewAcceptance (props) {
     let updatePayload = []
     if (props.isAccepeted) {
       if (props.isAccepeted === 'No') {
-        let obj = {}
-        obj.op = 'replace'
-        obj.path = '/reject_reason'
-        obj.value = props.notAcceptedReason
-        updatePayload.push(obj)
+        if (props.notAcceptedReason.trim() !== '') {
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/reason'
+          obj.value = props.notAcceptedReason
+          updatePayload.push(obj)
+        }
       }
     }
     console.log('update payload', updatePayload)
-    props.updateReviews(updatePayload)
+    let payload = {}
+    payload.reviewId = contextId
+    payload.data = updatePayload
+    props.updateReviews(payload)
   }
   let submitReview = function (event) {
     let updatePayload = []
     let obj = {}
     if (props.isAccepeted) {
       if (props.isAccepeted === 'Yes') {
+        let CompletedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Completed'
+        }), 'id')
+        // setting Stage payload
         obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = 'Completed'
+        obj.value = CompletedId
         updatePayload.push(obj)
+        // setting Status payload
         obj = {}
         obj.op = 'replace'
-        obj.path = '/compliance_status'
-        obj.value = 'Accepted'
+        obj.path = '/status'
+        obj.value = 'Completed'
         updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
-        props.updateReviews(updatePayload)
+        let payload = {}
+        payload.reviewId = contextId
+        payload.data = updatePayload
+        props.updateReviews(payload)
       } else if (props.isAccepeted === 'No') {
-        if (props.notAcceptedReason !== '' && props.notAcceptedReason !== null) {
+        if (props.notAcceptedReason.trim() !== '' && props.notAcceptedReason !== null) {
+          let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'In Progress'
+          }), 'id')
+          // setting Stage payload
           obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = 'In Progress'
+          obj.value = inProgressId
           updatePayload.push(obj)
+          // setting Status payload
           obj = {}
           obj.op = 'replace'
-          obj.path = '/compliance_status'
+          obj.path = '/status'
           obj.value = 'Not Accepted'
+          updatePayload.push(obj)
+          // setting Reason payload
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/reason'
+          obj.value = props.notAcceptedReason
           updatePayload.push(obj)
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           console.log('update payload', updatePayload)
-          props.updateReviews(updatePayload)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+        } else {
+          let validationClass = {...props.validationClass}
+          validationClass.notAcceptedReason = 'form-group m-form__group row has-danger'
+          props.setValidationClass(validationClass)
+        }
+        if (props.notAcceptedReason.trim() !== '') {
+          let discussionPayload = {}
+          discussionPayload.name = 'Not Accepted'
+          discussionPayload.context = {}
+          discussionPayload.context.artefact_type = {}
+          discussionPayload.context.artefact_type.key = 'Component'
+          discussionPayload.context.id = contextId
+          discussionPayload.discussion_type = {}
+          discussionPayload.discussion_type.key = 'User'
+          discussionPayload.messages = []
+          let message = {}
+          message.name = props.notAcceptedReason
+          message.mentions = []
+          message.references = []
+          message.tags = []
+          discussionPayload.messages.push(message)
+          console.log('discussion message', discussionPayload)
+          props.createDiscussion(discussionPayload)
         }
       }
+    } else {
+      let validationClass = {...props.validationClass}
+      validationClass.acceptance = 'form-group m-form__group row has-danger'
+      props.setValidationClass(validationClass)
     }
   }
   let handleNotAcceptReason = function (event) {
     let notAcceptedReason = event.target.value
     props.setNotAcceptedReason(notAcceptedReason)
+    if (notAcceptedReason !== '') {
+      let validationClass = {...props.validationClass}
+      validationClass.notAcceptedReason = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
+    }
   }
   return (
     <div>
@@ -120,7 +208,7 @@ export default function ReviewAcceptance (props) {
                 <div className='form-group m-form__group row'>
                   <label htmlFor='example-email-input' className='col-4'><b>Review Type</b></label>
                   <div className='col-8'>
-                    <span lassName='m-input'>{Category}</span>
+                    <span className='m-input'>{Category}</span>
                   </div>
                 </div>
               </div>
@@ -147,26 +235,7 @@ export default function ReviewAcceptance (props) {
                           <span className='m-list-search__result-category m-list-search__result-category--first'>
                                       Check Items
                                   </span>
-                          <span className='m-list-search__result-item'>
-                            <div className='form-group m-form__group row'>
-                              <label htmlFor='example-email-input' className='col-4 col-form-label'>Has Cloud Solution been considered</label>
-                              <div className='col-8 float-left' >
-                                <div className='m-radio-inline pull-left'>
-                                  <label htmlFor='example-email-input' className='m-radio'>
-                                    <input type='radio' name='example_8' value='1' /> Yes
-                                    <span />
-                                  </label>
-                                  <label htmlFor='example-email-input' className='m-radio'>
-                                    <input type='radio' name='example_8' value='2' /> No
-                                    <span />
-                                  </label>
-                                  <label htmlFor='example-email-input' className=''>
-                                    <span>No affordable options available</span>
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </span>
+                          {checkItemList}
                         </div>
                       </div>
                     </div>
@@ -176,8 +245,8 @@ export default function ReviewAcceptance (props) {
             </div>
           </div>
           <div className='row' style={{width: '100%'}}>
-            <div className='col-12 m-form__content'>
-              <div className='form-group m-form__group row'>
+            <div className='col-12 m-form m-form--state m-form--fit'>
+              <div className={props.validationClass.acceptance}>
                 <label htmlFor='example-email-input' className='col-3 col-form-label'>Accept Review<span className='text-danger' >*</span></label>
                 <div className='col-9 float-right'>
                   <div className='m-radio-inline'>
@@ -192,7 +261,7 @@ export default function ReviewAcceptance (props) {
                   </div>
                 </div>
               </div>
-              {props.isAccepeted === 'No' && (<div className='form-group m-form__group row'>
+              {props.isAccepeted === 'No' && (<div className={props.validationClass.notAcceptedReason}>
                 <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
                 <div className='col-8'>
                   {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
@@ -222,5 +291,7 @@ export default function ReviewAcceptance (props) {
   reviewData: PropTypes.any,
   isAccepeted: PropTypes.any,
   setNotAcceptedReason: PropTypes.func,
-  notAcceptedReason: PropTypes.any
+  setValidationClass: PropTypes.func,
+  notAcceptedReason: PropTypes.any,
+  validationClass: PropTypes.any
  }
