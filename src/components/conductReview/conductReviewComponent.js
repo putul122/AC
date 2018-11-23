@@ -10,6 +10,8 @@ import Discussion from '../../containers/discussion/discussionContainer'
 export default function ConductReview (props) {
   console.log('props conduct', props)
   let reviewName = ''
+  let ReviewStatus = ''
+  let ReviewReason = ''
   let Artefact = ''
   let Category = ''
   let checkItemList = ''
@@ -55,8 +57,8 @@ export default function ConductReview (props) {
     reviewName = props.reviewData.resources[0].name
       // Description = props.reviewData.resources[0].description
       Category = props.reviewData.resources[0].review_category
-      // Reviewer = props.reviewData.resources[0].reviewer
-      // Approver = props.reviewData.resources[0].approver
+      ReviewStatus = props.reviewData.resources[0].status
+      ReviewReason = props.reviewData.resources[0].reason
       // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
       // props.setComplaint(complianceStatus)
       Artefact = props.reviewData.resources[0].review_artefact_name
@@ -266,7 +268,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Type</b></label>
                     <div className='col-8'>
-                      <span lassName='m-input'>{Category}</span>
+                      <span className='m-input'>{Category}</span>
                     </div>
                   </div>
                 </div>
@@ -276,7 +278,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                     <div className='col-8'>
-                      <span lassName='m-input' >{Artefact}</span>
+                      <span className='m-input' >{Artefact}</span>
                     </div>
                   </div>
                 </div>
@@ -328,6 +330,18 @@ export default function ConductReview (props) {
                 </div>
               </div>
             </div>
+
+            {ReviewStatus === 'Not Accepted' && (<div className='row' style={{width: '100%'}}>
+              <div className='col-md-12'>
+                <div className='form-group m-form__group row'>
+                  <label htmlFor='example-email-input' className='col-4'><b>Not Accepted Reason</b></label>
+                  <div className='col-8'>
+                    {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                    <span className='m-input m-input--air'>{ReviewReason}</span>
+                  </div>
+                </div>
+              </div>
+            </div>)}
             <div className='m-form m-form--state m-form--fit'>
               <div className='row' style={{width: '100%'}}>
                 <div className='col-md-12'>
