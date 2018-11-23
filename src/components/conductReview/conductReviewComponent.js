@@ -213,7 +213,7 @@ export default function ConductReview (props) {
     payload.data = updatePayload
     console.log('update payload', payload)
     // props.updateReviews(payload)
-    if (props.checkboxSelected.draft || props.checkboxSelected.cancel) {
+    if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason !== '') {
       let discussionPayload = {}
       if (props.checkboxSelected.draft) {
         discussionPayload.name = 'Return to Draft'
