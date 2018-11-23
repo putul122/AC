@@ -190,6 +190,7 @@ export default compose(
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
         }
         this.props.resetResponse()
+        this.props.history.push('/reviews')
       }
       if (nextProps.connectArtefactResponse && nextProps.connectArtefactResponse !== '') {
         let connectArtefactSettings = {...this.props.connectArtefactSettings, 'isModalOpen': false}
@@ -205,6 +206,7 @@ export default compose(
           toastr.error(nextProps.connectArtefactResponse.error_message, nextProps.connectArtefactResponse.error_code)
         }
         this.props.resetResponse()
+        this.props.history.push('/reviews')
       }
       if (nextProps.connectArtefactSettings && nextProps.connectArtefactSettings.selectedRelations !== null && nextProps.connectArtefactSettings.selectedRelations !== this.props.connectArtefactSettings.selectedRelations) {
         let componentTypeIdForArtefact = nextProps.connectArtefactSettings.selectedRelations.id

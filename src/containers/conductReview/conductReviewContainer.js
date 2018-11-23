@@ -115,6 +115,7 @@ export default compose(
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
         }
         this.props.resetResponse()
+        this.props.history.push('/reviews')
       }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
         if (nextProps.componentTypeProperties.error_code === null) {
