@@ -12,11 +12,20 @@ export default function ConductReview (props) {
   let reviewName = ''
   let Artefact = ''
   let Category = ''
+  let checkItemList = ''
   let contextId = props.match.params.id
+  let onRadioChange = function (value) {
+    props.setComplaint(value)
+  }
   let handelReason = function (event) {
-    console.log(event)
     let value = event.target.value
     props.setReason(value)
+    if (props.reason !== '') {
+      let validationClass = {...props.validationClass}
+      validationClass.draft = 'form-group m-form__group row'
+      validationClass.cancel = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
+    }
   }
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -48,28 +57,79 @@ export default function ConductReview (props) {
       Category = props.reviewData.resources[0].review_category
       // Reviewer = props.reviewData.resources[0].reviewer
       // Approver = props.reviewData.resources[0].approver
+      // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
+      // props.setComplaint(complianceStatus)
       Artefact = props.reviewData.resources[0].review_artefact_name
+      if (props.reviewData.resources[0].check_items.length > 0) {
+        checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
+              <div className='col-8 float-left' >
+                <div className='m-radio-inline pull-left'>
+                  <label htmlFor='example-email-input' className='m-radio'>
+                    <input type='radio' name='example_8' value='1' /> Yes
+                    <span />
+                  </label>
+                  <label htmlFor='example-email-input' className='m-radio'>
+                    <input type='radio' name='example_8' value='2' /> No
+                    <span />
+                  </label>
+                  <label htmlFor='example-email-input' className=''>
+                    <input type='text' className='form-control lg-input' name='example_8' value='' />
+                    <span />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </span>)
+        })
+      } else {
+        checkItemList = ''
+      }
   }
   let saveReview = function (event) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let updatePayload = []
-    // if (props.isApproved) {
-    //   if (props.isApproved === 'Rejected') {
-    //     let obj = {}
-    //     obj.op = 'replace'
-    //     obj.path = '/reject_reason'
-    //     obj.value = props.rejectedReason
-    //     updatePayload.push(obj)
-    //   }
-    // }
-    console.log('update payload', updatePayload)
-    props.updateReviews(updatePayload)
+    if (props.complaint !== '') {
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/compliance_status'
+      obj.value = props.complaint
+      updatePayload.push(obj)
+    }
+    if (props.reason !== '') {
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/reason'
+      obj.value = props.reason
+      updatePayload.push(obj)
+    }
+    let payload = {}
+    payload.reviewId = contextId
+    payload.data = updatePayload
+    props.updateReviews(payload)
+    console.log(payload)
   }
   let submitReview = function (event) {
     // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let updatePayload = []
+    if (props.reason !== '') {
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/reason'
+      obj.value = props.reason
+      updatePayload.push(obj)
+    }
+    if (props.complaint !== '') {
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/compliance_status'
+      obj.value = props.complaint
+      updatePayload.push(obj)
+    }
     if (props.checkboxSelected.draft) {
       let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
         return obj.name === 'Draft'
@@ -86,6 +146,20 @@ export default function ConductReview (props) {
       obj.path = '/status'
       obj.value = 'Returned'
       updatePayload.push(obj)
+      if (props.reason === '') {
+        let validationClass = {...props.validationClass}
+        validationClass.draft = 'form-group m-form__group row has-danger'
+        validationClass.cancel = 'form-group m-form__group row'
+        props.setValidationClass(validationClass)
+      } else {
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        console.log('update payload', updatePayload)
+        let payload = {}
+        payload.reviewId = contextId
+        payload.data = updatePayload
+        props.updateReviews(payload)
+      }
     } else if (props.checkboxSelected.cancel) {
       let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
         return obj.name === 'Completed'
@@ -102,6 +176,20 @@ export default function ConductReview (props) {
       obj.path = '/status'
       obj.value = 'Cancelled'
       updatePayload.push(obj)
+      if (props.reason === '') {
+        let validationClass = {...props.validationClass}
+        validationClass.draft = 'form-group m-form__group row'
+        validationClass.cancel = 'form-group m-form__group row has-danger'
+        props.setValidationClass(validationClass)
+      } else {
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        console.log('update payload', updatePayload)
+        let payload = {}
+        payload.reviewId = contextId
+        payload.data = updatePayload
+        props.updateReviews(payload)
+      }
     } else {
       let acceptanceId = _.result(_.find(props.reviewProperties.stages, function (obj) {
         return obj.name === 'Acceptance'
@@ -112,12 +200,42 @@ export default function ConductReview (props) {
       obj.path = '/stage'
       obj.value = acceptanceId
       updatePayload.push(obj)
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      console.log('update payload', updatePayload)
+      let payload = {}
+      payload.reviewId = contextId
+      payload.data = updatePayload
+      props.updateReviews(payload)
     }
-    console.log('update payload', updatePayload)
     let payload = {}
     payload.reviewId = contextId
     payload.data = updatePayload
-    props.updateReviews(payload)
+    console.log('update payload', payload)
+    // props.updateReviews(payload)
+    if (props.checkboxSelected.draft || props.checkboxSelected.cancel) {
+      let discussionPayload = {}
+      if (props.checkboxSelected.draft) {
+        discussionPayload.name = 'Return to Draft'
+      } else if (props.checkboxSelected.cancel) {
+        discussionPayload.name = 'Cancel Review'
+      }
+      discussionPayload.context = {}
+      discussionPayload.context.artefact_type = {}
+      discussionPayload.context.artefact_type.key = 'Component'
+      discussionPayload.context.id = contextId
+      discussionPayload.discussion_type = {}
+      discussionPayload.discussion_type.key = 'User'
+      discussionPayload.messages = []
+      let message = {}
+      message.name = props.reason
+      message.mentions = []
+      message.references = []
+      message.tags = []
+      discussionPayload.messages.push(message)
+      console.log('discussion message', discussionPayload)
+      props.createDiscussion(discussionPayload)
+    }
   }
   console.log(reviewName)
     return (
@@ -176,16 +294,16 @@ export default function ConductReview (props) {
                     <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Complaint?</b></label>
                     <div className='col-8'>
                       <div className='m-radio-inline'>
-                        <label htmlFor='example-email-input' className='m-radio'>
-                          <input type='radio' name='example_8' value='1' /> Yes
+                        <label htmlFor='example-email-input' className=''>
+                          &nbsp;<input type='radio' name='example_8' value='Yes' checked={props.complaint === 'Yes'} onChange={(e) => onRadioChange('Yes')} /> Yes
                           <span />
-                        </label>
-                        <label htmlFor='example-email-input' className='m-radio'>
-                          <input type='radio' name='example_8' value='2' /> Partial
+                        </label>&nbsp;&nbsp;&nbsp;
+                        <label htmlFor='example-email-input' className=''>
+                          &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'Partial'} onChange={(e) => onRadioChange('Partial')} /> Partial
                           <span />
-                        </label>
-                        <label htmlFor='example-email-input' className='m-radio'>
-                          <input type='radio' name='example_8' value='3' /> No
+                        </label>&nbsp;&nbsp;&nbsp;
+                        <label htmlFor='example-email-input' className=''>
+                          &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'No'} onChange={(e) => onRadioChange('No')} /> No
                           <span />
                         </label>
                       </div>
@@ -206,27 +324,7 @@ export default function ConductReview (props) {
                             <span className='m-list-search__result-category m-list-search__result-category--first'>
                                         Check Items
                                     </span>
-                            <span className='m-list-search__result-item'>
-                              <div className='form-group m-form__group row'>
-                                <label htmlFor='example-email-input' className='col-4 col-form-label'>Has Cloud Solution been considered</label>
-                                <div className='col-8 float-left' >
-                                  <div className='m-radio-inline pull-left'>
-                                    <label htmlFor='example-email-input' className='m-radio'>
-                                      <input type='radio' name='example_8' value='1' /> Yes
-                                      <span />
-                                    </label>
-                                    <label htmlFor='example-email-input' className='m-radio'>
-                                      <input type='radio' name='example_8' value='2' /> No
-                                      <span />
-                                    </label>
-                                    <label htmlFor='example-email-input' className=''>
-                                      <input type='text' className='form-control lg-input' name='example_8' value='' />
-                                      <span />
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                            </span>
+                            {checkItemList}
                           </div>
                         </div>
                       </div>
@@ -235,40 +333,42 @@ export default function ConductReview (props) {
                 </div>
               </div>
             </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-12'>
-                {/* m-checkbox m-checkbox--danger */}
-                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
-                  <input type='checkbox' checked={props.checkboxSelected.draft} onChange={(event) => { handleCheckbox('Draft') }} /> <b>Return to Draft</b>
-                  <span />
-                </label>
-              </div>
-              {props.checkboxSelected.draft && (<div className='col-md-12'>
-                <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
-                  <div className='col-8'>
-                    {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                    <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
-                  </div>
+            <div className='m-form m-form--state m-form--fit'>
+              <div className='row' style={{width: '100%'}}>
+                <div className='col-md-12'>
+                  {/* m-checkbox m-checkbox--danger */}
+                  &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                    <input type='checkbox' checked={props.checkboxSelected.draft} onChange={(event) => { handleCheckbox('Draft') }} /> <b>Return to Draft</b>
+                    <span />
+                  </label>
                 </div>
-              </div>)}
-            </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-12'>
-                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
-                  <input type='checkbox' checked={props.checkboxSelected.cancel} onChange={(event) => { handleCheckbox('Cancel') }} /> <b>Cancel Review</b>
-                  <span />
-                </label>
-              </div>
-              {props.checkboxSelected.cancel && (<div className='col-md-12'>
-                <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-2 col-form-label'>Cancel Reason<span className='text-danger'>*</span></label>
-                  <div className='col-8'>
-                    {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                    <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                {props.checkboxSelected.draft && (<div className='col-md-12'>
+                  <div className={props.validationClass.draft}>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
+                    <div className='col-8'>
+                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                      <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                    </div>
                   </div>
+                </div>)}
+              </div>
+              <div className='row' style={{width: '100%'}}>
+                <div className='col-md-12'>
+                  &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                    <input type='checkbox' checked={props.checkboxSelected.cancel} onChange={(event) => { handleCheckbox('Cancel') }} /> <b>Cancel Review</b>
+                    <span />
+                  </label>
                 </div>
-              </div>)}
+                {props.checkboxSelected.cancel && (<div className='col-md-12'>
+                  <div className={props.validationClass.cancel}>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Cancel Reason<span className='text-danger'>*</span></label>
+                    <div className='col-8'>
+                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                      <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                    </div>
+                  </div>
+                </div>)}
+              </div>
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-6' />
@@ -292,8 +392,13 @@ export default function ConductReview (props) {
       reviewData: PropTypes.any,
       reason: PropTypes.any,
       reviewProperties: PropTypes.any,
+      complaint: PropTypes.any,
       // returnToDraft: PropTypes.any,
       // cancelReview: PropTypes.any,
       checkboxSelected: PropTypes.any,
-      updateReviews: PropTypes.func
+      validationClass: PropTypes.any,
+      updateReviews: PropTypes.func,
+      createDiscussion: PropTypes.func,
+      // setComplaint: PropTypes.func,
+      setValidationClass: PropTypes.func
   }

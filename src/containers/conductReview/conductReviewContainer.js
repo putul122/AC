@@ -17,7 +17,9 @@ export function mapStateToProps (state, props) {
     cancelReview: state.conductReviewReducer.cancelReview,
     reviewProperties: state.conductReviewReducer.reviewProperties,
     checkboxSelected: state.conductReviewReducer.checkboxSelected,
-    reason: state.conductReviewReducer.reason
+    reason: state.conductReviewReducer.reason,
+    validationClass: state.conductReviewReducer.validationClass,
+    complaint: state.conductReviewReducer.complaint
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -31,7 +33,10 @@ export const propsMapping: Callbacks = {
   setReviewProperty: actionCreators.setReviewProperty,
   setCheckbox: actionCreators.setCheckbox,
   setReason: actionCreators.setReason,
+  setComplaint: actionCreators.setComplaint,
+  setValidationClass: actionCreators.setValidationClass,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
+  createDiscussion: sagaActions.discussionActions.createDiscussion,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
