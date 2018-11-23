@@ -95,7 +95,7 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.reviewData.error_message, nextProps.reviewData.error_code)
         } else {
-          let rejectedReason = nextProps.reviewData.resources[0].reason
+          let rejectedReason = nextProps.reviewData.resources[0].reason || ''
           this.props.setRejectedReason(rejectedReason)
         }
       }

@@ -80,7 +80,7 @@ export default function ReviewApproval (props) {
           payload.data = updatePayload
           props.updateReviews(payload)
       } else if (props.isApproved === 'Rejected') {
-        if (props.rejectedReason !== '' && props.rejectedReason !== null) {
+        if (props.rejectedReason.trim() !== '' && props.rejectedReason !== null) {
           let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
             return obj.name === 'Draft'
           }), 'id')

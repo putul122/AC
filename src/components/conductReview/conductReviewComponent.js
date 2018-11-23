@@ -99,7 +99,7 @@ export default function ConductReview (props) {
       obj.value = props.complaint
       updatePayload.push(obj)
     }
-    if (props.reason !== '') {
+    if (props.reason.trim() !== '') {
       let obj = {}
       obj.op = 'replace'
       obj.path = '/reason'
@@ -146,7 +146,7 @@ export default function ConductReview (props) {
       obj.path = '/status'
       obj.value = 'Returned'
       updatePayload.push(obj)
-      if (props.reason === '') {
+      if (props.reason.trim() === '') {
         let validationClass = {...props.validationClass}
         validationClass.draft = 'form-group m-form__group row has-danger'
         validationClass.cancel = 'form-group m-form__group row'
@@ -176,7 +176,7 @@ export default function ConductReview (props) {
       obj.path = '/status'
       obj.value = 'Cancelled'
       updatePayload.push(obj)
-      if (props.reason === '') {
+      if (props.reason.trim() === '') {
         let validationClass = {...props.validationClass}
         validationClass.draft = 'form-group m-form__group row'
         validationClass.cancel = 'form-group m-form__group row has-danger'
@@ -213,7 +213,7 @@ export default function ConductReview (props) {
     payload.data = updatePayload
     console.log('update payload', payload)
     // props.updateReviews(payload)
-    if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason !== '') {
+    if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '') {
       let discussionPayload = {}
       if (props.checkboxSelected.draft) {
         discussionPayload.name = 'Return to Draft'
