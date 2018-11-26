@@ -206,11 +206,13 @@ export default function ReviewDraft (props) {
     for (let x in draftEdit) {
       if (draftEdit.hasOwnProperty(x)) {
         if (x === 'category') {
-          let obj = {}
-          obj.op = 'replace'
-          obj.path = '/review_category'
-          obj.value = props.selectedCategory.id || props.draftEdit.category
-          updatePayload.push(obj)
+          if (props.selectedCategory) {
+            let obj = {}
+            obj.op = 'replace'
+            obj.path = '/review_category'
+            obj.value = props.selectedCategory.id || props.draftEdit.category
+            updatePayload.push(obj)
+          }
         } else {
           let obj = {}
           obj.op = 'replace'
@@ -255,11 +257,13 @@ export default function ReviewDraft (props) {
     for (let x in draftEdit) {
       if (draftEdit.hasOwnProperty(x)) {
         if (x === 'category') {
-          let obj = {}
-          obj.op = 'replace'
-          obj.path = '/review_category'
-          obj.value = props.selectedCategory.id || props.draftEdit.category
-          updatePayload.push(obj)
+          if (props.selectedCategory) {
+            let obj = {}
+            obj.op = 'replace'
+            obj.path = '/review_category'
+            obj.value = props.selectedCategory.id || props.draftEdit.category
+            updatePayload.push(obj)
+          }
         } else {
           let obj = {}
           obj.op = 'replace'
