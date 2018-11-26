@@ -16,7 +16,8 @@ export function mapStateToProps (state, props) {
     selectedCheckItem: state.addTemplateReducer.selectedCheckItem,
     checkItems: state.addTemplateReducer.checkItems,
     addTemplateValue: state.addTemplateReducer.addTemplateValue,
-    addTemplateResponse: state.addTemplateReducer.addTemplateResponse
+    addTemplateResponse: state.addTemplateReducer.addTemplateResponse,
+    validationClass: state.addTemplateReducer.validationClass
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -29,7 +30,8 @@ export const propsMapping: Callbacks = {
   setAddTemplateValue: actionCreators.setAddTemplateValue,
   setCheckItemsData: actionCreators.setCheckItemsData,
   setSelectedCategory: actionCreators.setSelectedCategory,
-  setSelectedCheckItem: actionCreators.setSelectedCheckItem
+  setSelectedCheckItem: actionCreators.setSelectedCheckItem,
+  setValidationClass: actionCreators.setValidationClass
 }
 
 // If you want to use the function mapping

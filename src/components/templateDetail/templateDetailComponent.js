@@ -41,7 +41,6 @@ export default function TemplateDetail (props) {
     }
   }
   if (props.checkItems.length > 0) {
-    console.log(props.checkItems)
     checkItemList = props.checkItems.map(function (data, index) {
       return (<span className='m-list-search__result-item' key={index}>
         <span className='m-list-search__result-item-text'>{data.name}</span>
@@ -51,12 +50,15 @@ export default function TemplateDetail (props) {
   }
   let handleTitleChange = function (event) {
     let value = event.target.value
-    console.log(value)
     let updateTemplateValue = {...props.updateTemplateValue}
     updateTemplateValue.name = value
     props.setUpdateTemplateValue(updateTemplateValue)
+    if (value.trim() !== '') {
+      props.setValidationClass('form-group m-form__group row')
+    }
   }
   let editTemplate = function (event) {
+    props.setValidationClass('form-group m-form__group row')
     let editTemplateSettings = {...props.editTemplateSettings, 'isEditFlag': true}
     props.setEditTemplateSettings(editTemplateSettings)
   }
@@ -134,62 +136,65 @@ export default function TemplateDetail (props) {
     props.setCheckItemsData(checkItems)
   }
   let saveTemplate = function (event) {
-    let payload = []
-    let obj = {}
-    // edit name payload
-    obj.op = 'replace'
-    obj.path = '/name'
-    obj.value = props.updateTemplateValue.name
-    payload.push(obj)
-    // edit description payload
-    obj = {}
-    obj.op = 'replace'
-    obj.path = '/description'
-    obj.value = props.updateTemplateValue.description
-    payload.push(obj)
-    // edit category payload
-    if (props.selectedCategory) {
+    if (props.updateTemplateValue.name.trim() !== '') {
+      let payload = []
+      let obj = {}
+      // edit name payload
+      obj.op = 'replace'
+      obj.path = '/name'
+      obj.value = props.updateTemplateValue.name
+      payload.push(obj)
+      // edit description payload
       obj = {}
       obj.op = 'replace'
-      obj.path = '/review_category'
-      obj.value = props.selectedCategory.id
+      obj.path = '/description'
+      obj.value = props.updateTemplateValue.description
       payload.push(obj)
+      // edit category payload
+      if (props.selectedCategory) {
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/review_category'
+        obj.value = props.selectedCategory.id
+        payload.push(obj)
+      }
+      // edit checkItems payload
+      if (props.payload.length > 0) {
+        payload = payload.concat(props.payload)
+      }
+      if (props.checkItems.length > 0) {
+        props.checkItems.forEach(function (data, index) {
+          if (data.type === 'NEW') {
+            obj = {}
+            obj.op = 'add'
+            obj.path = '/check_items/-'
+            obj.value = data.id
+            payload.push(obj)
+          }
+        })
+      }
+      // props.createTemplates(payload)
+      let updatePayload = {}
+      updatePayload.urlPart = {}
+      updatePayload.urlPart.review_template_id = parseInt(props.match.params.id)
+      updatePayload.payloadPart = payload
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.updateTemplates(updatePayload)
+      console.log('payload', updatePayload, props)
+    } else {
+      props.setValidationClass('form-group m-form__group row has-danger')
     }
-    // edit checkItems payload
-    if (props.payload.length > 0) {
-      payload = payload.concat(props.payload)
-    }
-    if (props.checkItems.length > 0) {
-      props.checkItems.forEach(function (data, index) {
-        if (data.type === 'NEW') {
-          obj = {}
-          obj.op = 'add'
-          obj.path = '/check_items/-'
-          obj.value = data.id
-          payload.push(obj)
-        }
-      })
-    }
-    // props.createTemplates(payload)
-    let updatePayload = {}
-    updatePayload.urlPart = {}
-    updatePayload.urlPart.review_template_id = parseInt(props.match.params.id)
-    updatePayload.payloadPart = payload
-    // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    props.updateTemplates(updatePayload)
-    console.log('payload', updatePayload, props)
   }
     return (
       <div>
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          {props.editTemplateSettings.isEditFlag && (<br />)}
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
                 {props.editTemplateSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
-                  <div className='col-8'>
-                    <div className='form-group m-form__group has-danger'>
+                  <div className='col-8 m-form m-form--state m-form--fit'>
+                    <div className={props.validationClass}>
                       <input type='text' className='form-control m-input' value={props.updateTemplateValue.name} onChange={handleTitleChange} placeholder='Trmplate Name' aria-describedby='basic-addon2' />
                     </div>
                   </div>
@@ -352,6 +357,7 @@ export default function TemplateDetail (props) {
       )
     }
     TemplateDetail.propTypes = {
+      validationClass: PropTypes.any,
       editTemplateSettings: PropTypes.any,
       templateData: PropTypes.any,
       match: PropTypes.any,
@@ -368,5 +374,6 @@ export default function TemplateDetail (props) {
       selectedCheckItem: PropTypes.any,
       payload: PropTypes.any,
       selectedCategory: PropTypes.any,
-      updateTemplateValue: PropTypes.any
+      updateTemplateValue: PropTypes.any,
+      setValidationClass: PropTypes.func
  }

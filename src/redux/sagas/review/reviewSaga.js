@@ -22,6 +22,9 @@ export const UPDATE_REVIEWS_FAILURE = 'saga/review/UPDATE_REVIEWS_FAILURE'
 export const FETCH_REVIEW_ARTEFACTS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS'
 export const FETCH_REVIEW_ARTEFACTS_SUCCESS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_SUCCESS'
 export const FETCH_REVIEW_ARTEFACTS_FAILURE = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_FAILURE'
+export const CONNECT_DISCONNECT_ARTEFACT = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT'
+export const CONNECT_DISCONNECT_ARTEFACT_SUCCESS = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT_SUCCESS'
+export const CONNECT_DISCONNECT_ARTEFACT_FAILURE = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT_FAILURE'
 
 export const actionCreators = {
   fetchReviews: createAction(FETCH_REVIEWS),
@@ -41,7 +44,10 @@ export const actionCreators = {
   updateReviewsFailure: createAction(UPDATE_REVIEWS_FAILURE),
   fetchReviewArtefacts: createAction(FETCH_REVIEW_ARTEFACTS),
   fetchReviewArtefactsSuccess: createAction(FETCH_REVIEW_ARTEFACTS_SUCCESS),
-  fetchReviewArtefactsFailure: createAction(FETCH_REVIEW_ARTEFACTS_FAILURE)
+  fetchReviewArtefactsFailure: createAction(FETCH_REVIEW_ARTEFACTS_FAILURE),
+  connectDisconnectArtefact: createAction(CONNECT_DISCONNECT_ARTEFACT),
+  connectDisconnectArtefactSuccess: createAction(CONNECT_DISCONNECT_ARTEFACT_SUCCESS),
+  connectDisconnectArtefactFailure: createAction(CONNECT_DISCONNECT_ARTEFACT_FAILURE)
 }
 
 export default function * watchReviews () {
@@ -51,7 +57,8 @@ export default function * watchReviews () {
       takeLatest(FETCH_REVIEW_BY_ID, getReviewById),
       takeLatest(CREATE_REVIEWS, createReviews),
       takeLatest(UPDATE_REVIEWS, updateReview),
-      takeLatest(FETCH_REVIEW_ARTEFACTS, getReviewArtefacts)
+      takeLatest(FETCH_REVIEW_ARTEFACTS, getReviewArtefacts),
+      takeLatest(CONNECT_DISCONNECT_ARTEFACT, connectDisconnectArtefact)
     ]
 }
 
@@ -128,10 +135,24 @@ export function * getReviewArtefacts (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const reviewArtefacts = yield call(
       axios.get,
-      api.getComponentTypeComponents(action.payload)
+      api.getReviewArtefacts(action.payload)
     )
     yield put(actionCreators.fetchReviewArtefactsSuccess(reviewArtefacts.data))
   } catch (error) {
     yield put(actionCreators.fetchReviewArtefactsFailure(error))
+  }
+}
+
+export function * connectDisconnectArtefact (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const review = yield call(
+      axios.patch,
+      api.updateReview(action.payload.reviewId),
+      action.payload.data
+    )
+    yield put(actionCreators.connectDisconnectArtefactSuccess(review.data))
+  } catch (error) {
+    yield put(actionCreators.connectDisconnectArtefactFailure(error))
   }
 }

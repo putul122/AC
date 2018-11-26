@@ -14,6 +14,7 @@ const SET_CHECK_ITEMS_DATA = 'TemplateDetailReducer/SET_CHECK_ITEMS_DATA'
 const SET_SELECTED_CATEGORY = 'TemplateDetailReducer/SET_SELECTED_CATEGORY'
 const SET_SELECTED_CHECKITEM = 'TemplateDetailReducer/SET_SELECTED_CHECKITEM'
 const SET_PAYLOAD = 'TemplateDetailReducer/SET_PAYLOAD'
+const SET_VALIDATION_CLASS = 'AddTemplateReducer/SET_VALIDATION_CLASS'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -28,7 +29,8 @@ export const actions = {
   SET_EDIT_TEMPLATE_SETTINGS,
   RESET_RESPONSE,
   SET_PAYLOAD,
-  UPDATE_TEMPLATES_SUCCESS
+  UPDATE_TEMPLATES_SUCCESS,
+  SET_VALIDATION_CLASS
 }
 
 export const actionCreators = {
@@ -39,7 +41,8 @@ export const actionCreators = {
   setSelectedCheckItem: createAction(SET_SELECTED_CHECKITEM),
   setEditTemplateSettings: createAction(SET_EDIT_TEMPLATE_SETTINGS),
   resetResponse: createAction(RESET_RESPONSE),
-  setPayload: createAction(SET_PAYLOAD)
+  setPayload: createAction(SET_PAYLOAD),
+  setValidationClass: createAction(SET_VALIDATION_CLASS)
 }
 
 export const initialState = {
@@ -62,7 +65,8 @@ export const initialState = {
     isEditFlag: false
   },
   updateTemplateResponse: '',
-  deleteTemplateResponse: ''
+  deleteTemplateResponse: '',
+  validationClass: 'form-group m-form__group row'
 }
 
 export default handleActions(
@@ -119,6 +123,10 @@ export default handleActions(
     [UPDATE_TEMPLATES_SUCCESS]: (state, action) => ({
       ...state,
       updateTemplateResponse: action.payload
+    }),
+    [SET_VALIDATION_CLASS]: (state, action) => ({
+      ...state,
+      validationClass: action.payload
     })
   },
   initialState

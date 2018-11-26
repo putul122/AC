@@ -37,6 +37,9 @@ export default function AddTemplate (props) {
     let addTemplateValue = {...props.addTemplateValue}
     addTemplateValue.name = value
     props.setAddTemplateValue(addTemplateValue)
+    if (value.trim() !== '') {
+      props.setValidationClass('form-group m-form__group row')
+    }
   }
   let handleCategorySelect = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
@@ -73,33 +76,36 @@ export default function AddTemplate (props) {
     props.setCheckItemsData(checkItems)
   }
   let saveTemplate = function (event) {
-    // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let payload = {}
-    payload.name = props.addTemplateValue.name
-    payload.description = ''
-    payload.review_category_id = props.selectedCategory.id
-    if (props.checkItems.length > 0) {
-      payload.check_items = props.checkItems.map(function (data, index) {
-        let obj = {}
-        obj.id = data.id
-        return obj
-      })
+    if (props.addTemplateValue.name.trim() !== '') {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {}
+      payload.name = props.addTemplateValue.name
+      payload.description = ''
+      payload.review_category_id = props.selectedCategory.id
+      if (props.checkItems.length > 0) {
+        payload.check_items = props.checkItems.map(function (data, index) {
+          let obj = {}
+          obj.id = data.id
+          return obj
+        })
+      } else {
+        payload.check_items = []
+      }
+      props.createTemplates(payload)
     } else {
-      payload.check_items = []
+      props.setValidationClass('form-group m-form__group row has-danger')
     }
-    props.createTemplates(payload)
   }
     return (
       <div>
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          <br />
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
-                <div className='row' style={{width: '100%'}}>
-                  <div className='col-8'>
-                    <div className='form-group m-form__group has-danger'>
+                <div className='row ' style={{width: '100%'}}>
+                  <div className='col-8 m-form m-form--state m-form--fit'>
+                    <div className={props.validationClass}>
                       <input type='text' className='form-control m-input' value={props.addTemplateValue.name} onChange={handleNameChange} placeholder='Trmplate Name' aria-describedby='basic-addon2' />
                     </div>
                   </div>
@@ -214,11 +220,13 @@ export default function AddTemplate (props) {
       )
     }
     AddTemplate.propTypes = {
+      validationClass: PropTypes.any,
     templateCategories: PropTypes.any,
     templateCheckItems: PropTypes.any,
     selectedCategory: PropTypes.any,
     selectedCheckItem: PropTypes.any,
     checkItems: PropTypes.any,
     addTemplateValue: PropTypes.any,
-    createTemplates: PropTypes.func
+    createTemplates: PropTypes.func,
+    setValidationClass: PropTypes.func
  }

@@ -2,13 +2,13 @@ import { createAction, handleActions } from 'redux-actions'
 import {
     FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
     FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS,
-    UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS,
     FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
 } from '../../sagas/basic/basicSaga'
 import {
   FETCH_REVIEW_BY_ID_SUCCESS,
   FETCH_REVIEW_ARTEFACTS_SUCCESS,
-  UPDATE_REVIEWS_SUCCESS
+  UPDATE_REVIEWS_SUCCESS,
+  CONNECT_DISCONNECT_ARTEFACT_SUCCESS
 } from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const SET_CONNECT_ARTEFACT_SETTINGS = 'ReviewDraftReducer/SET_CONNECT_ARTEFACT_SETTINGS'
@@ -33,7 +33,7 @@ export const actions = {
   SET_DRAFT_EDIT_DATA,
   SET_UPDATE_PAYLOAD,
   UPDATE_REVIEWS_SUCCESS,
-  UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS,
+  CONNECT_DISCONNECT_ARTEFACT_SUCCESS,
   FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
   SET_CATEGORY_DATA,
   SET_REVIEW_PROPERTY,
@@ -136,7 +136,7 @@ export default handleActions(
       ...state,
       updateReviewResponse: action.payload
     }),
-    [UPDATE_COMPONENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
+    [CONNECT_DISCONNECT_ARTEFACT_SUCCESS]: (state, action) => ({
       ...state,
       connectArtefactResponse: action.payload
     }),

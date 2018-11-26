@@ -11,6 +11,7 @@ export default function ReviewDraft (props) {
   console.log('review draft', props)
   let reviewStatus = ''
   let reviewReason = ''
+  let reviewArtefact = null
   let checkItemsOptions = []
   let categoryOptions = []
   let relationsOptions = []
@@ -24,6 +25,7 @@ export default function ReviewDraft (props) {
   if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
     reviewStatus = props.reviewData.resources[0].status
     reviewReason = props.reviewData.resources[0].reason
+    reviewArtefact = props.reviewData.resources[0].review_artefact_id
   }
   if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
     categoryOptions = props.reviewProperties.category.map(function (data, index) {
@@ -151,7 +153,21 @@ export default function ReviewDraft (props) {
       props.setConnectArtefactSettings(connectArtefactSettings)
     }
     if (actionMeta.action === 'clear') {
-      let connectArtefactSettings = {...props.connectArtefactSettings, 'selectedRelations': null}
+      let connectArtefactSettings = {...props.connectArtefactSettings, 'selectedRelations': null, 'selectedArtefact': null}
+      props.setConnectArtefactSettings(connectArtefactSettings)
+    }
+  }
+  let handleArtefactSelect = function (newValue: any, actionMeta: any) {
+    console.group('Value Changed first select')
+    console.log(newValue)
+    console.log(`action: ${actionMeta.action}`)
+    console.groupEnd()
+    if (actionMeta.action === 'select-option') {
+      let connectArtefactSettings = {...props.connectArtefactSettings, 'selectedArtefact': newValue}
+      props.setConnectArtefactSettings(connectArtefactSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      let connectArtefactSettings = {...props.connectArtefactSettings, 'selectedArtefact': null}
       props.setConnectArtefactSettings(connectArtefactSettings)
     }
   }
@@ -161,10 +177,6 @@ export default function ReviewDraft (props) {
   }
   let closeModal = function (event) {
     let connectArtefactSettings = {...props.connectArtefactSettings, 'isModalOpen': false, 'isConnected': true}
-    props.setConnectArtefactSettings(connectArtefactSettings)
-  }
-  let disconnectArtefact = function (event) {
-    let connectArtefactSettings = {...props.connectArtefactSettings, 'isConnected': false}
     props.setConnectArtefactSettings(connectArtefactSettings)
   }
   let addcheckItem = function () {
@@ -344,11 +356,36 @@ export default function ReviewDraft (props) {
   }
   let connectArtefact = function (event) {
     // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
-    payload.componentId = 1
-    payload.relationship = []
-    props.updateComponentRelationships(payload)
+    payload.reviewId = contextId
+    payload.data = []
+    if (props.connectArtefactSettings.selectedArtefact) {
+      let obj = {}
+      if (reviewArtefact) {
+        obj.op = 'replace'
+      } else {
+        obj.op = 'add'
+      }
+      obj.path = 'review_artefact_id'
+      obj.value = props.connectArtefactSettings.selectedArtefact.id
+      payload.data.push(obj)
+    }
+    localStorage.setItem('connectArtefact', 'connected')
+    props.connectDisconnectArtefact(payload)
+  }
+  let disconnectArtefact = function (event) {
+    // eslint-disable-next-line
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let payload = {}
+    payload.reviewId = contextId
+    payload.data = []
+    let obj = {}
+    obj.op = 'remove'
+    obj.path = 'review_artefact_id'
+    payload.data.push(obj)
+    localStorage.setItem('connectArtefact', 'disconnected')
+    props.connectDisconnectArtefact(payload)
   }
   if (props.draftEdit.checkItems) {
     if (props.draftEdit.checkItems.length > 0) {
@@ -554,8 +591,8 @@ export default function ReviewDraft (props) {
                             placeholder='Select Artefact'
                             isClearable
                             // defaultValue={dvalue}
-                            // value={props.userActionSettings.selectedRole}
-                            // onChange={handleTemplateSelect}
+                            value={props.connectArtefactSettings.selectedArtefact}
+                            onChange={handleArtefactSelect}
                             isSearchable={false}
                             name={'artefactSelected'}
                             options={artefactsOptions}

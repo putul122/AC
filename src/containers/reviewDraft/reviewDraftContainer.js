@@ -47,7 +47,8 @@ export const propsMapping: Callbacks = {
   updateReviews: sagaActions.reviewActions.updateReviews,
   fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   fetchcomponentTypeRelations: sagaActions.basicActions.fetchcomponentTypeRelations,
-  updateComponentRelationships: sagaActions.basicActions.updateComponentRelationships,
+  fetchcomponentTypeConstraints: sagaActions.basicActions.fetchcomponentTypeConstraints,
+  connectDisconnectArtefact: sagaActions.reviewActions.connectDisconnectArtefact,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
@@ -91,6 +92,7 @@ export default compose(
       this.props.fetchReviewById && this.props.fetchReviewById(payload)
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
+      let connectionTypes = appPackage.resources[0].connection_types
       let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Check Item'
       }), 'component_type')
@@ -98,7 +100,12 @@ export default compose(
       let componentTypeIdForReview = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Review'
       }), 'component_type')
-      this.props.fetchcomponentTypeRelations && this.props.fetchcomponentTypeRelations(componentTypeIdForReview)
+      let payloadRelations = {}
+      payloadRelations.componentTypeId = componentTypeIdForReview
+      payloadRelations.connectionTypeId = _.result(_.find(connectionTypes, function (obj) {
+        return obj.key === 'Assesses'
+      }), 'connection_type')
+      this.props.fetchcomponentTypeRelations && this.props.fetchcomponentTypeRelations(payloadRelations)
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForReview)
     },
     componentDidMount: function () {
@@ -199,18 +206,19 @@ export default compose(
         mApp && mApp.unblockPage()
         if (nextProps.connectArtefactResponse.error_code === null) {
           // this.props.fetchUsers && this.props.fetchUsers()
+          let connectArtefactOperation = localStorage.getItem('connectArtefact')
           // eslint-disable-next-line
-          toastr.success('Successfully updated Review ' +  nextProps.connectArtefactResponse.resources[0].id , 'Nice!')
+          toastr.success('Successfully ' + connectArtefactOperation + ' Artefact ', 'Nice!')
+          localStorage.removeItem('connectArtefact')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.connectArtefactResponse.error_message, nextProps.connectArtefactResponse.error_code)
         }
         this.props.resetResponse()
-        this.props.history.push('/reviews')
       }
       if (nextProps.connectArtefactSettings && nextProps.connectArtefactSettings.selectedRelations !== null && nextProps.connectArtefactSettings.selectedRelations !== this.props.connectArtefactSettings.selectedRelations) {
-        let componentTypeIdForArtefact = nextProps.connectArtefactSettings.selectedRelations.id
-        this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeIdForArtefact)
+        let componentTypeId = nextProps.connectArtefactSettings.selectedRelations.target_component_type.id
+        this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeId)
       }
       if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.firstLoad) {
         console.log('inside if -----------------------------------reviewProperties', nextProps, nextProps.reviewData)

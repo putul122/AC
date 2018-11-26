@@ -115,10 +115,10 @@ if (props.reviews && props.reviews !== '') {
       <tbody>
         <tr key={index}>
           <td><a href={link + data.id} >{data.name}</a></td>
-          <td>{''}</td>
+          <td>{data.review_category}</td>
           <td>{data.stage}</td>
-          <td>{''}</td>
-          <td>{''}</td>
+          <td>{data.reviewer}</td>
+          <td>{data.approver}</td>
         </tr>
       </tbody>
     )

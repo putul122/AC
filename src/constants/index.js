@@ -21,11 +21,17 @@ const api = {
   getComponentTypeComponents: function (componentTypeId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/components'
   },
+  getReviewArtefacts: function (componentTypeId) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/components'
+  },
   getComponentTypeProperties: function (componentTypeId) {
     return 'https://model-eco-dev.ecoconductor.com/component_types/' + componentTypeId + '/component_type_properties'
   },
   getComponentTypeConstraints: function (componentTypeId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/constraints'
+  },
+  getComponentTypeRelations: function (payload) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + payload.componentTypeId + '/constraints?connection_type_id=' + payload.connectionTypeId
   },
   updateComponent: function (payload) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId

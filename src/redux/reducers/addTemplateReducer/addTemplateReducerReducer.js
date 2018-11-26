@@ -12,6 +12,7 @@ const SET_ADD_TEMPLATE_VALUE = 'AddTemplateReducer/SET_ADD_TEMPLATE_VALUE'
 const SET_CHECK_ITEMS_DATA = 'AddTemplateReducer/SET_CHECK_ITEMS_DATA'
 const SET_SELECTED_CATEGORY = 'AddTemplateReducer/SET_SELECTED_CATEGORY'
 const SET_SELECTED_CHECKITEM = 'AddTemplateReducer/SET_SELECTED_CHECKITEM'
+const SET_VALIDATION_CLASS = 'AddTemplateReducer/SET_VALIDATION_CLASS'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -22,7 +23,8 @@ export const actions = {
   SET_CHECK_ITEMS_DATA,
   SET_SELECTED_CATEGORY,
   SET_SELECTED_CHECKITEM,
-  CREATE_TEMPLATES_SUCCESS
+  CREATE_TEMPLATES_SUCCESS,
+  SET_VALIDATION_CLASS
 }
 
 export const actionCreators = {
@@ -31,7 +33,8 @@ export const actionCreators = {
   setAddTemplateValue: createAction(SET_ADD_TEMPLATE_VALUE),
   setCheckItemsData: createAction(SET_CHECK_ITEMS_DATA),
   setSelectedCategory: createAction(SET_SELECTED_CATEGORY),
-  setSelectedCheckItem: createAction(SET_SELECTED_CHECKITEM)
+  setSelectedCheckItem: createAction(SET_SELECTED_CHECKITEM),
+  setValidationClass: createAction(SET_VALIDATION_CLASS)
 }
 
 export const initialState = {
@@ -45,7 +48,8 @@ export const initialState = {
   addTemplateValue: {
     'name': '',
     'description': ''
-  }
+  },
+  validationClass: 'form-group m-form__group row'
 }
 
 export default handleActions(
@@ -85,6 +89,10 @@ export default handleActions(
     [CREATE_TEMPLATES_SUCCESS]: (state, action) => ({
         ...state,
         addTemplateResponse: action.payload
+    }),
+    [SET_VALIDATION_CLASS]: (state, action) => ({
+      ...state,
+      validationClass: action.payload
     })
   },
   initialState
