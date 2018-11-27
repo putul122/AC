@@ -11,6 +11,8 @@ const SET_CHECKBOX = 'ConductReviewReducer/SET_CHECKBOX'
 const SET_REASON = 'ConductReviewReducer/SET_REASON'
 const SET_VALIDATION_CLASS = 'ConductReviewReducer/SET_VALIDATION_CLASS'
 const SET_COMPLAINT = 'ConductReviewReducer/SET_COMPLAINT'
+const SET_CHECKITEMS = 'ConductReviewReducer/SET_CHECKITEMS'
+const PROCESS_CHECKITEMS = 'ConductReviewReducer/PROCESS_CHECKITEMS'
 
 export const actions = {
   RESET_RESPONSE,
@@ -24,7 +26,8 @@ export const actions = {
   SET_REASON,
   SET_VALIDATION_CLASS,
   CREATE_DISCUSSION_SUCCESS,
-  SET_COMPLAINT
+  SET_COMPLAINT,
+  PROCESS_CHECKITEMS
 }
 
 export const actionCreators = {
@@ -35,7 +38,9 @@ export const actionCreators = {
   setCheckbox: createAction(SET_CHECKBOX),
   setReason: createAction(SET_REASON),
   setValidationClass: createAction(SET_VALIDATION_CLASS),
-  setComplaint: createAction(SET_COMPLAINT)
+  setComplaint: createAction(SET_COMPLAINT),
+  setCheckItems: createAction(SET_CHECKITEMS),
+  processCheckItems: createAction(PROCESS_CHECKITEMS)
 }
 
 export const initialState = {
@@ -45,6 +50,8 @@ export const initialState = {
   returnToDraft: false,
   cancelReview: false,
   reviewData: '',
+  checkItems: [],
+  checkItemFlag: false,
   complaint: '',
   reason: '',
   validationClass: {
@@ -110,6 +117,14 @@ export default handleActions(
     [SET_COMPLAINT]: (state, action) => ({
       ...state,
       complaint: action.payload
+    }),
+    [SET_CHECKITEMS]: (state, action) => ({
+      ...state,
+      checkItems: action.payload
+    }),
+    [PROCESS_CHECKITEMS]: (state, action) => ({
+      ...state,
+      checkItemFlag: action.payload
     })
   },
   initialState

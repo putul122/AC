@@ -39,12 +39,10 @@ export default function Dashboard (props) {
         pointHitRadius: 10
       }
       let obj1data = []
-      for (let x in props.reviewsSummary.resources[0].compliant_by_month[0]) {
-        if (props.reviewsSummary.resources[0].compliant_by_month[0].hasOwnProperty(x)) {
-          labels.push(x)
-          obj1data.push(props.reviewsSummary.resources[0].compliant_by_month[0][x])
-        }
-      }
+      props.reviewsSummary.resources[0].compliant_by_month.forEach(function (data, index) {
+        labels.push(data.month)
+        obj1data.push(data.count)
+      })
       obj1.data = obj1data
       datasets.push(obj1)
       lineData.labels = labels
@@ -69,15 +67,13 @@ export default function Dashboard (props) {
         pointHitRadius: 10
       }
       let obj2data = []
-      for (let x in props.reviewsSummary.resources[0].non_compliant_by_month[0]) {
-        if (props.reviewsSummary.resources[0].non_compliant_by_month[0].hasOwnProperty(x)) {
-          obj2data.push(props.reviewsSummary.resources[0].non_compliant_by_month[0][x])
-        }
-      }
+      props.reviewsSummary.resources[0].non_compliant_by_month.forEach(function (data, index) {
+        obj2data.push(data.count)
+      })
       obj2.data = obj2data
       datasets.push(obj2)
       lineData.datasets = datasets
-      let countByCategory = props.reviewsSummary.resources[0].count_by_category[0]
+      let countByCategory = props.reviewsSummary.resources[0].count_by_category
       let pieLabels = []
       let pieData = []
       let colorData = []
@@ -154,7 +150,7 @@ export default function Dashboard (props) {
                         <span className=''>
                           <h4>Number of Reviews</h4>
                           <br />
-                          <h5>Per Review Type</h5>
+                          <h5>Per Category Type</h5>
                         </span>
                       </div>
                       <div className='col'>

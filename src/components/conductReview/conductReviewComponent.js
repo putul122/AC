@@ -19,6 +19,36 @@ export default function ConductReview (props) {
   let onRadioChange = function (value) {
     props.setComplaint(value)
   }
+  let handleCommentChange = function (comment, data) {
+    console.log(data, comment)
+    let checkItems = JSON.parse(JSON.stringify(props.checkItems))
+    data.compliance_comment = comment
+    let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
+    console.log('index', index)
+    if (index >= 0) {
+      checkItems[index] = data
+      console.log(data)
+      console.log('checkItems', checkItems)
+      props.setCheckItems(checkItems)
+    } else {
+      console.log('else')
+    }
+  }
+  let onCheckItemRadioChange = function (compliance, data) {
+    console.log(data, compliance)
+    let checkItems = JSON.parse(JSON.stringify(props.checkItems))
+    data.compliance = compliance
+    let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
+    console.log('index', index)
+    if (index >= 0) {
+      checkItems[index] = data
+      console.log(data)
+      console.log('checkItems', checkItems)
+      props.setCheckItems(checkItems)
+    } else {
+      console.log('else')
+    }
+  }
   let handelReason = function (event) {
     let value = event.target.value
     props.setReason(value)
@@ -55,58 +85,108 @@ export default function ConductReview (props) {
   }
   if (props.reviewData && props.reviewData !== null & props.reviewData.error_code === null) {
     reviewName = props.reviewData.resources[0].name
-      // Description = props.reviewData.resources[0].description
-      Category = props.reviewData.resources[0].review_category
-      ReviewStatus = props.reviewData.resources[0].status
-      ReviewReason = props.reviewData.resources[0].reason
-      // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
-      // props.setComplaint(complianceStatus)
-      Artefact = props.reviewData.resources[0].review_artefact_name
-      if (props.reviewData.resources[0].check_items.length > 0) {
-        checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
-          return (<span className='m-list-search__result-item' key={index}>
-            <div className='form-group m-form__group row'>
-              <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
-              <div className='col-8 float-left' >
-                <div className='m-radio-inline pull-left'>
-                  <label htmlFor='example-email-input' className='m-radio'>
-                    <input type='radio' name='example_8' value='1' /> Yes
-                    <span />
-                  </label>
-                  <label htmlFor='example-email-input' className='m-radio'>
-                    <input type='radio' name='example_8' value='2' /> No
-                    <span />
-                  </label>
-                  <label htmlFor='example-email-input' className=''>
-                    <input type='text' className='form-control lg-input' name='example_8' value='' />
-                    <span />
-                  </label>
-                </div>
+    // Description = props.reviewData.resources[0].description
+    Category = props.reviewData.resources[0].review_category
+    ReviewStatus = props.reviewData.resources[0].status
+    ReviewReason = props.reviewData.resources[0].reason
+    // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
+    // props.setComplaint(complianceStatus)
+    Artefact = props.reviewData.resources[0].review_artefact_name
+  }
+  if (props.checkItems.length > 0) {
+    let notToDisplay = []
+    props.checkItems.forEach(function (data, index) {
+      let compliance = data.compliance
+      if (data.values.length > 0) {
+        data.values.forEach(function (value, idx) {
+          if (compliance === value.name) {
+            // remove id from notToDisplay
+          } else {
+            // add id to notToDisplay
+            if (value.requires_check_items.length > 0) {
+              value.requires_check_items.forEach(function (requireCheckItem, ix) {
+                notToDisplay.push(requireCheckItem.id)
+              })
+            }
+          }
+        })
+      }
+    })
+    let checkItems = props.checkItems.map(function (data, index) {
+      if (notToDisplay.includes(data.id)) {
+        data.display = false
+      } else {
+        data.display = true
+      }
+      return data
+    }) || []
+    console.log('check item render', checkItems)
+    checkItemList = _.filter(checkItems, function (checkItem) {
+          return checkItem.display
+      }).map(function (data, index) {
+      if (data.type === null || data.type === 'Radio') {
+        let valueList = ''
+        if (data.values.length > 0) {
+          valueList = data.values.map(function (valueData, valueIndex) {
+            return (<span><label htmlFor='example-email-input' className=''>
+              <input type='radio' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} onChange={(e) => onCheckItemRadioChange(valueData.name, data)} /> {valueData.name + '  '}
+              <span />
+            </label>&nbsp;&nbsp;&nbsp;</span>)
+          })
+        }
+        console.log('valueList', valueList, typeof valueList)
+        return (<span className='m-list-search__result-item' key={index}>
+          <div className='form-group m-form__group row'>
+            <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
+            <div className='col-8 float-left' >
+              <div className='m-radio-inline pull-left' style={{width: '100%'}}>
+                {valueList}
+                <label htmlFor='example-email-input' className='col-8'>
+                  <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                  <span />
+                </label>
               </div>
             </div>
-          </span>)
-        })
-      } else {
-        checkItemList = ''
+          </div>
+        </span>)
       }
+    })
+  } else {
+    checkItemList = ''
   }
   let saveReview = function (event) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let updatePayload = []
+    let obj = {}
     if (props.complaint !== '') {
-      let obj = {}
+      obj = {}
       obj.op = 'replace'
       obj.path = '/compliance_status'
       obj.value = props.complaint
       updatePayload.push(obj)
     }
     if (props.reason.trim() !== '') {
-      let obj = {}
+      obj = {}
       obj.op = 'replace'
       obj.path = '/reason'
       obj.value = props.reason
       updatePayload.push(obj)
+    }
+    // Set payload for checkItems Value
+    if (props.checkItems.length > 0) {
+      props.checkItems.forEach(function (data, index) {
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/check_items/' + index + '/compliance'
+        obj.value = data.compliance
+        updatePayload.push(obj)
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/check_items/' + index + '/compliance_comment'
+        obj.value = data.compliance_comment
+        updatePayload.push(obj)
+      })
     }
     let payload = {}
     payload.reviewId = contextId
@@ -118,6 +198,7 @@ export default function ConductReview (props) {
     // eslint-disable-next-line
     // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let updatePayload = []
+    let obj = {}
     if (props.reason !== '') {
       let obj = {}
       obj.op = 'replace'
@@ -131,6 +212,21 @@ export default function ConductReview (props) {
       obj.path = '/compliance_status'
       obj.value = props.complaint
       updatePayload.push(obj)
+    }
+    // Set payload for checkItems Value
+    if (props.checkItems.length > 0) {
+      props.checkItems.forEach(function (data, index) {
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/check_items/' + index + '/compliance'
+        obj.value = data.compliance
+        updatePayload.push(obj)
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/check_items/' + index + '/compliance_comment'
+        obj.value = data.compliance_comment
+        updatePayload.push(obj)
+      })
     }
     if (props.checkboxSelected.draft) {
       let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
@@ -163,14 +259,14 @@ export default function ConductReview (props) {
         props.updateReviews(payload)
       }
     } else if (props.checkboxSelected.cancel) {
-      let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Completed'
+      let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+        return obj.name === 'Cancelled'
       }), 'id')
       // set Cancel stage
       let obj = {}
       obj.op = 'replace'
       obj.path = '/stage'
-      obj.value = completedId
+      obj.value = cancelledId
       updatePayload.push(obj)
       // set Cancel status
       obj = {}
@@ -405,6 +501,7 @@ export default function ConductReview (props) {
       // returnToDraft: PropTypes.any,
       // cancelReview: PropTypes.any,
       checkboxSelected: PropTypes.any,
+      checkItems: PropTypes.any,
       validationClass: PropTypes.any,
       updateReviews: PropTypes.func,
       createDiscussion: PropTypes.func,

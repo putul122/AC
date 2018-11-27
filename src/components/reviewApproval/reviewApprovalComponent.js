@@ -16,6 +16,7 @@ export default function ReviewApproval (props) {
   let Approver = ''
   let Artefact = ''
   let checkItemList = ''
+  let Compliant = ''
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -133,6 +134,7 @@ export default function ReviewApproval (props) {
     Reviewer = props.reviewData.resources[0].reviewer
     Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
+    Compliant = props.reviewData.resources[0].compliance_status
     if (props.reviewData.resources[0].check_items.length > 0) {
       checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
         return (<span className='m-list-search__result-item' key={index}>
@@ -208,6 +210,13 @@ export default function ReviewApproval (props) {
                                   {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
                                   <div className='col-4'><b>Review Artefact</b></div>
                                   <div className='col-8'><p>{Artefact}</p></div>
+                                </div>
+                              </span>
+                              <span className='m-list-search__result-item'>
+                                <div className='form-group m-form__group row'>
+                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
+                                  <div className='col-4'><b>Compliant</b></div>
+                                  <div className='col-8'><p>{Compliant}</p></div>
                                 </div>
                               </span>
                             </div>

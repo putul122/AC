@@ -19,7 +19,9 @@ export function mapStateToProps (state, props) {
     checkboxSelected: state.conductReviewReducer.checkboxSelected,
     reason: state.conductReviewReducer.reason,
     validationClass: state.conductReviewReducer.validationClass,
-    complaint: state.conductReviewReducer.complaint
+    complaint: state.conductReviewReducer.complaint,
+    checkItems: state.conductReviewReducer.checkItems,
+    checkItemFlag: state.conductReviewReducer.checkItemFlag
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -34,7 +36,9 @@ export const propsMapping: Callbacks = {
   setCheckbox: actionCreators.setCheckbox,
   setReason: actionCreators.setReason,
   setComplaint: actionCreators.setComplaint,
+  setCheckItems: actionCreators.setCheckItems,
   setValidationClass: actionCreators.setValidationClass,
+  processCheckItems: actionCreators.processCheckItems,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   createDiscussion: sagaActions.discussionActions.createDiscussion,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
@@ -101,6 +105,38 @@ export default compose(
         if (nextProps.reviewData.error_code !== null) {
           // eslint-disable-next-line
           toastr.error(nextProps.reviewData.error_message, nextProps.reviewData.error_code)
+        } else {
+          let complaint = nextProps.reviewData.resources[0].compliance_status || ''
+          this.props.setComplaint(complaint)
+          let notToDisplay = []
+          if (nextProps.reviewData.resources[0].check_items.length > 0) {
+            nextProps.reviewData.resources[0].check_items.forEach(function (data, index) {
+              let compliance = data.compliance
+              if (data.values.length > 0) {
+                data.values.forEach(function (value, idx) {
+                  if (compliance === value.name) {
+                    // remove id from notToDisplay
+                  } else {
+                    // add id to notToDisplay
+                    if (value.requires_check_items.length > 0) {
+                      value.requires_check_items.forEach(function (requireCheckItem, ix) {
+                        notToDisplay.push(requireCheckItem.id)
+                      })
+                    }
+                  }
+                })
+              }
+            })
+          }
+          let checkitems = nextProps.reviewData.resources[0].check_items.map(function (data, index) {
+            if (notToDisplay.includes(data.id)) {
+              data.display = false
+            } else {
+              data.display = true
+            }
+            return data
+          }) || []
+          this.props.setCheckItems(checkitems)
         }
       }
       if (nextProps.updateReviewResponse && nextProps.updateReviewResponse !== '') {
@@ -108,7 +144,7 @@ export default compose(
         mApp && mApp.unblockPage()
         if (nextProps.updateReviewResponse.error_code === null) {
           // eslint-disable-next-line
-          toastr.success('Successfully updated Review ' +  nextProps.updateReviewResponse.resources[0].id , 'Nice!')
+          toastr.success('Successfully updated Review Id' +  nextProps.updateReviewResponse.resources[0].review_id , 'Nice!')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.updateReviewResponse.error_message, nextProps.updateReviewResponse.error_code)
