@@ -11,6 +11,7 @@ export default function ReviewDraft (props) {
   console.log('review draft', props)
   let reviewStatus = ''
   let reviewReason = ''
+  let reviewArtefactName = null
   let reviewArtefact = null
   let checkItemsOptions = []
   let categoryOptions = []
@@ -26,6 +27,7 @@ export default function ReviewDraft (props) {
     reviewStatus = props.reviewData.resources[0].status
     reviewReason = props.reviewData.resources[0].reason
     reviewArtefact = props.reviewData.resources[0].review_artefact_id
+    reviewArtefactName = props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'
   }
   if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
     categoryOptions = props.reviewProperties.category.map(function (data, index) {
@@ -312,13 +314,13 @@ export default function ReviewDraft (props) {
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
         // set stage to approval
-        let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Completed'
+        let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Cancelled'
         }), 'id')
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = completedId
+        obj.value = cancelledId
         updatePayload.push(obj)
         // set status to Cancelled
         obj = {}
@@ -463,7 +465,7 @@ export default function ReviewDraft (props) {
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
                     <div className='col-8'>
                       <div className='row'>
-                        <div className='col-md-5'><span>Connect to Artefact</span></div>
+                        <div className='col-md-5'><span>{reviewArtefactName}</span></div>
                         <div className='col-md-7'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>

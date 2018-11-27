@@ -205,6 +205,10 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
         if (nextProps.connectArtefactResponse.error_code === null) {
+          let payload = {
+            'review_id': this.props.match.params.id
+          }
+          this.props.fetchReviewById && this.props.fetchReviewById(payload)
           // this.props.fetchUsers && this.props.fetchUsers()
           let connectArtefactOperation = localStorage.getItem('connectArtefact')
           // eslint-disable-next-line
