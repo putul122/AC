@@ -28,7 +28,12 @@ export default function ViewReview (props) {
   let reviewname
   let reviewdescription
   let reviewstage
+  let Reviewer = ''
+  let Approver = ''
+  let ReviewCategory = ''
+  let ReviewArtefact = ''
   let contextId = props.match.params.id
+  let checkItemList = ''
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -38,12 +43,48 @@ export default function ViewReview (props) {
     reviewname = props.reviewbyId.resources[0].name
     reviewdescription = props.reviewbyId.resources[0].description
     reviewstage = props.reviewbyId.resources[0].stage
+    Approver = props.reviewbyId.resources[0].approver
+    Reviewer = props.reviewbyId.resources[0].reviewer
+    ReviewCategory = props.reviewbyId.resources[0].review_category
+    ReviewArtefact = props.reviewbyId.resources[0].review_artefact_name
+    if (props.reviewbyId.resources[0].check_items.length > 0) {
+      checkItemList = props.reviewbyId.resources[0].check_items.map(function (data, index) {
+        if (data.type === null || data.type === 'Radio') {
+          let valueList = ''
+          if (data.values.length > 0) {
+            valueList = data.values.map(function (valueData, valueIndex) {
+              return (<span><label htmlFor='example-email-input' className='m-radio'>
+                <input type='radio' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} /> {valueData.name}
+                <span />
+              </label>&nbsp;&nbsp;&nbsp;</span>)
+            })
+          }
+          console.log('valueList', valueList, typeof valueList)
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-5 col-form-label'>{data.name}</label>
+              <div className='col-6 float-left' >
+                <div className='m-radio-inline pull-left' style={{width: '100%'}}>
+                  {valueList}
+                  <label htmlFor='example-email-input' className='col-6'>
+                    <span className=''>{data.compliance_comment || ''}</span>
+                    <span />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
+      })
+    } else {
+      checkItemList = ''
+    }
   }
-  let openModal = function (event) {
-    event.preventDefault()
-    props.setModalOpenStatus(true)
-    console.log('props', props.setModalOpenStatus)
-   }
+  // let openModal = function (event) {
+  //   event.preventDefault()
+  //   props.setModalOpenStatus(true)
+  //   console.log('props', props.setModalOpenStatus)
+  //  }
    let openPrincipleModal = function (event) {
     event.preventDefault()
     props.setPrincipleModalOpenStatus(true)
@@ -110,41 +151,31 @@ export default function ViewReview (props) {
                                     <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                       Review Category:
                                     </span>
-                                    <span className='m-widget13__text'>
-                                    Lorem Ipsum is simply dummy.
-                                    </span>
+                                    <span className='m-widget13__text'>{ReviewCategory}</span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                     Reviewer:
                                     </span>
-                                    <span className='m-widget13__text'>
-                                    XYZABC
-                                    </span>
+                                    <span className='m-widget13__text'>{Reviewer}</span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                     Approver:
                                     </span>
-                                    <span className='m-widget13__text'>
-                                    Keenthemes
-                                    </span>
+                                    <span className='m-widget13__text'>{Approver}</span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                     Review Artefact
                                     </span>
-                                    <span className='m-widget13__text m--font-brand'>
-                                    C12345
-                                    </span>
+                                    <span className='m-widget13__text m--font-brand'>{ReviewArtefact}</span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                       Review Stage
                                     </span>
-                                    <span className='m-widget13__text  m--font-brand'>
-                                      {reviewstage}
-                                    </span>
+                                    <span className='m-widget13__text  m--font-brand'>{reviewstage}</span>
                                   </div>
                                 </div>
                               </div>
@@ -162,7 +193,8 @@ export default function ViewReview (props) {
                             <div className='m-list-search'>
                               <div className='m-list-search__results'>
                                 <span className='m-list-search__result-category m-list-search__result-category--first'>Selected Check Items</span>
-                                <div className='m-widget13'>
+                                {checkItemList}
+                                {/* <div className='m-widget13'>
                                   <div className='m-widget13__item row'>
                                     <div className='col-sm-12 m-radio-inline'>
                                       <label htmlFor='example-text-input'>
@@ -181,7 +213,7 @@ export default function ViewReview (props) {
                                       </label>
                                     </div>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>

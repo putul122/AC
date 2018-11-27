@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 // import styles from './acceptReviewComponent.scss'
 // import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
@@ -8,6 +9,7 @@ import Discussion from '../../containers/discussion/discussionContainer'
 
 export default function ReviewAcceptance (props) {
   let reviewName = ''
+  let reviewComplaint = ''
   let Artefact = ''
   let Category = ''
   let checkItemList = ''
@@ -27,31 +29,37 @@ export default function ReviewAcceptance (props) {
     reviewName = props.reviewData.resources[0].name
     // Description = props.reviewData.resources[0].description
     Category = props.reviewData.resources[0].review_category
-    // Reviewer = props.reviewData.resources[0].reviewer
+    reviewComplaint = props.reviewData.resources[0].compliance_status
     // Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
     if (props.reviewData.resources[0].check_items.length > 0) {
       checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
-        return (<span className='m-list-search__result-item' key={index}>
-          <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
-            <div className='col-8 float-left' >
-              <div className='m-radio-inline pull-left'>
-                <label htmlFor='example-email-input' className='m-radio'>
-                  <input type='radio' name='example_8' value='1' /> Yes
-                  <span />
-                </label>
-                <label htmlFor='example-email-input' className='m-radio'>
-                  <input type='radio' name='example_8' value='2' /> No
-                  <span />
-                </label>
-                <label htmlFor='example-email-input' className=''>
-                  <span>No affordable options available</span>
-                </label>
+        if (data.type === null || data.type === 'Radio') {
+          let valueList = ''
+          if (data.values.length > 0) {
+            valueList = data.values.map(function (valueData, valueIndex) {
+              return (<span><label htmlFor='example-email-input' className='m-radio'>
+                <input type='radio' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} /> {valueData.name}
+                <span />
+              </label>&nbsp;&nbsp;&nbsp;</span>)
+            })
+          }
+          console.log('valueList', valueList, typeof valueList)
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
+              <div className='col-8 float-left' >
+                <div className='m-radio-inline pull-left' style={{width: '100%'}}>
+                  {valueList}
+                  <label htmlFor='example-email-input' className='col-8'>
+                    <span className=''>{data.compliance_comment || ''}</span>
+                    <span />
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-        </span>)
+          </span>)
+        }
       })
     } else {
       checkItemList = ''
@@ -97,6 +105,12 @@ export default function ReviewAcceptance (props) {
         obj.op = 'replace'
         obj.path = '/status'
         obj.value = 'Completed'
+        updatePayload.push(obj)
+        // setting Completed date when approved
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/completed_date'
+        obj.value = moment().format()
         updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -223,6 +237,20 @@ export default function ReviewAcceptance (props) {
                 </div>
               </div>
             </div>
+          </div>
+          <div className='row' style={{width: '100%'}}>
+            <div className='col-md-6'>
+              <div className='col-12'>
+                {/* {messageBlock} */}
+                <div className='form-group m-form__group row'>
+                  <label htmlFor='example-email-input' className='col-4'><b>Compliant</b></label>
+                  <div className='col-8'>
+                    <span className='m-input' >{reviewComplaint}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='col-md-6' />
           </div>
           <div className='row' style={{width: '100%'}}>
             <div className='col-md-12'>
