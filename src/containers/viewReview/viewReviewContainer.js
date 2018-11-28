@@ -5,38 +5,30 @@ import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/viewReviewReducer/viewReviewReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as checkItemModalActionCreators } from '../../redux/reducers/checkItemModalReducer/checkItemModalReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
   return {
     authenticateUser: state.basicReducer.authenticateUser,
-    // agreements: state.viewReviewReducer.agreements,
-    // agreementsSummary: state.viewReviewReducer.agreementsSummary,
-    // currentPage: state.viewReviewReducer.currentPage,
-    // addAgreementSettings: state.agreementDetailReducer.addAgreementSettings,
-    // addAgreementResponse: state.agreementDetailReducer.addAgreementResponse,
-    // perPage: state.viewReviewReducer.perPage,
     modalIsOpen: state.basicReducer.modalIsOpen,
     principlemodalIsOpen: state.viewReviewReducer.principlemodalIsOpen,
     standardmodalIsOpen: state.viewReviewReducer.standardmodalIsOpen,
-    reviewbyId: state.viewReviewReducer.reviewbyId
-    // standardmodalIsOpen: state.
+    reviewbyId: state.viewReviewReducer.reviewbyId,
+    clickCheckItemData: state.viewReviewReducer.clickCheckItemData
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-  // fetchAgreements: sagaActions.agreementActions.fetchAgreements,
-  // fetchAgreementsSummary: sagaActions.agreementActions.fetchAgreementsSummary,
-  // addAgreement: sagaActions.agreementActions.addAgreement,
-  // setCurrentPage: actionCreators.setCurrentPage,
-  // setPerPage: actionCreators.setPerPage,
-  // setAddAgreementSettings: actionCreators.setAddAgreementSettings
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setPrincipleModalOpenStatus: actionCreators.setPrincipleModalOpenStatus,
   setStandardModalOpenStatus: actionCreators.setStandardModalOpenStatus,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setClickCheckItemData: actionCreators.setClickCheckItemData,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setModalSetting: checkItemModalActionCreators.setModalSetting,
+  setCheckItemData: checkItemModalActionCreators.setCheckItemData
 }
 
 // If you want to use the function mapping

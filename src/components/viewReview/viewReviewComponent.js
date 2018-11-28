@@ -3,27 +3,9 @@ import PropTypes from 'prop-types'
 import './viewReviewComponent.scss'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
-import ReactModal from 'react-modal'
-ReactModal.setAppElement('#root')
-
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    border: 'none',
-    background: 'none',
-    transform: 'translate(-50%, -50%)',
-    width: '100%'
-  }
-}
+import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 
 export default function ViewReview (props) {
-  console.log('props', props.setModalOpenStatus)
-  console.log('props', props.setStandardModalOpenStatus)
-  console.log('props', props.setPrincipleModalOpenStatus)
   console.log('*****', props.reviewbyId)
   let reviewname
   let reviewdescription
@@ -37,6 +19,16 @@ export default function ViewReview (props) {
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let openModal = function (event) {
+    console.log('run me')
+    event.preventDefault()
+    let modalSettings = {
+      'isViewCheckItemOpen': true,
+      'isStandardModalOpen': false,
+      'isPrincipleModalOpen': false
+    }
+    props.setModalSetting(modalSettings)
   }
   // console.log(props.agreementsSummary, props.agreements, props.currentPage)
   if (props.reviewbyId && props.reviewbyId !== '') {
@@ -62,7 +54,7 @@ export default function ViewReview (props) {
           console.log('valueList', valueList, typeof valueList)
           return (<span className='m-list-search__result-item' key={index}>
             <div className='form-group m-form__group row'>
-              <label htmlFor='example-email-input' className='col-5 col-form-label'>{data.name}</label>
+              <label htmlFor='example-email-input' className='col-5 col-form-label'><a href='' onClick={openModal} >{data.name}</a></label>
               <div className='col-6 float-left' >
                 <div className='m-radio-inline pull-left' style={{width: '100%'}}>
                   {valueList}
@@ -80,32 +72,27 @@ export default function ViewReview (props) {
       checkItemList = ''
     }
   }
-  // let openModal = function (event) {
+  //  let openPrincipleModal = function (event) {
   //   event.preventDefault()
-  //   props.setModalOpenStatus(true)
+  //   props.setPrincipleModalOpenStatus(true)
+  //   // props.setModalOpenStatus(false)
   //   console.log('props', props.setModalOpenStatus)
   //  }
-   let openPrincipleModal = function (event) {
-    event.preventDefault()
-    props.setPrincipleModalOpenStatus(true)
-    // props.setModalOpenStatus(false)
-    console.log('props', props.setModalOpenStatus)
-   }
-   let openStandardModal = function (event) {
-    event.preventDefault()
-    props.setStandardModalOpenStatus(true)
-    // props.setModalOpenStatus(false)
-    console.log('props', props.setStandardModalOpenStatus)
-   }
-  let closeModal = function () {
-    props.setModalOpenStatus(false)
-  }
-  let closePrincipleModal = function () {
-    props.setPrincipleModalOpenStatus(false)
-  }
-  let closeStandardModal = function () {
-    props.setStandardModalOpenStatus(false)
-  }
+  //  let openStandardModal = function (event) {
+  //   event.preventDefault()
+  //   props.setStandardModalOpenStatus(true)
+  //   // props.setModalOpenStatus(false)
+  //   console.log('props', props.setStandardModalOpenStatus)
+  //  }
+  // let closeModal = function () {
+  //   props.setModalOpenStatus(false)
+  // }
+  // let closePrincipleModal = function () {
+  //   props.setPrincipleModalOpenStatus(false)
+  // }
+  // let closeStandardModal = function () {
+  //   props.setStandardModalOpenStatus(false)
+  // }
     return (
       <div>
         <div className='row clearfix'>
@@ -225,220 +212,16 @@ export default function ViewReview (props) {
               </div>
             </div>
           </div>
-          <div>
-            <ReactModal isOpen={props.modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}>
-              <div className={''}>
-                <div className='modal-dialog modal-lg'>
-                  <div className='modal-content'>
-                    <div className='modal-header'>
-                      <h4 className='modal-title' id='exampleModalLabel'>View Check Item</h4>
-                      <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
-                        <span aria-hidden='true'>×</span>
-                      </button>
-                    </div>
-                    <div className='modal-body'>
-                      <h6>Has Cloud Solution been considered</h6>
-                      <div className='row m--margin-top-20'>
-                        <div className='col-xl-6'>
-                          <div className='m-portlet m-portlet--full-height '>
-                            <div className='m-portlet__head'>
-                              <div className='m-portlet__head-caption'>
-                                <div className='m-portlet__head-title'>
-                                  <h3 className='m-portlet__head-text'>
-                                    Principles
-                                  </h3>
-                                </div>
-                              </div>
-                            </div>
-                            <div className='m-portlet__body'>
-                              <div className='m-widget13'>
-                                <div className='m-widget13__item'>
-                                  <a href='' onClick={openPrincipleModal}>Keep it simple</a><br />
-                                  <a href='' onClick={openPrincipleModal}>Cloud First</a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='col-xl-6'>
-                          <div className='m-portlet m-portlet--full-height '>
-                            <div className='m-portlet__head'>
-                              <div className='m-portlet__head-caption'>
-                                <div className='m-portlet__head-title'>
-                                  <h3 className='m-portlet__head-text'>
-                                    Standards
-                                  </h3>
-                                </div>
-                              </div>
-                            </div>
-                            <div className='m-portlet__body'>
-                              <div className='m-widget13'>
-                                <div className='m-widget13__item'>
-                                  <a href='' onClick={openStandardModal}>Technology Stack Standard</a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='modal-footer'>
-                      <button type='button' onClick={closeModal} className='btn btn-sm btn-info'>Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ReactModal>
-            <ReactModal isOpen={props.principlemodalIsOpen}
-              onRequestClose={closePrincipleModal}
-              style={customStyles}>
-              <div className={''}>
-                <div className='modal-dialog modal-lg'>
-                  <div className='modal-content'>
-                    <div className='modal-header'>
-                      <h4 className='modal-title' id='exampleModalLabel'>View Principles: Principle 03: Business</h4>
-                      <button type='button' onClick={closePrincipleModal} className='close' data-dismiss='modal' aria-label='Close'>
-                        <span aria-hidden='true'>×</span>
-                      </button>
-                    </div>
-                    <div className='modal-body'>
-                      <div className='row m--margin-top-20'>
-                        <div className='col-xl-12'>
-                          <div className=''>
-                            <div className='m-portlet__body'>
-                              <div className='m-widget13'>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
-                                  Statement:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                  Rationale:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                    Implication:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                  Type:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  XYZABC
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                  Strategic Theme:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Keenthemes
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='modal-footer'>
-                      <button type='button' onClick={closePrincipleModal} className='btn btn-sm btn-info'>Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ReactModal>
-            <ReactModal isOpen={props.standardmodalIsOpen}
-              onRequestClose={closeStandardModal}
-              style={customStyles}>
-              <div className={''}>
-                <div className='modal-dialog modal-lg'>
-                  <div className='modal-content'>
-                    <div className='modal-header'>
-                      <h4 className='modal-title' id='exampleModalLabel'>View Standard</h4>
-                      <button type='button' onClick={closeStandardModal} className='close' data-dismiss='modal' aria-label='Close'>
-                        <span aria-hidden='true'>×</span>
-                      </button>
-                    </div>
-                    <div className='modal-body'>
-                      <div className='row m--margin-top-20'>
-                        <div className='col-xl-12'>
-                          <div className=''>
-                            <div className='m-portlet__body'>
-                              <div className='m-widget13'>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
-                                  Name:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                  Description:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry
-                                  </span>
-                                </div>
-                                <div className='m-widget13__item'>
-                                  <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
-                                    Reference:
-                                  </span>
-                                  <span className='m-widget13__text'>
-                                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='modal-footer'>
-                      <button type='button' onClick={closeStandardModal} className='btn btn-sm btn-info'>Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ReactModal>
-          </div>
         </div>
         <Discussion name={reviewname} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={reviewname} type='Component' {...props} />
+        <CheckItemModal checkItemData={props.clickCheckItemData} />
       </div>
       )
     }
     ViewReview.propTypes = {
       match: PropTypes.any,
-      modalIsOpen: PropTypes.any,
+      // setModalSetting: PropTypes.func,
       reviewbyId: PropTypes.any,
-      principlemodalIsOpen: PropTypes.any,
-      standardmodalIsOpen: PropTypes.any,
-      setModalOpenStatus: PropTypes.func,
-      setPrincipleModalOpenStatus: PropTypes.func,
-      setStandardModalOpenStatus: PropTypes.func
+      clickCheckItemData: PropTypes.any
  }

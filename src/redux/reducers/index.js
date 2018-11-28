@@ -15,6 +15,7 @@ import reviewApprovalReducer from './reviewApprovalReducer/reviewApprovalReducer
 import reviewDraftReducer from './reviewDraftReducer/reviewDraftReducerReducer'
 import discussionReducer from './discussionReducer/discussionReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
+import checkItemModalReducer from './checkItemModalReducer/checkItemModalReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -31,5 +32,6 @@ export default combineReducers({
     reviewDraftReducer,
     viewReviewReducer,
     discussionReducer,
-    newDiscussionReducer
+    newDiscussionReducer,
+    checkItemModalReducer
 })

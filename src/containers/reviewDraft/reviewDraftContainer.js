@@ -94,7 +94,7 @@ export default compose(
       let componentTypes = appPackage.resources[0].component_types
       let connectionTypes = appPackage.resources[0].connection_types
       let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
-          return obj.key === 'Check Item'
+          return obj.key === 'Check Item Template'
       }), 'component_type')
       this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeIdForComponents)
       let componentTypeIdForReview = _.result(_.find(componentTypes, function (obj) {
