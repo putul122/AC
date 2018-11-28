@@ -20,9 +20,9 @@ export default function ViewReview (props) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
   }
-  let openModal = function (event) {
+  let openModal = function (data) {
     console.log('run me')
-    event.preventDefault()
+    props.setCheckItemData(data)
     let modalSettings = {
       'isViewCheckItemOpen': true,
       'isStandardModalOpen': false,
@@ -54,7 +54,7 @@ export default function ViewReview (props) {
           console.log('valueList', valueList, typeof valueList)
           return (<span className='m-list-search__result-item' key={index}>
             <div className='form-group m-form__group row'>
-              <label htmlFor='example-email-input' className='col-5 col-form-label'><a href='' onClick={openModal} >{data.name}</a></label>
+              <label htmlFor='example-email-input' className='col-5 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
               <div className='col-6 float-left' >
                 <div className='m-radio-inline pull-left' style={{width: '100%'}}>
                   {valueList}
@@ -215,13 +215,13 @@ export default function ViewReview (props) {
         </div>
         <Discussion name={reviewname} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={reviewname} type='Component' {...props} />
-        <CheckItemModal checkItemData={props.clickCheckItemData} />
+        <CheckItemModal />
       </div>
       )
     }
     ViewReview.propTypes = {
       match: PropTypes.any,
       // setModalSetting: PropTypes.func,
-      reviewbyId: PropTypes.any,
-      clickCheckItemData: PropTypes.any
+      reviewbyId: PropTypes.any
+      // clickCheckItemData: PropTypes.any
  }

@@ -2,8 +2,6 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import ViewReview from '../../components/viewReview/viewReviewComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
-import { actionCreators } from '../../redux/reducers/viewReviewReducer/viewReviewReducerReducer'
-import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 import { actionCreators as checkItemModalActionCreators } from '../../redux/reducers/checkItemModalReducer/checkItemModalReducerReducer'
 
@@ -11,21 +9,13 @@ import { actionCreators as checkItemModalActionCreators } from '../../redux/redu
 export function mapStateToProps (state, props) {
   return {
     authenticateUser: state.basicReducer.authenticateUser,
-    modalIsOpen: state.basicReducer.modalIsOpen,
-    principlemodalIsOpen: state.viewReviewReducer.principlemodalIsOpen,
-    standardmodalIsOpen: state.viewReviewReducer.standardmodalIsOpen,
-    reviewbyId: state.viewReviewReducer.reviewbyId,
-    clickCheckItemData: state.viewReviewReducer.clickCheckItemData
+    reviewbyId: state.viewReviewReducer.reviewbyId
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   // fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setPrincipleModalOpenStatus: actionCreators.setPrincipleModalOpenStatus,
-  setStandardModalOpenStatus: actionCreators.setStandardModalOpenStatus,
-  setClickCheckItemData: actionCreators.setClickCheckItemData,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setModalSetting: checkItemModalActionCreators.setModalSetting,
   setCheckItemData: checkItemModalActionCreators.setCheckItemData
