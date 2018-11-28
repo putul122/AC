@@ -12,6 +12,30 @@ export default function Dashboard (props) {
   let lineData = {}
   let pieChartData = {}
   let datasets = []
+  let lineOption = {
+    responsive: true,
+    // title: {
+    //   display: true,
+    //   text: 'Top 5 Technology'
+    // },
+    maintainAspectRatio: true,
+    scales: {
+      yAxes: [{
+        display: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Review'
+        }
+      }],
+      xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Reviews Compliant & Per Month'
+          }
+      }]
+    }
+  }
   if (props.reviewsSummary && props.reviewsSummary !== '') {
     if (props.reviewsSummary.resources.length > 0) {
       reviewsInDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
@@ -259,7 +283,7 @@ export default function Dashboard (props) {
                   </div>
                   <div className='col'>
                     <span className='m-widget12__text2'>
-                      <Line data={lineData} />
+                      <Line data={lineData} options={lineOption} />
                     </span>
                   </div>
                 </div>
