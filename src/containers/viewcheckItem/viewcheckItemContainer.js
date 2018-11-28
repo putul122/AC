@@ -1,46 +1,52 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
-import AddCheckItem from '../../components/addcheckItem/addcheckItemComponent'
+import ViewCheckItem from '../../components/viewcheckItem/viewcheckItemComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import _ from 'lodash'
-import { actionCreators } from '../../redux/reducers/addcheckItemReducer/addcheckItemReducerReducer'
-import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators } from '../../redux/reducers/viewcheckItemReducer/viewcheckItemReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
     authenticateUser: state.basicReducer.authenticateUser,
-    // componentTypeComponents: state.basicReducer.componentTypeComponents,
-    componentTypeComponentCheckitems: state.addcheckItemReducer.componentTypeComponentCheckitems,
-    componentTypeComponentPrinciples: state.addcheckItemReducer.componentTypeComponentPrinciples,
-    componentTypeComponentStandards: state.addcheckItemReducer.componentTypeComponentStandards,
-    componentTypeComponentCheckitemsvalues: state.addcheckItemReducer.componentTypeComponentCheckitemsvalues,
-    componentTypeProperties: state.addcheckItemReducer.componentTypeProperties,
-    reviewCategories: state.addcheckItemReducer.reviewCategories,
-    selectedStandard: state.addcheckItemReducer.selectedStandard,
-    standards: state.addcheckItemReducer.standards,
-    selectedPrinciple: state.addcheckItemReducer.selectedPrinciple,
-    principles: state.addcheckItemReducer.principles,
-    selectedValue: state.addcheckItemReducer.selectedValue,
-    values: state.addcheckItemReducer.values,
-    selectedCheckitem: state.addcheckItemReducer.selectedCheckitem,
-    checkitems: state.addcheckItemReducer.checkitems,
-    addCheckitemValue: state.addcheckItemReducer.addCheckitemValue,
-    newStandardValue: state.addcheckItemReducer.newStandardValue,
-    modalIsOpen: state.basicReducer.modalIsOpen,
-    createCheckItemResponse: state.addcheckItemReducer.createCheckItemResponse,
-    addStandard: state.addcheckItemReducer.addStandard
+    checkitembyId: state.viewcheckItemReducer.checkitembyId,
+    editCheckItemsSettings: state.viewcheckItemReducer.editCheckItemsSettings,
+    updateCheckItemResponse: state.viewcheckItemReducer.updateCheckItemResponse,
+    deleteCheckItemResponse: state.viewcheckItemReducer.deleteCheckItemResponse,
+    componentTypeComponentCheckitems: state.viewcheckItemReducer.componentTypeComponentCheckitems,
+    componentTypeComponentPrinciples: state.viewcheckItemReducer.componentTypeComponentPrinciples,
+    componentTypeComponentStandards: state.viewcheckItemReducer.componentTypeComponentStandards,
+    componentTypeComponentCheckitemsvalues: state.viewcheckItemReducer.componentTypeComponentCheckitemsvalues,
+    componentTypeProperties: state.viewcheckItemReducer.componentTypeProperties,
+    reviewCategories: state.viewcheckItemReducer.reviewCategories,
+    selectedStandard: state.viewcheckItemReducer.selectedStandard,
+    standards: state.viewcheckItemReducer.standards,
+    selectedPrinciple: state.viewcheckItemReducer.selectedPrinciple,
+    principles: state.viewcheckItemReducer.principles,
+    selectedValue: state.viewcheckItemReducer.selectedValue,
+    values: state.viewcheckItemReducer.values,
+    selectedCheckitem: state.viewcheckItemReducer.selectedCheckitem,
+    checkitems: state.viewcheckItemReducer.checkitems,
+    updateCheckItemValue: state.viewcheckItemReducer.updateCheckItemValue,
+    payload: state.viewcheckItemReducer.payload,
+    componentTypeComponent: state.basicReducer.componentTypeComponent,
+    componentTypeComponents: state.basicReducer.componentTypeComponents
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  setEditCheckItemSettings: actionCreators.setEditCheckItemSettings,
+  setUpdateCheckItemValue: actionCreators.setUpdateCheckItemValue,
+  resetResponse: actionCreators.resetResponse,
+  fetchComponentTypeComponent: sagaActions.basicActions.fetchComponentTypeComponent,
+  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchCheckItemById: sagaActions.checkitemActions.fetchCheckItemById,
+  deleteCheckitem: sagaActions.checkitemActions.deleteCheckitem,
+  updateCheckitem: sagaActions.checkitemActions.updateCheckitem,
   fetchComponentTypeComponentsforcheckitems: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitems,
   fetchComponentTypeComponentsforprinciples: sagaActions.checkitemActions.fetchComponentTypeComponentsforprinciples,
   fetchComponentTypeComponentsforstandards: sagaActions.checkitemActions.fetchComponentTypeComponentsforstandards,
   fetchComponentTypeComponentsforcheckitemvalues: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitemvalues,
   fetchComponentTypeProperties: sagaActions.checkitemActions.fetchComponentTypeProperties,
-  createCheckItem: sagaActions.checkitemActions.createCheckItem,
-  addStandard: sagaActions.checkitemActions.addStandard,
   setReviewCategoryData: actionCreators.setReviewCategoryData,
   setSelectedStandard: actionCreators.setSelectedStandard,
   setStandardsData: actionCreators.setStandardsData,
@@ -50,11 +56,7 @@ export const propsMapping: Callbacks = {
   setValuesData: actionCreators.setValuesData,
   setSelectedCheckitem: actionCreators.setSelectedCheckitem,
   setCheckitemsData: actionCreators.setCheckitemsData,
-  setAddCheckitemValue: actionCreators.setAddCheckitemValue,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setNewStandardValue: actionCreators.setNewStandardValue
-
-  // fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents
+  setPayload: actionCreators.setPayload
 }
 
 // If you want to use the function mapping
@@ -86,8 +88,19 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      let appPackage = JSON.parse(localStorage.getItem('packages'))
+    this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+    // let appPackage = JSON.parse(localStorage.getItem('packages'))
+    // console.log('***********', appPackage)
+    // let componentTypes = appPackage.resources[0].component_types
+    // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+    //     return obj.key === 'Check Item'
+    // }), 'component_type')
+    // console.log('component_type iddddd', componentTypeId)
+    let payload = {
+     'template_id': this.props.match.params.id
+    }
+    this.props.fetchCheckItemById && this.props.fetchCheckItemById(payload)
+    let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
       let checkItemTemplatesId = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Check Item Template'
@@ -108,12 +121,6 @@ export default compose(
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('&&&&', nextProps)
-      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
-        if (!nextProps.authenticateUser.resources[0].result) {
-          this.props.history.push('/')
-        }
-      }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '') {
         if (nextProps.componentTypeProperties.error_code === null) {
           let appPackage = JSON.parse(localStorage.getItem('packages'))
@@ -137,23 +144,21 @@ export default compose(
           toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
         }
       }
-
-      if (nextProps.createCheckItemResponse && nextProps.createCheckItemResponse !== '') {
-        // eslint-disable-next-line
-        mApp && mApp.unblockPage()
+      if (nextProps.deleteCheckItemResponse && nextProps.deleteCheckItemResponse !== '') {
+        // // eslint-disable-next-line
+        // mApp && mApp.unblockPage()
         // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
         // this.props.setUserActionSettings(userActionSettings)
-        if (nextProps.createCheckItemResponse.error_code === null) {
+        if (nextProps.deleteCheckItemResponse.error_code === null) {
           // eslint-disable-next-line
-          toastr.success('Successfully added CheckItem ' +  nextProps.createCheckItemResponse.resources[0].id , 'Nice!')
+          toastr.success('Successfully deleted CheckItem ' +  nextProps.deleteCheckItemResponse.resources[0].id , 'Nice!')
         } else {
           // eslint-disable-next-line
-          toastr.error(nextProps.createCheckItemResponse.error_message, nextProps.createCheckItemResponse.error_code)
+          toastr.error(nextProps.deleteCheckItemResponse.error_message, deleteCheckItemResponse.error_code)
         }
         // this.props.resetResponse()
         this.props.history.push('/checkitems')
       }
     }
-
   })
-)(AddCheckItem)
+)(ViewCheckItem)

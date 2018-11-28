@@ -18,6 +18,10 @@ const customStyles = {
 
 export default function CheckItemModal (props) {
     console.log('check Modal component props', props)
+    let checkItemName = ''
+    let principleList = ''
+    let standardList = ''
+    // let principleType = ''
     let openPrincipleModal = function (event) {
         event.preventDefault()
         let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true}
@@ -33,6 +37,41 @@ export default function CheckItemModal (props) {
         let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false}
         props.setModalSetting(modalSettings)
     }
+    if (props.checkItemData && props.checkItemData !== '') {
+      checkItemName = props.checkItemData.name
+      if (props.checkItemData.principles.length > 0) {
+        principleList = props.checkItemData.principles.map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td><a href={''} onClick={openPrincipleModal}>{data.name}</a></td>
+            </tr>
+          )
+        })
+      } else {
+        principleList = []
+        principleList.push((
+          <tr key={0}>
+            <td>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+      if (props.checkItemData.standards.length > 0) {
+        standardList = props.checkItemData.standards.map(function (data, index) {
+          return (
+            <tr key={index}>
+              <td><a href={''} onClick={openStandardModal}>{data.name}</a></td>
+            </tr>
+          )
+        })
+      } else {
+        standardList = []
+        standardList.push((
+          <tr key={0}>
+            <td>{'No data to display'}</td>
+          </tr>
+        ))
+      }
+   }
     // let closePrincipleModal = function () {
     //     event.preventDefault()
     //     let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false}
@@ -58,7 +97,7 @@ export default function CheckItemModal (props) {
                 </button>
               </div>
               <div className='modal-body'>
-                <h6>Has Cloud Solution been considered</h6>
+                <h6>{checkItemName}</h6>
                 <div className='row m--margin-top-20'>
                   <div className='col-xl-6'>
                     <div className='m-portlet m-portlet--full-height '>
@@ -74,8 +113,11 @@ export default function CheckItemModal (props) {
                       <div className='m-portlet__body'>
                         <div className='m-widget13'>
                           <div className='m-widget13__item'>
-                            <a href='' onClick={openPrincipleModal}>Keep it simple</a><br />
-                            <a href='' onClick={openPrincipleModal}>Cloud First</a>
+                            <table>
+                              <tbody>
+                                {principleList}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -95,7 +137,11 @@ export default function CheckItemModal (props) {
                       <div className='m-portlet__body'>
                         <div className='m-widget13'>
                           <div className='m-widget13__item'>
-                            <a href='' onClick={openStandardModal}>Technology Stack Standard</a>
+                            <table>
+                              <tbody>
+                                {standardList}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -247,7 +293,7 @@ export default function CheckItemModal (props) {
     </div>)
 }
 CheckItemModal.propTypes = {
-  // checkItemData: PropTypes.any,
-  modalSettings: PropTypes.any,
-  setModalSetting: PropTypes.func
+  checkItemData: PropTypes.any,
+  modalSettings: PropTypes.any
+  // setModalSetting: PropTypes.func
 }

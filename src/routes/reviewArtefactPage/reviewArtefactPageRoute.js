@@ -1,9 +1,9 @@
 import React from 'react'
 import Header from '../../containers/header/headerContainer'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation'
-import ReviewApproval from '../../containers/reviewApproval/reviewApprovalContainer'
+import ReviewArtefact from '../../containers/reviewArtefact/reviewArtefactContainer'
 
-class ReviewApprovalPageRoute extends React.Component {
+class ReviewArtefactPageRoute extends React.Component {
   render () {
     return (
       <div>
@@ -11,7 +11,7 @@ class ReviewApprovalPageRoute extends React.Component {
         <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
           <LeftNavigation {...this.props} />
           <div className='m-content col-xl-12'>
-            <ReviewApproval {...this.props} />
+            <ReviewArtefact {...this.props} />
           </div>
         </div>
       </div>
@@ -19,4 +19,4 @@ class ReviewApprovalPageRoute extends React.Component {
   }
   // props: {}
 }
-export default ReviewApprovalPageRoute
+export default ReviewArtefactPageRoute

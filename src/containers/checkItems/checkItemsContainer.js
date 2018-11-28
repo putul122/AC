@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
 import CheckItems from '../../components/checkItems/checkItemsComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
+import _ from 'lodash'
 import { actionCreators } from '../../redux/reducers/checkItemsReducer/checkItemsReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 // Global State
@@ -11,17 +12,21 @@ export function mapStateToProps (state, props) {
     // entitlements: state.checkItemsReducer.entitlements,
     // currentPage: state.checkItemsReducer.currentPage,
     // addEntitlementResponse: state.checkItemsReducer.addEntitlementResponse,
-    modalIsOpen: state.basicReducer.modalIsOpen
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    componentTypeComponents: state.basicReducer.componentTypeComponents,
+    checkitems: state.checkItemsReducer.checkitems,
+    currentPage: state.checkItemsReducer.currentPage,
+    perPage: state.checkItemsReducer.perPage
     // perPage: state.checkItemsReducer.perPage
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchEntitlementsSummary: sagaActions.entitlementActions.fetchEntitlementsSummary,
-  fetchEntitlements: sagaActions.entitlementActions.fetchEntitlements,
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
+  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchCheckItems: sagaActions.checkitemActions.fetchCheckItems,
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
-  addEntitlement: sagaActions.entitlementActions.addEntitlement,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus
  }
 
@@ -55,55 +60,46 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+          return obj.key === 'Check Item'
+      }), 'component_type')
+      console.log('component_type iddddd', componentTypeId)
+      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
+      let payload = {
+        'search': '',
+        'page_size': 10,
+        'page': 1
+      }
+      this.props.fetchCheckItems && this.props.fetchCheckItems(payload)
+    },
+    componentDidMount: function () {
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   let payload = {
-    //     'search': '',
-    //     'page_size': 10,
-    //     'page': 1
-    //   }
-    //   this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
-    //   this.props.fetchEntitlementsSummary && this.props.fetchEntitlementsSummary()
-    // },
-    // componentDidMount: function () {
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#entitlementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    // },
-    // componentWillReceiveProps: function (nextProps) {
-    //   if (nextProps.entitlements && nextProps.entitlements !== this.props.entitlements) {
-    //     // eslint-disable-next-line
-    //     mApp && mApp.unblock('#entitlementList')
-    //   }
-    //   if (nextProps.entitlementsSummary && nextProps.entitlementsSummary !== this.props.entitlementsSummary) {
-    //     // eslint-disable-next-line
-    //     mApp && mApp.unblock('#entitlementSummary')
-    //   }
-    //   if (nextProps.addEntitlementResponse && nextProps.addEntitlementResponse !== '') {
-    //     if (nextProps.addEntitlementResponse.error_code === null) {
-    //       let newEntitlementId = nextProps.addEntitlementResponse.resources[0].id
-    //       // eslint-disable-next-line
-    //       toastr.success('We\'ve added the ' +  nextProps.addEntitlementResponse.resources[0].name  +  ' to your model' , 'Nice!')
-    //       this.props.history.push('/entitlements/' + newEntitlementId)
-    //       // eslint-disable-next-line
-    //       location.reload()
-    //     } else {
-    //       // eslint-disable-next-line
-    //       toastr.error(nextProps.addEntitlementResponse.error_message, nextProps.addEntitlementResponse.error_code)
-    //     }
-    //     this.props.resetResponse()
-    //   }
-    //   if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
-    //     // eslint-disable-next-line
-    //     mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //     let payload = {
-    //       'search': '',
-    //       'page_size': nextProps.perPage,
-    //       'page': 1
-    //     }
-    //     this.props.fetchEntitlements && this.props.fetchEntitlements(payload)
-    //   }
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+     },
+     componentWillReceiveProps: function (nextProps) {
+      console.log('component will receive props', nextProps)
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.checkitems && nextProps.checkitems !== this.props.checkitems) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#entitlementList')
+      }
+      if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+        // eslint-disable-next-line
+        mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        this.props.fetchCheckItems && this.props.fetchCheckItems(payload)
+      }
     }
   })
 )(CheckItems)

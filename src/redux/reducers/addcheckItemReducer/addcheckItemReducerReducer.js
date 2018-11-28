@@ -1,246 +1,171 @@
-import { handleActions } from 'redux-actions'
-// import {
-//     FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
-//     FETCH_ENTITLEMENT_BY_ID_SUCCESS,
-//     FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
-//     FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
-//     DELETE_ENTITLEMENT_SUCCESS,
-//     UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS
-// } from '../../sagas/entitlement/entitlementSaga'
-// import {
-//   FETCH_RELATIONSHIP_PROPERTY_SUCCESS,
-//   UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
-//   DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
-//   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
-//   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
-//   UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
-// } from '../../sagas/agreement/agreementSaga'
-// // Name Spaced Action Types
-// const SET_UPDATE_ENTITLEMENT_SETTINGS = 'EntitlementDetailReducer/SET_UPDATE_ENTITLEMENT_SETTINGS'
-// const RESET_RESPONSE = 'EntitlementDetailReducer/RESET_RESPONSE'
-// const SET_EDIT_COMPONENT_FLAG = 'EntitlementDetailReducer/SET_EDIT_COMPONENT_FLAG'
-// const PUSH_ENTITLEMENT_PROPERTY_PAYLOAD = 'EntitlementDetailReducer/PUSH_ENTITLEMENT_PROPERTY_PAYLOAD'
-// const EDIT_ENTITLEMENT_PROPERTIES = 'EntitlementDetailReducer/EDIT_ENTITLEMENT_PROPERTIES'
-// const COPY_ENTITLEMENT_PROPERTIES = 'EntitlementDetailReducer/COPY_AGREEMENT_PROPERTIES'
-// const COPY_ENTITLEMENT_DATA = 'EntitlementDetailReducer/COPY_AGREEMENT_DATA'
-// const RESTORE_ENTITLEMENT_PROPERTIES = 'EntitlementDetailReducer/RESTORE_AGREEMENT_PROPERTIES'
-// const SET_RELATIONSHIP_ACTION_SETTINGS = 'EntitlementDetailReducer/SET_RELATIONSHIPS_ACTION_SETTINGS'
-// const EDIT_COMPONENT_RELATIONSHIP_PROPERTY = 'EntitlementDetailReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY'
-// const RESET_COMPONENT_RELATIONSHIP_PROPERTY = 'EntitlementDetailReducer/RESET_COMPONENT_RELATIONSHIP_PROPERTY'
-// const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'EntitlementDetailReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD'
-// const SET_ADD_CONNECTION_SETTINGS = 'EntitlementDetailReducer/SET_ADD_CONNECTION_SETTINGS'
-// const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'EntitlementDetailReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
+import { createAction, handleActions } from 'redux-actions'
+import {
+    CREATE_CHECKITEM_SUCCESS,
+    FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
+    FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
+    FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
+    FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
+    FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+    ADD_STANDARD_SUCCESS
+} from '../../sagas/checkItem/checkItemSaga'
+// Name Spaced Action Types
+const RESET_RESPONSE = 'addcheckItemReducer/RESET_RESPONSE'
+const SET_REVIEW_CATEGORY_DATA = 'addcheckItemReducer/SET_REVIEW_CATEGORY_DATA'
+const SET_STANDARDS_DATA = 'addcheckItemReducer/SET_STANDARDS_DATA'
+const SET_SELECTED_STANDARD = 'addcheckItemReducer/SET_SELECTED_STANDARD'
+const SET_SELECTED_PRINCIPLE = 'addcheckItemReducer/SET_SELECTED_PRINCIPLE'
+const SET_PRINCIPLES_DATA = 'addcheckItemReducer/SET_PRINCIPLES_DATA'
+const SET_SELECTED_VALUE = 'addcheckItemReducer/SET_SELECTED_VALUE'
+const SET_VALUES_DATA = 'addcheckItemReducer/SET_VALUES_DATA'
+const SET_SELECTED_CHECKITEM = 'addcheckItemReducer/SET_CHECKITEM_VALUE'
+const SET_CHECKITEMS_DATA = 'addcheckItemReducer/SET_CHECKITEMS_DATA'
+const SET_ADD_CHECKITEM_VALUE = 'addcheckItemReducer/SET_ADD_CHECKITEM_VALUE'
+const SET_NEW_STANDARD_VALUE = 'addcheckItemReducer/SET_NEW_STANDARD_VALUE'
 
 export const actions = {
-    // FETCH_ENTITLEMENTS_SUMMARY_SUCCESS,
-    // FETCH_ENTITLEMENT_BY_ID_SUCCESS,
-    // FETCH_ENTITLEMENT_PROPERTIES_SUCCESS,
-    // FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS,
-    // SET_UPDATE_ENTITLEMENT_SETTINGS,
-    // RESET_RESPONSE,
-    // SET_EDIT_COMPONENT_FLAG,
-    // PUSH_ENTITLEMENT_PROPERTY_PAYLOAD,
-    // EDIT_ENTITLEMENT_PROPERTIES,
-    // COPY_ENTITLEMENT_PROPERTIES,
-    // COPY_ENTITLEMENT_DATA,
-    // RESTORE_ENTITLEMENT_PROPERTIES,
-    // DELETE_ENTITLEMENT_SUCCESS,
-    // UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS,
-    // FETCH_RELATIONSHIP_PROPERTY_SUCCESS,
-    // UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
-    // DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
-    // FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
-    // FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
-    // UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
-    // RESET_UPDATE_RELATIONSHIP_RESPONSE,
-    // SET_RELATIONSHIP_ACTION_SETTINGS
+  CREATE_CHECKITEM_SUCCESS,
+  RESET_RESPONSE,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+  SET_REVIEW_CATEGORY_DATA,
+  SET_SELECTED_STANDARD,
+  SET_STANDARDS_DATA,
+  SET_SELECTED_PRINCIPLE,
+  SET_PRINCIPLES_DATA,
+  SET_SELECTED_VALUE,
+  SET_VALUES_DATA,
+  SET_SELECTED_CHECKITEM,
+  SET_CHECKITEMS_DATA,
+  SET_ADD_CHECKITEM_VALUE,
+  ADD_STANDARD_SUCCESS,
+  SET_NEW_STANDARD_VALUE
 }
 
 export const actionCreators = {
-  // setUpdateEntitlementSettings: createAction(SET_UPDATE_ENTITLEMENT_SETTINGS),
-  // setEditComponentFlag: createAction(SET_EDIT_COMPONENT_FLAG),
-  // resetResponse: createAction(RESET_RESPONSE),
-  // pushEntitlementPropertyPayload: createAction(PUSH_ENTITLEMENT_PROPERTY_PAYLOAD),
-  // editEntitlementProperties: createAction(EDIT_ENTITLEMENT_PROPERTIES),
-  // copyEntitlementProperties: createAction(COPY_ENTITLEMENT_PROPERTIES),
-  // copyEntitlementData: createAction(COPY_ENTITLEMENT_DATA),
-  // restoreEntitlementProperties: createAction(RESTORE_ENTITLEMENT_PROPERTIES),
-  // setRelationshipActionSettings: createAction(SET_RELATIONSHIP_ACTION_SETTINGS),
-  // editComponentRelationshipProperties: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY),
-  // resetComponentRelationshipProperties: createAction(RESET_COMPONENT_RELATIONSHIP_PROPERTY),
-  // editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
-  // setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
-  // resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE)
+  resetResponse: createAction(RESET_RESPONSE),
+  setReviewCategoryData: createAction(SET_REVIEW_CATEGORY_DATA),
+  setSelectedStandard: createAction(SET_SELECTED_STANDARD),
+  setStandardsData: createAction(SET_STANDARDS_DATA),
+  setSelectedPrinciple: createAction(SET_SELECTED_PRINCIPLE),
+  setPrinciplesData: createAction(SET_PRINCIPLES_DATA),
+  setSelectedValue: createAction(SET_SELECTED_VALUE),
+  setValuesData: createAction(SET_VALUES_DATA),
+  setSelectedCheckitem: createAction(SET_SELECTED_CHECKITEM),
+  setCheckitemsData: createAction(SET_CHECKITEMS_DATA),
+  setAddCheckitemValue: createAction(SET_ADD_CHECKITEM_VALUE),
+  setNewStandardValue: createAction(SET_NEW_STANDARD_VALUE)
 }
 
 export const initialState = {
-  // entitlement: '',
-  // entitlementSummary: '',
-  // entitlementProperties: '',
-  // entitlementRelationships: '',
-  // deleteEntitlementResponse: '',
-  // updateEntitlementResponse: '',
-  // updateEntitlementPropertyResponse: '',
-  // copiedEntitlementProperties: '',
-  // copiedEntitlementData: '',
-  // isEditComponent: false,
-  // entitlementPropertiesPayload: {property: [], entitlement: [], relationship: []},
-  // updateEntitlementSettings: {
-  //   isDeleteModalOpen: false,
-  //   isConfirmationModalOpen: false
-  // },
-  // addNewConnectionSettings: {
-  //   isModalOpen: false,
-  //   firstSelectboxSelected: false,
-  //   firstSelectboxIndex: null,
-  //   targetComponentTypeId: '',
-  //   isWaitingForApiResponse: false,
-  //   secondSelectboxSelected: false,
-  //   secondSelectboxIndex: '',
-  //   isParentSelected: false,
-  //   isNewComponent: false,
-  //   newComponentName: '',
-  //   isEditComponent: false,
-  //   showAddRelationshipButton: false,
-  //   showCreateConnectionButton: false,
-  //   slectedConstraintObject: {},
-  //   selectedComponentObject: {},
-  //   relationshipText: '',
-  //   componentText: '',
-  //   newConnectionArray: []
-  // },
-  // relationshipActionSettings: {
-  //   isModalOpen: false,
-  //   actionType: '',
-  //   relationshipId: '',
-  //   relationshipText: '',
-  //   componentName: '',
-  //   selectedObject: ''
-  // },
-  // relationshipProperty: '',
-  // relationshipPropertyPayload: [],
-  // componentTypeComponentConstraints: '',
-  // componentTypeComponents: '',
-  // updateRelationshipResponse: '',
-  // updateRelationshipPropertyResponse: '',
-  // deleteRelationshipResponse: ''
+  createCheckItemResponse: '',
+  addStandardResponse: '',
+  componentTypeComponentCheckitems: '',
+  componentTypeComponentPrinciples: '',
+  componentTypeComponentStandards: '',
+  componentTypeComponentCheckitemsvalues: '',
+  componentTypeProperties: '',
+  reviewCategories: '',
+  standards: [],
+  selectedStandard: null,
+  principles: [],
+  selectedPrinciple: null,
+  values: [],
+  selectedValue: null,
+  checkitems: [],
+  selectedCheckitem: null,
+  addCheckitemValue: {
+    'name': '',
+    'description': ''
+  },
+  newStandardValue: {
+    'name': '',
+    'description': '',
+    'reference': ''
+  }
+
 }
 
 export default handleActions(
   {
-    // [FETCH_ENTITLEMENTS_SUMMARY_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   entitlementSummary: action.payload
-    // }),
-    // [FETCH_ENTITLEMENT_BY_ID_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   entitlement: action.payload
-    // }),
-    // [FETCH_ENTITLEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   entitlementProperties: action.payload
-    // }),
-    // [FETCH_ENTITLEMENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   entitlementRelationships: action.payload
-    // }),
-    // [DELETE_ENTITLEMENT_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   deleteEntitlementResponse: action.payload
-    // }),
-    // [UPDATE_ENTITLEMENT_PROPERTIES_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   updateEntitlementPropertyResponse: action.payload
-    // }),
-    // [COPY_ENTITLEMENT_PROPERTIES]: (state, action) => ({
-    //   ...state,
-    //   copiedEntitlementProperties: action.payload
-    // }),
-    // [COPY_ENTITLEMENT_DATA]: (state, action) => ({
-    //   ...state,
-    //   copiedEntitlementData: action.payload
-    // }),
-    // [SET_EDIT_COMPONENT_FLAG]: (state, action) => ({
-    //   ...state,
-    //   isEditComponent: action.payload
-    // }),
-    // [PUSH_ENTITLEMENT_PROPERTY_PAYLOAD]: (state, action) => ({
-    //   ...state,
-    //   entitlementPropertiesPayload: action.payload
-    // }),
-    // [EDIT_ENTITLEMENT_PROPERTIES]: (state, action) => ({
-    //   ...state,
-    //   entitlementProperties: action.payload.property,
-    //   entitlement: action.payload.entitlement
-    // }),
-    // [SET_UPDATE_ENTITLEMENT_SETTINGS]: (state, action) => ({
-    //   ...state,
-    //   updateEntitlementSettings: action.payload
-    // }),
-    // [RESTORE_ENTITLEMENT_PROPERTIES]: (state, action) => ({
-    //   ...state,
-    //   entitlementProperties: action.payload.property,
-    //   entitlement: action.payload.entitlement
-    // }),
-    // [RESET_RESPONSE]: (state, action) => ({
-    //   ...state,
-    //   entitlementPropertiesPayload: {property: [], entitlement: [], relationship: []},
-    //   updateEntitlementResponse: '',
-    //   deleteEntitlementResponse: '',
-    //   updateEntitlementPropertyResponse: ''
-    // }),
-    // [FETCH_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   relationshipProperty: action.payload
-    // }),
-    // [EDIT_COMPONENT_RELATIONSHIP_PROPERTY]: (state, action) => ({
-    //   ...state,
-    //   relationshipProperty: action.payload
-    // }),
-    // [RESET_COMPONENT_RELATIONSHIP_PROPERTY]: (state, action) => ({
-    //   ...state,
-    //   relationshipProperty: ''
-    // }),
-    // [EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD]: (state, action) => ({
-    //   ...state,
-    //   relationshipPropertyPayload: action.payload
-    // }),
-    // [UPDATE_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   updateRelationshipPropertyResponse: action.payload
-    // }),
-    // [DELETE_COMPONENT_RELATIONSHIP_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   deleteRelationshipResponse: action.payload
-    // }),
-    // [SET_ADD_CONNECTION_SETTINGS]: (state, action) => ({
-    //   ...state,
-    //   addNewConnectionSettings: action.payload
-    // }),
-    // [FETCH_COMPONENT_CONSTRAINTS_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   componentTypeComponentConstraints: action.payload
-    // }),
-    // [FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   componentTypeComponents: action.payload
-    // }),
-    // [UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
-    //   ...state,
-    //   updateRelationshipResponse: action.payload
-    // }),
-    // [SET_RELATIONSHIP_ACTION_SETTINGS]: (state, action) => ({
-    //   ...state,
-    //   relationshipActionSettings: action.payload
-    // }),
-    // [RESET_UPDATE_RELATIONSHIP_RESPONSE]: (state, action) => ({
-    //   ...state,
-    //   updateRelationshipResponse: '',
-    //   updateRelationshipPropertyResponse: '',
-    //   deleteRelationshipResponse: '',
-    //   relationshipPropertyPayload: [],
-    //   deleteComponent: ''
-    // })
+    [CREATE_CHECKITEM_SUCCESS]: (state, action) => ({
+      ...state,
+      createCheckItemResponse: action.payload
+    }),
+    [ADD_STANDARD_SUCCESS]: (state, action) => ({
+      ...state,
+      addStandardResponse: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentCheckitems: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentPrinciples: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentStandards: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentCheckitemsvalues: action.payload
+    }),
+    [SET_STANDARDS_DATA]: (state, action) => ({
+      ...state,
+      standards: action.payload
+    }),
+    [SET_PRINCIPLES_DATA]: (state, action) => ({
+      ...state,
+      principles: action.payload
+    }),
+    [SET_VALUES_DATA]: (state, action) => ({
+      ...state,
+      values: action.payload
+    }),
+    [SET_CHECKITEMS_DATA]: (state, action) => ({
+      ...state,
+      checkitems: action.payload
+    }),
+    [SET_REVIEW_CATEGORY_DATA]: (state, action) => ({
+      ...state,
+      reviewCategories: action.payload
+    }),
+    [SET_SELECTED_STANDARD]: (state, action) => ({
+      ...state,
+      selectedStandard: action.payload
+    }),
+    [SET_SELECTED_PRINCIPLE]: (state, action) => ({
+      ...state,
+      selectedPrinciple: action.payload
+    }),
+    [SET_SELECTED_VALUE]: (state, action) => ({
+      ...state,
+      selectedValue: action.payload
+    }),
+    [SET_SELECTED_CHECKITEM]: (state, action) => ({
+      ...state,
+      selectedCheckitem: action.payload
+    }),
+    [SET_ADD_CHECKITEM_VALUE]: (state, action) => ({
+      ...state,
+      addCheckitemValue: action.payload
+    }),
+    [SET_NEW_STANDARD_VALUE]: (state, action) => ({
+      ...state,
+      newStandardValue: action.payload
+    }),
+    [FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeProperties: action.payload
+    }),
+    [RESET_RESPONSE]: (state, action) => ({
+      ...state,
+      createCheckItemResponse: ''
+    })
   },
   initialState
 )

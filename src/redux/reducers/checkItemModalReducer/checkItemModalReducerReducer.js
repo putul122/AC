@@ -19,7 +19,9 @@ export const initialState = {
   modalSettings: {
     isViewCheckItemOpen: false,
     isStandardModalOpen: false,
-    isPrincipleModalOpen: false
+    isPrincipleModalOpen: false,
+    principleData: '',
+    standardData: ''
   }
 }
 

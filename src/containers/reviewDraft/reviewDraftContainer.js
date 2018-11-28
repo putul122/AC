@@ -5,6 +5,7 @@ import ReviewDraft from '../../components/reviewDraft/reviewDraftComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/reviewDraftReducer/reviewDraftReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as checkItemModalActionCreators } from '../../redux/reducers/checkItemModalReducer/checkItemModalReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -26,7 +27,10 @@ export function mapStateToProps (state, props) {
     reviewProperties: state.reviewDraftReducer.reviewProperties,
     validationClass: state.reviewDraftReducer.validationClass,
     selectedCategory: state.reviewDraftReducer.selectedCategory,
-    firstLoad: state.reviewDraftReducer.firstLoad
+    firstLoad: state.reviewDraftReducer.firstLoad,
+    users: state.reviewDraftReducer.users,
+    selectedApprover: state.reviewDraftReducer.selectedApprover,
+    selectedReviewer: state.reviewDraftReducer.selectedReviewer
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -42,6 +46,8 @@ export const propsMapping: Callbacks = {
   setValidationClass: actionCreators.setValidationClass,
   setSelectedCategory: actionCreators.setSelectedCategory,
   setFirstLoad: actionCreators.setFirstLoad,
+  setSelectedApprover: actionCreators.setSelectedApprover,
+  setSelectedReviewer: actionCreators.setSelectedReviewer,
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   fetchReviewArtefacts: sagaActions.reviewActions.fetchReviewArtefacts,
   updateReviews: sagaActions.reviewActions.updateReviews,
@@ -50,7 +56,10 @@ export const propsMapping: Callbacks = {
   fetchcomponentTypeConstraints: sagaActions.basicActions.fetchcomponentTypeConstraints,
   connectDisconnectArtefact: sagaActions.reviewActions.connectDisconnectArtefact,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  fetchUsers: sagaActions.userActions.fetchUsers,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setModalSetting: checkItemModalActionCreators.setModalSetting,
+  setCheckItemData: checkItemModalActionCreators.setCheckItemData
 }
 
 // If you want to use the function mapping
@@ -84,6 +93,7 @@ export default compose(
     componentWillMount: function () {
       console.log('props', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      this.props.fetchUsers && this.props.fetchUsers()
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -121,10 +131,11 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      if (nextProps.reviewData && nextProps.reviewData !== '' && nextProps.reviewData !== this.props.reviewData) {
+      if (nextProps.reviewData && nextProps.reviewData !== '' && nextProps.reviewData !== this.props.reviewData && this.props.reviewData === '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        if (!nextProps.reviewData.errorCode && nextProps.reviewData.resources && nextProps.reviewData.resources.length > 0) {
+        console.log('running 123')
+        if (nextProps.reviewData.error_code === null && nextProps.reviewData.resources && nextProps.reviewData.resources.length > 0) {
           let draftEdit = {...this.props.draftEdit}
           draftEdit.name = nextProps.reviewData.resources[0].name || ''
           draftEdit.description = nextProps.reviewData.resources[0].description || ''
@@ -142,6 +153,8 @@ export default compose(
           draftEdit.isCancel = nextProps.reviewData.resources[0].status === 'Cancelled' || false
           draftEdit.cancelReason = nextProps.reviewData.resources[0].reason || ''
           this.props.setDraftEditData(draftEdit)
+        } else {
+          console.log('else', nextProps.reviewData)
         }
       }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '' && nextProps.componentTypeProperties !== this.props.componentTypeProperties) {
@@ -224,7 +237,7 @@ export default compose(
         let componentTypeId = nextProps.connectArtefactSettings.selectedRelations.target_component_type.id
         this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeId)
       }
-      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.firstLoad) {
+      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.users.resources.length > 0 && nextProps.firstLoad) {
         console.log('inside if -----------------------------------reviewProperties', nextProps, nextProps.reviewData)
         if (nextProps.reviewData && nextProps.reviewData !== null & nextProps.reviewData.error_code === null) {
           let defaultCategoryId = nextProps.reviewData.resources[0].review_category_id
@@ -236,6 +249,28 @@ export default compose(
           if (defaultCategoryObject) {
             defaultCategoryObject.label = defaultCategoryObject.name
             nextProps.setSelectedCategory(defaultCategoryObject)
+            nextProps.setFirstLoad(false)
+          }
+          let reviewerId = nextProps.reviewData.resources[0].reviewer_id
+          let defaultReviewerObject = _.find(nextProps.users.resources, function (obj) {
+            return obj.id === reviewerId
+          })
+          console.log('defaultReviewerObject', defaultReviewerObject)
+          defaultReviewerObject = defaultReviewerObject || null
+          if (defaultReviewerObject) {
+            defaultReviewerObject.label = defaultReviewerObject.first_name + ' ' + defaultReviewerObject.last_name
+            nextProps.setSelectedReviewer(defaultReviewerObject)
+            nextProps.setFirstLoad(false)
+          }
+          let approverId = nextProps.reviewData.resources[0].approver_id
+          let defaultApproverObject = _.find(nextProps.users.resources, function (obj) {
+            return obj.id === approverId
+          })
+          console.log('defaultApproverObject', defaultApproverObject)
+          defaultApproverObject = defaultApproverObject || null
+          if (defaultApproverObject) {
+            defaultApproverObject.label = defaultApproverObject.first_name + ' ' + defaultApproverObject.last_name
+            nextProps.setSelectedApprover(defaultApproverObject)
             nextProps.setFirstLoad(false)
           }
         }

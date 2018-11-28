@@ -5,6 +5,7 @@ import ReviewApproval from '../../components/reviewApproval/reviewApprovalCompon
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/reviewApprovalReducer/reviewApprovalReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+import { actionCreators as checkItemModalActionCreators } from '../../redux/reducers/checkItemModalReducer/checkItemModalReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -30,7 +31,9 @@ export const propsMapping: Callbacks = {
   setValidationClass: actionCreators.setValidationClass,
   setReviewProperty: actionCreators.setReviewProperty,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
-  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
+  setModalSetting: checkItemModalActionCreators.setModalSetting,
+  setCheckItemData: checkItemModalActionCreators.setCheckItemData
 }
 
 // If you want to use the function mapping

@@ -8,6 +8,7 @@ import watchLoginUser, {actionCreators as loginActions} from './login/loginSaga'
 import watchApplicationActivity, {actionCreators as applicationActivityActions} from './applicationActivity/applicationActivitySaga'
 import watchUserActions, {actionCreators as userActions} from './user/userSaga'
 import watchDiscussions, {actionCreators as discussionActions} from './discussion/discussionSaga'
+import watchCheckItems, {actionCreators as checkitemActions} from './checkItem/checkItemSaga'
 
 export const actions = {
   basicActions,
@@ -19,7 +20,8 @@ export const actions = {
   applicationActivityActions,
   userActions,
   templateActions,
-  discussionActions
+  discussionActions,
+  checkitemActions
 }
 export default function * rootSaga () {
   yield [
@@ -32,6 +34,7 @@ export default function * rootSaga () {
     watchApplicationActivity(),
     watchUserActions(),
     watchTemplates(),
-    watchDiscussions()
+    watchDiscussions(),
+    watchCheckItems()
   ]
 }

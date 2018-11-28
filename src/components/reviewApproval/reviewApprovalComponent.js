@@ -1,11 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-// import styles from './addTemplateComponent.scss'
-// import moment from 'moment'
-// import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 
 export default function ReviewApproval (props) {
   console.log(props)
@@ -21,6 +19,17 @@ export default function ReviewApproval (props) {
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let openModal = function (data) {
+    props.setCheckItemData(data)
+    let modalSettings = {
+      'isViewCheckItemOpen': true,
+      'isStandardModalOpen': false,
+      'isPrincipleModalOpen': false,
+      'principleData': '',
+      'standardData': ''
+    }
+    props.setModalSetting(modalSettings)
   }
   let onRadioChange = function (value) {
     let isApproved = value
@@ -138,7 +147,7 @@ export default function ReviewApproval (props) {
     if (props.reviewData.resources[0].check_items.length > 0) {
       checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
         return (<span className='m-list-search__result-item' key={index}>
-          <span className='m-list-search__result-item-text'>{data.name}</span>
+          <span className='m-list-search__result-item-text'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></span>
         </span>)
       })
     } else {
@@ -148,7 +157,7 @@ export default function ReviewApproval (props) {
     return (
       <div className=''>
         <div className='row clearfix'>
-          <div className='col-xs-4 col-sm-6 col-md-8' />
+          <div className='col-xs-4 col-sm-6 col-md-8' ><h2> Approve Review</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
               <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
@@ -286,6 +295,7 @@ export default function ReviewApproval (props) {
         </div>
         <Discussion name={reviewName} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={reviewName} type='Component' {...props} />
+        <CheckItemModal />
       </div>
       )
     }

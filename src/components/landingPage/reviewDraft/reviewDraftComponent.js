@@ -4,7 +4,6 @@ import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer
 import Discussion from '../../containers/discussion/discussionContainer'
 import Select from 'react-select'
 import _ from 'lodash'
-import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
@@ -24,17 +23,6 @@ export default function ReviewDraft (props) {
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
-  }
-  let openModal = function (data) {
-    props.setCheckItemData(data)
-    let modalSettings = {
-      'isViewCheckItemOpen': true,
-      'isStandardModalOpen': false,
-      'isPrincipleModalOpen': false,
-      'principleData': '',
-      'standardData': ''
-    }
-    props.setModalSetting(modalSettings)
   }
   if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
     reviewStatus = props.reviewData.resources[0].status
@@ -540,7 +528,7 @@ export default function ReviewDraft (props) {
     if (props.draftEdit.checkItems.length > 0) {
       checkItemList = props.draftEdit.checkItems.map(function (data, index) {
         return (<span className='m-list-search__result-item' key={index}>
-          <span className='m-list-search__result-item-text'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></span>
+          <span className='m-list-search__result-item-text'>{data.name}</span>
           <button type='button' onClick={() => { removeCheckItem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
         </span>)
       })
@@ -552,7 +540,7 @@ export default function ReviewDraft (props) {
     return (
       <div>
         <div className='row clearfix'>
-          <div className='col-xs-4 col-sm-6 col-md-8' ><h2>Complete Draft</h2></div>
+          <div className='col-xs-4 col-sm-6 col-md-8' />
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
               <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
@@ -783,7 +771,6 @@ export default function ReviewDraft (props) {
         </div>
         <Discussion name={props.draftEdit.name} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={props.draftEdit.name} type='Component' {...props} />
-        <CheckItemModal />
       </div>
       )
     }

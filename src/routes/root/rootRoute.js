@@ -169,6 +169,24 @@ export default class Root extends Component {
             }
             resolve(require('../addcheckItemPage/addcheckItemPageRoute').default)
             break
+          case 'viewCheckItem':
+            if (module.hot) {
+              module.hot.accept('../viewcheckItemPage/viewcheckItemPageRoute', () => {
+                require('../viewcheckItemPage/viewcheckItemPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../viewcheckItemPage/viewcheckItemPageRoute').default)
+            break
+          case 'review_artefact':
+            if (module.hot) {
+              module.hot.accept('../reviewArtefactPage/reviewArtefactPageRoute', () => {
+                        require('../reviewArtefactPage/reviewArtefactPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+              })
+            }
+            resolve(require('../reviewArtefactPage/reviewArtefactPageRoute').default)
+            break
           case 'landing':
             if (module.hot) {
               module.hot.accept('../landingPage/landingPageRoute', () => {
@@ -214,6 +232,8 @@ export default class Root extends Component {
             <Route exact path='/accept_review/:id' component={(props) => this.loadView('acceptReview', props)} />
             <Route exact path='/addcheckitem' component={(props) => this.loadView('addcheckItem', props)} />
             <Route exact path='/reviews/:id' component={(props) => this.loadView('viewReview', props)} />
+            <Route exact path='/checkitems/:id' component={(props) => this.loadView('viewCheckItem', props)} />
+            <Route exact path='/review_artefact/:id' component={(props) => this.loadView('review_artefact', props)} />
             <Route path='/' exact component={(props) => this.loadView('landing', props)} />
           </Switch>
         </BrowserRouter>

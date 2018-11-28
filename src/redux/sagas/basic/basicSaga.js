@@ -37,6 +37,12 @@ export const FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE = 'saga/Basic/FETCH_COMPONE
 export const FETCH_COMPONENT_TYPE_CONSTRAINTS = 'saga/Basic/FETCH_COMPONENT_TYPE_CONSTRAINTS'
 export const FETCH_COMPONENT_TYPE_CONSTRAINTS_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_CONSTRAINTS_SUCCESS'
 export const FETCH_COMPONENT_TYPE_CONSTRAINTS_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_CONSTRAINTS_FAILURE'
+export const FETCH_REVIEWARTEFACT_PROPERTIES = 'saga/Basic/FETCH_REVIEWARTEFACT_PROPERTIES'
+export const FETCH_REVIEWARTEFACT_PROPERTIES_SUCCESS = 'saga/Basic/FETCH_REVIEWARTEFACT_PROPERTIES_SUCCESS'
+export const FETCH_REVIEWARTEFACT_PROPERTIES_FAILURE = 'saga/Basic/FETCH_REVIEWARTEFACT_PROPERTIES_FAILURE'
+export const FETCH_REVIEWARTEFACT_RELATIONSHIPS = 'saga/Basic/FETCH_REVIEWARTEFACT_RELATIONSHIPS'
+export const FETCH_REVIEWARTEFACT_RELATIONSHIPS_SUCCESS = 'saga/Basic/FETCH_REVIEWARTEFACT_RELATIONSHIPS_SUCCESS'
+export const FETCH_REVIEWARTEFACT_RELATIONSHIPS_FAILURE = 'saga/Baisc/FETCH_REVIEWARTEFACT_RELATIONSHIPS_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -71,7 +77,13 @@ export const actionCreators = {
   fetchComponentTypePropertiesFailure: createAction(FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE),
   fetchcomponentTypeConstraints: createAction(FETCH_COMPONENT_TYPE_CONSTRAINTS),
   fetchcomponentTypeConstraintsSuccess: createAction(FETCH_COMPONENT_TYPE_CONSTRAINTS_SUCCESS),
-  fetchcomponentTypeConstraintsFailure: createAction(FETCH_COMPONENT_TYPE_CONSTRAINTS_FAILURE)
+  fetchcomponentTypeConstraintsFailure: createAction(FETCH_COMPONENT_TYPE_CONSTRAINTS_FAILURE),
+  fetchReviewArtefactProperties: createAction(FETCH_REVIEWARTEFACT_PROPERTIES),
+  fetchReviewArtefactPropertiesSuccess: createAction(FETCH_REVIEWARTEFACT_PROPERTIES_SUCCESS),
+  fetchReviewArtefactPropertiesFailure: createAction(FETCH_REVIEWARTEFACT_PROPERTIES_FAILURE),
+  fetchReviewArtefactRelationships: createAction(FETCH_REVIEWARTEFACT_RELATIONSHIPS),
+  fetchReviewArtefactRelationshipsSuccess: createAction(FETCH_REVIEWARTEFACT_RELATIONSHIPS_SUCCESS),
+  fetchReviewArtefactRelationshipsFailure: createAction(FETCH_REVIEWARTEFACT_RELATIONSHIPS_FAILURE)
 }
 
 export default function * watchBasic () {
@@ -86,7 +98,9 @@ export default function * watchBasic () {
     takeLatest(FETCH_ROLES, getRoles),
     takeLatest(UPDATE_COMPONENT_RELATIONSHIPS, updateComponentRelationships),
     takeLatest(FETCH_COMPONENT_TYPE_PROPERTIES, getComponentTypeProperties),
-    takeLatest(FETCH_COMPONENT_TYPE_CONSTRAINTS, getComponentTypeConstraints)
+    takeLatest(FETCH_COMPONENT_TYPE_CONSTRAINTS, getComponentTypeConstraints),
+    takeLatest(FETCH_REVIEWARTEFACT_PROPERTIES, getReviewArtefactProperties),
+    takeLatest(FETCH_REVIEWARTEFACT_RELATIONSHIPS, getReviewArtefactRelationships)
   ]
 }
 
@@ -113,6 +127,32 @@ export function * getUserAuthentication (action) {
     yield put(actionCreators.fetchUserAuthenticationSuccess(userAuthentication.data))
   } catch (error) {
     yield put(actionCreators.fetchUserAuthenticationFailure(error))
+  }
+}
+
+export function * getReviewArtefactProperties (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const reviewArtefactProperties = yield call(
+      axios.get,
+      api.getReviewArtefactProperties(action.payload.review_artefact_id)
+    )
+    yield put(actionCreators.fetchReviewArtefactPropertiesSuccess(reviewArtefactProperties.data))
+  } catch (error) {
+    yield put(actionCreators.fetchReviewArtefactPropertiesFailure(error))
+  }
+}
+
+export function * getReviewArtefactRelationships (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const reviewArtefactRelationships = yield call(
+      axios.get,
+      api.getReviewArtefactRelationships(action.payload.review_artefact_id)
+    )
+    yield put(actionCreators.fetchReviewArtefactRelationshipsSuccess(reviewArtefactRelationships.data))
+  } catch (error) {
+    yield put(actionCreators.fetchReviewArtefactRelationshipsFailure(error))
   }
 }
 

@@ -15,11 +15,10 @@ ReactModal.setAppElement('#root')
 // }
 
 export default function CheckItems (props) {
-  console.log(props.currentPage, props.entitlements)
-  // let entitlementCount = ''
-  // let consumed = ''
+  console.log(props.currentPage, props.componentTypeComponents)
+  console.log(props.checkitems)
   let searchTextBox
-  let entitlementsList = ''
+  let checkitemList = ''
   let totalNoPages
   let perPage = props.perPage
   let currentPage = props.currentPage
@@ -28,7 +27,7 @@ export default function CheckItems (props) {
   let pageArray = []
   let listPage = []
   let paginationLimit = 6
-  let totalEntitlement
+  let totalCheckItem
    // let contextId = ''
   // let appPackage = JSON.parse(localStorage.getItem('packages'))
   // let componentTypes = appPackage.resources[0].component_types
@@ -49,11 +48,11 @@ export default function CheckItems (props) {
     props.setPerPage(parseInt(event.target.value))
   }
 
-  if (props.entitlements && props.entitlements !== '') {
-    entitlementsList = props.entitlements.resources.map(function (data, index) {
+  if (props.checkitems && props.checkitems !== '') {
+    checkitemList = props.checkitems.resources.map(function (data, index) {
       return (
         <tr key={index}>
-          <td>{data.name}</td>
+          <td><a href={'/checkitems/' + data.id}>{data.name}</a></td>
           {/* <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
           <td>{data.purchased}</td>
           <td>{data.consumed}</td>
@@ -64,8 +63,8 @@ export default function CheckItems (props) {
       )
     })
 
-    totalEntitlement = props.entitlements.total_count
-    totalNoPages = Math.ceil(totalEntitlement / perPage)
+    totalCheckItem = props.checkitems.total_count
+    totalNoPages = Math.ceil(totalCheckItem / perPage)
 
     if (currentPage === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -91,14 +90,14 @@ export default function CheckItems (props) {
   let handleInputChange = debounce((e) => {
     console.log(e)
     const value = searchTextBox.value
-    entitlementsList = ''
+    // entitlementsList = ''
     let payload = {
       'search': value || '',
       'page_size': props.perPage,
       'page': currentPage
     }
     // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchEntitlements(payload)
+      props.fetchCheckItems(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // props.setComponentTypeLoading(true)
@@ -118,7 +117,7 @@ export default function CheckItems (props) {
         'page_size': props.perPage,
         'page': currentPage - 1
       }
-      props.fetchEntitlements(payload)
+      props.fetchCheckItems(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage - 1)
@@ -139,7 +138,7 @@ export default function CheckItems (props) {
         'page': currentPage + 1
       }
       // entitlementsList = ''
-      props.fetchEntitlements(payload)
+      props.fetchCheckItems(payload)
       // eslint-disable-next-line
       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage + 1)
@@ -161,7 +160,7 @@ export default function CheckItems (props) {
       'page_size': props.perPage,
       'page': page
     }
-    props.fetchEntitlements(payload)
+    props.fetchCheckItems(payload)
     // eslint-disable-next-line
     mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     props.setCurrentPage(page)
@@ -171,10 +170,6 @@ export default function CheckItems (props) {
       if (found.length > 0) { return group }
     })
   }
-  // if (props.entitlementsSummary && props.entitlementsSummary !== '') {
-  //   entitlementCount = props.entitlementsSummary.resources[0].entitlement_count
-  //   consumed = props.entitlementsSummary.resources[0].consumption_ratio_percent
-  // }
 
 return (
   <div>
@@ -234,7 +229,7 @@ return (
                         </tr>
                       </thead>
                       <tbody>
-                        {entitlementsList}
+                        {checkitemList}
                       </tbody>
                     </table>
                     <div className='row'>
@@ -295,7 +290,8 @@ return (
   }
   CheckItems.propTypes = {
   // entitlementsSummary: PropTypes.any,
-  entitlements: PropTypes.any,
+  componentTypeComponents: PropTypes.any,
+  checkitems: PropTypes.any,
   currentPage: PropTypes.any,
   setModalOpenStatus: PropTypes.func,
   perPage: PropTypes.any

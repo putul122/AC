@@ -54,16 +54,29 @@ const api = {
   getReviewsSummary: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewsSummary',
   getReview: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReview/',
   createReview: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReview',
+  getReviewArtefactProperties: function (id) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + id + '/component_properties'
+  },
+  getReviewArtefactRelationships: function (id) {
+    return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + id + '/component_relationships'
+  },
   updateReview: function (reviewId) {
     return 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReview?review_id=' + reviewId
   },
   createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
+  createCheckItem: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateCheckItemTemplate',
   getReviewTemplates: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplates',
   getReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/review/GetReviewTemplate',
   createReviewTemplate: 'https://ac-eco-dev.ecoconductor.com/api/update/CreateReviewTemplate',
   updateReviewTemplate: function (reviewTemplateId) {
     return 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateReviewTemplate?review_template_id=' + reviewTemplateId
   },
+  getCheckItems: 'https://ac-eco-dev.ecoconductor.com/api/review/GetCheckItemTemplates',
+  getCheckItem: 'https://ac-eco-dev.ecoconductor.com/api/review/GetCheckItemTemplate',
+  deleteCheckitem: function (componentId) {
+    return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
+  },
+  updateCheckItem: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateCheckItemTemplate',
   deleteReviewTemplate: function (componentId) {
     return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
   }

@@ -1,11 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-// import styles from './addTemplateComponent.scss'
-// import moment from 'moment'
-// import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 
 export default function ConductReview (props) {
   console.log('props conduct', props)
@@ -16,6 +14,17 @@ export default function ConductReview (props) {
   let Category = ''
   let checkItemList = ''
   let contextId = props.match.params.id
+  let openModal = function (data) {
+    props.setCheckItemData(data)
+    let modalSettings = {
+      'isViewCheckItemOpen': true,
+      'isStandardModalOpen': false,
+      'isPrincipleModalOpen': false,
+      'principleData': '',
+      'standardData': ''
+    }
+    props.setModalSetting(modalSettings)
+  }
   let onRadioChange = function (value) {
     props.setComplaint(value)
   }
@@ -137,7 +146,7 @@ export default function ConductReview (props) {
         console.log('valueList', valueList, typeof valueList)
         return (<span className='m-list-search__result-item' key={index}>
           <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-4 col-form-label'>{data.name}</label>
+            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
             <div className='col-8 float-left' >
               <div className='m-radio-inline pull-left' style={{width: '100%'}}>
                 {valueList}
@@ -334,7 +343,7 @@ export default function ConductReview (props) {
     return (
       <div>
         <div className='row clearfix'>
-          <div className='col-xs-4 col-sm-6 col-md-8' />
+          <div className='col-xs-4 col-sm-6 col-md-8' ><h2>Conduct Review</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
               <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
@@ -489,6 +498,7 @@ export default function ConductReview (props) {
         </div>
         <Discussion name={reviewName} type='Component' {...props} />
         <NewDiscussion contextId={contextId} name={reviewName} type='Component' {...props} />
+        <CheckItemModal />
       </div>
       )
     }

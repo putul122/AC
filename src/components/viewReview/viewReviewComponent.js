@@ -12,6 +12,7 @@ export default function ViewReview (props) {
   let reviewstage
   let Reviewer = ''
   let Approver = ''
+  let reviewId
   let ReviewCategory = ''
   let ReviewArtefact = ''
   let contextId = props.match.params.id
@@ -26,12 +27,15 @@ export default function ViewReview (props) {
     let modalSettings = {
       'isViewCheckItemOpen': true,
       'isStandardModalOpen': false,
-      'isPrincipleModalOpen': false
+      'isPrincipleModalOpen': false,
+      'principleData': '',
+      'standardData': ''
     }
     props.setModalSetting(modalSettings)
   }
   // console.log(props.agreementsSummary, props.agreements, props.currentPage)
   if (props.reviewbyId && props.reviewbyId !== '') {
+    reviewId = props.reviewbyId.resources[0].id
     reviewname = props.reviewbyId.resources[0].name
     reviewdescription = props.reviewbyId.resources[0].description
     reviewstage = props.reviewbyId.resources[0].stage
@@ -96,7 +100,7 @@ export default function ViewReview (props) {
     return (
       <div>
         <div className='row clearfix'>
-          <div className='col-xs-4 col-sm-6 col-md-8' />
+          <div className='col-xs-4 col-sm-6 col-md-8' ><h2>Review Details</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
               <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
@@ -156,7 +160,7 @@ export default function ViewReview (props) {
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                     Review Artefact
                                     </span>
-                                    <span className='m-widget13__text m--font-brand'>{ReviewArtefact}</span>
+                                    <span className='m-widget13__text'><a href={'/review_artefact/' + reviewId}>{ReviewArtefact}</a></span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>

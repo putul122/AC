@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {defaults, Pie, Line} from 'react-chartjs-2'
-// import styles from './dashboardComponent.scss'
-// import _ from 'lodash'
+import _ from 'lodash'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
+
 export default function Dashboard (props) {
   let reviewsInDraft = ''
   let reviewsInProgress = ''
@@ -21,6 +21,9 @@ export default function Dashboard (props) {
     maintainAspectRatio: true,
     scales: {
       yAxes: [{
+        ticks: {
+          beginAtZero: true
+        },
         display: true,
         scaleLabel: {
           display: true,
@@ -41,7 +44,52 @@ export default function Dashboard (props) {
       reviewsInDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
       reviewsInProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress']
       reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
+      let data1 = props.reviewsSummary.resources[0].compliant_by_month.map(function (data, index) {
+        data.type = 'CompliantByMonth'
+        return data
+      })
+      let data2 = props.reviewsSummary.resources[0].non_compliant_by_month.map(function (data, index) {
+        data.type = 'NonCompliantByMonth'
+        return data
+      })
+      let dataArray = data1.concat(data2)
+      dataArray = _.orderBy(dataArray, ['month'], ['asc'])
+      let length = dataArray.length
       let labels = []
+      let compliantByMonth = []
+      let nonCompliantByMonth = []
+      for (let i = 0; i < length;) {
+        if (dataArray[i]['month'] === dataArray[i + 1]['month']) {
+          labels.push(dataArray[i]['month'])
+          if (dataArray[i]['type'] === 'CompliantByMonth') {
+            compliantByMonth.push(dataArray[i]['count'])
+          }
+          if (dataArray[i]['type'] === 'NonCompliantByMonth') {
+            nonCompliantByMonth.push(dataArray[i]['count'])
+          }
+          i++
+          if (dataArray[i]['type'] === 'CompliantByMonth') {
+            compliantByMonth.push(dataArray[i]['count'])
+          }
+          if (dataArray[i]['type'] === 'NonCompliantByMonth') {
+            nonCompliantByMonth.push(dataArray[i]['count'])
+          }
+          i++
+        } else {
+          labels.push(dataArray[i]['month'])
+          if (dataArray[i]['type'] === 'CompliantByMonth') {
+            compliantByMonth.push(dataArray[i]['count'])
+            nonCompliantByMonth.push('')
+          } else {
+            nonCompliantByMonth.push(dataArray[i]['count'])
+            compliantByMonth.push('')
+          }
+          i++
+        }
+      }
+      console.log(dataArray)
+      console.log(compliantByMonth)
+      console.log(nonCompliantByMonth)
       let obj1 = {
         label: 'Compliant Review',
         fill: false,
@@ -62,12 +110,7 @@ export default function Dashboard (props) {
         pointRadius: 1,
         pointHitRadius: 10
       }
-      let obj1data = []
-      props.reviewsSummary.resources[0].compliant_by_month.forEach(function (data, index) {
-        labels.push(data.month)
-        obj1data.push(data.count)
-      })
-      obj1.data = obj1data
+      obj1.data = compliantByMonth
       datasets.push(obj1)
       lineData.labels = labels
       let obj2 = {
@@ -90,11 +133,7 @@ export default function Dashboard (props) {
         pointRadius: 1,
         pointHitRadius: 10
       }
-      let obj2data = []
-      props.reviewsSummary.resources[0].non_compliant_by_month.forEach(function (data, index) {
-        obj2data.push(data.count)
-      })
-      obj2.data = obj2data
+      obj2.data = nonCompliantByMonth
       datasets.push(obj2)
       lineData.datasets = datasets
       let countByCategory = props.reviewsSummary.resources[0].count_by_category
@@ -278,7 +317,7 @@ export default function Dashboard (props) {
                     <span className=''>
                       <h4>Number of Reviews</h4>
                       <br />
-                      <h5>Per Review Type</h5>
+                      <h5>Reviews Compliant & Per Month</h5>
                     </span>
                   </div>
                   <div className='col'>

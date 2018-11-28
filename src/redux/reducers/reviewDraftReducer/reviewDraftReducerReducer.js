@@ -4,6 +4,7 @@ import {
     FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS,
     FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
 } from '../../sagas/basic/basicSaga'
+import {FETCH_USERS_SUCCESS} from '../../sagas/user/userSaga'
 import {
   FETCH_REVIEW_BY_ID_SUCCESS,
   FETCH_REVIEW_ARTEFACTS_SUCCESS,
@@ -20,6 +21,8 @@ const SET_CATEGORY_DATA = 'ReviewDraftReducer/SET_CATEGORY_DATA'
 const SET_REVIEW_PROPERTY = 'ReviewDraftReducer/SET_REVIEW_PROPERTY'
 const SET_VALIDATION_CLASS = 'ReviewDraftReducer/SET_VALIDATION_CLASS'
 const SET_SELECTED_CATEGORY = 'ReviewDraftReducer/SET_SELECTED_CATEGORY'
+const SET_SELECTED_APPROVER = 'ReviewDraftReducer/SET_SELECTED_APPROVER'
+const SET_SELECTED_REVIEWER = 'ReviewDraftReducer/SET_SELECTED_REVIEWER'
 const SET_FIRST_LOAD = 'ReviewDraftReducer/SET_FIRST_LOAD'
 
 export const actions = {
@@ -39,7 +42,8 @@ export const actions = {
   SET_REVIEW_PROPERTY,
   SET_VALIDATION_CLASS,
   SET_SELECTED_CATEGORY,
-  SET_FIRST_LOAD
+  SET_FIRST_LOAD,
+  FETCH_USERS_SUCCESS
 }
 
 export const actionCreators = {
@@ -52,11 +56,14 @@ export const actionCreators = {
   setReviewProperty: createAction(SET_REVIEW_PROPERTY),
   setValidationClass: createAction(SET_VALIDATION_CLASS),
   setSelectedCategory: createAction(SET_SELECTED_CATEGORY),
+  setSelectedApprover: createAction(SET_SELECTED_APPROVER),
+  setSelectedReviewer: createAction(SET_SELECTED_REVIEWER),
   setFirstLoad: createAction(SET_FIRST_LOAD)
 }
 
 export const initialState = {
   connectArtefact: '',
+  users: '',
   componentTypeRelations: '',
   componentTypeProperties: '',
   reviewCategories: '',
@@ -68,6 +75,8 @@ export const initialState = {
   firstLoad: true,
   selectedCheckItem: null,
   selectedCategory: null,
+  selectedApprover: null,
+  selectedReviewer: null,
   updatePayload: [],
   reviewProperties: {
     category: [],
@@ -163,6 +172,18 @@ export default handleActions(
     [SET_FIRST_LOAD]: (state, action) => ({
       ...state,
       firstLoad: action.payload
+    }),
+    [FETCH_USERS_SUCCESS]: (state, action) => ({
+      ...state,
+      users: action.payload
+    }),
+    [SET_SELECTED_APPROVER]: (state, action) => ({
+      ...state,
+      selectedApprover: action.payload
+    }),
+    [SET_SELECTED_REVIEWER]: (state, action) => ({
+      ...state,
+      selectedReviewer: action.payload
     })
   },
   initialState

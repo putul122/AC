@@ -9,6 +9,9 @@ import addTemplateReducer from './addTemplateReducer/addTemplateReducerReducer'
 import templatesReducer from './templateReducer/templateReducerReducer'
 import reviewsReducer from './reviewsReducer/reviewsReducerReducer'
 import viewReviewReducer from './viewReviewReducer/viewReviewReducerReducer'
+import viewcheckItemReducer from './viewcheckItemReducer/viewcheckItemReducerReducer'
+import addcheckItemReducer from './addcheckItemReducer/addcheckItemReducerReducer'
+import checkItemsReducer from './checkItemsReducer/checkItemsReducerReducer'
 import conductReviewReducer from './conductReviewReducer/conductReviewReducerReducer'
 import acceptReviewReducer from './acceptReviewReducer/acceptReviewReducerReducer'
 import reviewApprovalReducer from './reviewApprovalReducer/reviewApprovalReducerReducer'
@@ -16,6 +19,7 @@ import reviewDraftReducer from './reviewDraftReducer/reviewDraftReducerReducer'
 import discussionReducer from './discussionReducer/discussionReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 import checkItemModalReducer from './checkItemModalReducer/checkItemModalReducerReducer'
+import reviewArtefactReducer from './reviewArtefactReducer/reviewArtefactReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -28,10 +32,14 @@ export default combineReducers({
     reviewsReducer,
     conductReviewReducer,
     acceptReviewReducer,
+    checkItemsReducer,
     reviewApprovalReducer,
     reviewDraftReducer,
+    viewcheckItemReducer,
+    addcheckItemReducer,
     viewReviewReducer,
     discussionReducer,
     newDiscussionReducer,
+    reviewArtefactReducer,
     checkItemModalReducer
 })
