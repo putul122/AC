@@ -30,7 +30,7 @@ export default function addcheckItem (props) {
   let checkItemsOptions = []
   let standardsOptions = []
   let principlesOptions = []
-  let checkitemsvalueOptions = []
+  // let checkitemsvalueOptions = []
   let typeOptions = []
   let standardList = ''
   let principleList = ''
@@ -86,12 +86,12 @@ export default function addcheckItem (props) {
        return data
      })
    }
-   if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
-    checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
-      data.label = data.name
-      return data
-    })
-  }
+  //  if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
+  //   checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
+  //     data.label = data.name
+  //     return data
+  //   })
+  // }
   if (props.reviewCategories && props.reviewCategories !== '') {
     typeOptions = props.reviewCategories.map(function (data, index) {
       data.label = data.name
@@ -157,8 +157,8 @@ export default function addcheckItem (props) {
                 <div className='m-list-search'>
                   <div className='m-list-search__results'>
                     <span className='m-list-search__result-item'>
-                      <span className='m-list-search__result-item-text'>{data.value.name}</span>
-                      <button onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Retmove</button>
+                      <span className='m-list-search__result-item-text'>{data.value}</span>
+                      <button onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
                     </span>
                     <span className='m-list-search__result-category m-list-search__result-category--first'>
                                 Select Check Item
@@ -282,15 +282,11 @@ export default function addcheckItem (props) {
     principles.splice(index, 1)
     props.setPrinciplesData(principles)
   }
-  let handleValueSelect = function (newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      let selectedValue = newValue
-      props.setSelectedValue(selectedValue)
-    }
-    if (actionMeta.action === 'clear') {
-      let selectedValue = null
-      props.setSelectedValue(selectedValue)
-    }
+  let handleValueSelect = function (event) {
+      let selectedValue = event.target.value
+      if (selectedValue.trim() !== '') {
+        props.setSelectedValue(selectedValue)
+      }
   }
   let addValue = function () {
     console.log(props)
@@ -303,7 +299,7 @@ export default function addcheckItem (props) {
       console.log('values', values)
       props.setValuesData(values)
     }
-    let selectedValue = null
+    let selectedValue = ''
     props.setSelectedValue(selectedValue)
   }
   let removeValue = function (index) {
@@ -344,8 +340,8 @@ export default function addcheckItem (props) {
       props.values.forEach(function (data, index) {
         if (data.value) {
           let obj = {}
-          obj.name = data.value.name
-          obj.description = data.value.description
+          obj.name = data.value
+          // obj.description = data.value.description
           obj.requires_check_items = []
           if (data.requiresCheckItems.length > 0) {
             data.requiresCheckItems.forEach(function (checkItem, idx) {
@@ -454,7 +450,8 @@ export default function addcheckItem (props) {
                                           <div className='form-group m-form__group row'>
                                             {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label> */}
                                             <div className='col-8'>
-                                              <Select
+                                              <input type='text' className='form-control m-input' value={props.selectedValue} placeholder='Enter Value' onChange={handleValueSelect} />
+                                              {/* <Select
                                                 // className='col-7 input-sm m-input'
                                                 placeholder='Select Value'
                                                 isClearable
@@ -463,7 +460,7 @@ export default function addcheckItem (props) {
                                                 isSearchable={false}
                                                 name={'roleSelected'}
                                                 options={checkitemsvalueOptions}
-                                              />
+                                              /> */}
                                             </div>
                                             <button type='button' onClick={addValue} className='btn btn-outline-info col-2 btn-sm'>Add</button>
                                           </div>
