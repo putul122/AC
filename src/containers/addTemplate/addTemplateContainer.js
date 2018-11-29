@@ -91,17 +91,24 @@ export default compose(
       }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '') {
         if (nextProps.componentTypeProperties.error_code === null) {
-          let propertiesData = nextProps.componentTypeProperties.resources[0].properties
           let appPackage = JSON.parse(localStorage.getItem('packages'))
           let componentTypeProperties = appPackage.resources[0].component_type_properties
           let propertyId = _.result(_.find(componentTypeProperties, function (obj) {
             return obj.key === 'Review Template~Review Category'
           }), 'component_type_property')
-          let valueSet = _.result(_.find(propertiesData, function (obj) {
-            return obj.id === propertyId
-          }), 'value_set')
-          console.log('valueset', valueSet)
-          this.props.setTemplateCategoryData(valueSet.values)
+          if (nextProps.componentTypeProperties.resources.length > 0) {
+            nextProps.componentTypeProperties.resources.forEach(function (data, index) {
+              console.log('data-------------', data)
+              let valueSet = _.result(_.find(data.properties, function (obj) {
+                return obj.id === propertyId
+              }), 'value_set')
+              console.log('valueset ----', valueSet)
+              if (valueSet) {
+                console.log(valueSet.values, 'inside if')
+                nextProps.setTemplateCategoryData(valueSet.values)
+              }
+            })
+          }
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
