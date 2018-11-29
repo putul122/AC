@@ -54,11 +54,33 @@ export default function viewcheckItem (props) {
       })
       valuename = props.checkitembyId.resources[0].values
       valuesList = valuename.map(function (data, index) {
-        return (
-          <tr key={index}>
-            <td><a href={''}>{data.name}</a></td>
-          </tr>
-        )
+        let checkList = []
+        if (data.requires_check_items.length > 0) {
+          checkList = data.requires_check_items.map(function (checkItem, ix) {
+            return (<span className='m-list-search__result-item' key={ix}>
+              <span className='m-list-search__result-item-text'>{checkItem.name}</span>
+            </span>)
+          })
+        }
+        return (<span className='m-list-search__result-item'>
+          <span className='m-list-search__result-item-text'>{data.name}</span>
+          <div className='m-section m-section--last'>
+            <div className='m-section__content'>
+              <div className='m-demo'>
+                <div className='m-demo__preview'>
+                  <div className='m-list-search'>
+                    <div className='m-list-search__results'>
+                      <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                  Selected Check Item
+                              </span>
+                      {checkList}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </span>)
       })
     }
   }
@@ -424,7 +446,7 @@ export default function viewcheckItem (props) {
                 {!props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className='form-group m-form__group has-danger'>
-                      <input type='text' className='form-control m-input' value={props.updateCheckItemValue.name} onChange={handletitleChange} placeholder='Trmplate Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input' value={props.updateCheckItemValue.name} onChange={handletitleChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
                     </div>
                   </div>
                   <div className='col-4 float-right'>
@@ -496,7 +518,8 @@ export default function viewcheckItem (props) {
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
                                                       Values
                                                   </span>
-                                          <div className='form-group m-form__group m--margin-top-30 row'>
+                                          {valuesList}
+                                          {/* <div className='form-group m-form__group m--margin-top-30 row'>
                                             <div className='col-6'>
                                               <table>
                                                 <tbody>
@@ -504,7 +527,7 @@ export default function viewcheckItem (props) {
                                                 </tbody>
                                               </table>
                                             </div>
-                                          </div>
+                                          </div> */}
                                         </div>
                                       </div>
                                     </div>
