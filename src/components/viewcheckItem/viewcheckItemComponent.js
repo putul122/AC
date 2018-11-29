@@ -3,6 +3,19 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    border: 'none',
+    background: 'none',
+    transform: 'translate(-50%, -50%)',
+    width: '100%'
+  }
+}
 
 export default function viewcheckItem (props) {
   console.log('EDC', props.componentTypecomponent)
@@ -18,12 +31,12 @@ export default function viewcheckItem (props) {
   let checkItemsOptions = []
   let standardsOptions = []
   let principlesOptions = []
-  let checkitemsvalueOptions = []
+  // let checkitemsvalueOptions = []
   let reviewCategoryOptions = []
   let standardListforedit = ''
   let principleListforedit = ''
   let valueListforedit = ''
-  let checkitemListforedit = ''
+  // let checkitemListforedit = ''
   let principleList = ''
   let principlename = ''
   let standardList = ''
@@ -31,7 +44,32 @@ export default function viewcheckItem (props) {
   let valuesList = ''
   let valuename = ''
   let checkitemname = ''
-
+  let NameInputBox
+  let DescriptionBox
+  let ReferenceBox
+  let handleCheckItemSelect = function (index) {
+    console.log('index', index)
+    let selectedCheckitem = JSON.parse(JSON.stringify(props.selectedCheckitem))
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      if (actionMeta.action === 'select-option') {
+        selectedCheckitem[index] = newValue
+        props.setSelectedCheckitem(selectedCheckitem)
+      }
+      if (actionMeta.action === 'clear') {
+        selectedCheckitem[index] = null
+        props.setSelectedCheckitem(selectedCheckitem)
+      }
+    }
+  }
+  let openModal = function (event) {
+    event.preventDefault()
+    props.setModalOpenStatus(true)
+   }
+  let closeModal = function () {
+    props.setModalOpenStatus(false)
+  }
  // code for data of checkitem
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
@@ -106,13 +144,13 @@ export default function viewcheckItem (props) {
       return data
     })
   }
-  if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
-   checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
-     data.label = data.name
-     data.type = 'NEW'
-     return data
-   })
- }
+//   if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
+//    checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
+//      data.label = data.name
+//      data.type = 'NEW'
+//      return data
+//    })
+//  }
  if (props.reviewCategories && props.reviewCategories !== '') {
    reviewCategoryOptions = props.reviewCategories.map(function (data, index) {
      data.label = data.name
@@ -145,27 +183,74 @@ export default function viewcheckItem (props) {
   principleListforedit = ''
    console.log('standardList', principleListforedit)
  }
-   if (props.checkitems.length > 0) {
-   console.log(props.checkitems)
-   checkitemListforedit = props.checkitems.map(function (data, index) {
-     return (<span className='m-list-search__result-item' key={index}>
-       <span className='m-list-search__result-item-text'>{data.name}</span>
-       <button type='button' onClick={(event) => { removeCheckitem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
-     </span>)
-   })
-   console.log('standardList', checkitemListforedit)
- } else {
-  checkitemListforedit = ''
-   console.log('standardList', checkitemListforedit)
- }
+//    if (props.checkitems.length > 0) {
+//    console.log(props.checkitems)
+//    checkitemListforedit = props.checkitems.map(function (data, index) {
+//      return (<span className='m-list-search__result-item' key={index}>
+//        <span className='m-list-search__result-item-text'>{data.name}</span>
+//        <button type='button' onClick={(event) => { removeCheckitem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+//      </span>)
+//    })
+//    console.log('standardList', checkitemListforedit)
+//  } else {
+//   checkitemListforedit = ''
+//    console.log('standardList', checkitemListforedit)
+//  }
  if (props.values.length > 0) {
    console.log(props.values)
   valueListforedit = props.values.map(function (data, index) {
-     return (<span className='m-list-search__result-item' key={index}>
-       <span className='m-list-search__result-item-text'>{data.name}</span>
-       <button type='button' onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
-     </span>)
-   })
+    let checkList = []
+    if (data.requires_check_items.length > 0) {
+      checkList = data.requires_check_items.map(function (checkItem, ix) {
+        return (<span className='m-list-search__result-item' key={ix}>
+          <span className='m-list-search__result-item-text'>{checkItem.name}</span>
+          <button type='button' onClick={(event) => { removeCheckItem(index, ix) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+        </span>)
+      })
+    }
+    return (<span className='m-list-search__result-item'>
+      <div className='m-section m-section--last'>
+        <div className='m-section__content'>
+          <div className='m-demo'>
+            <div className='m-demo__preview'>
+              <div className='m-list-search'>
+                <div className='m-list-search__results'>
+                  <span className='m-list-search__result-item'>
+                    <span className='m-list-search__result-item-text'>{data.name}</span>
+                    <button onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+                  </span>
+                  <span className='m-list-search__result-category m-list-search__result-category--first'>
+                              Select Check Item
+                          </span>
+                  <div className='form-group m-form__group row'>
+                    <div className='col-8'>
+                      <Select
+                        // className='col-7 input-sm m-input'
+                        placeholder='Select CheckItem'
+                        isClearable
+                        value={props.selectedCheckitem[index] || null}
+                        onChange={handleCheckItemSelect(index)}
+                        isSearchable={false}
+                        name={'checkItemSelected'}
+                        options={checkItemsOptions}
+                      />
+                    </div>
+                    <button type='button' onClick={(event) => { addRequireCheckItem(index) }} className='btn btn-outline-info col-2 btn-sm'>Add</button>
+                  </div>
+                  <span className='m-list-search__result-category m-list-search__result-category--first'>
+                              Selected Check Item
+                          </span>
+                  <div className='m-demo__preview'>
+                    {checkList}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </span>)
+  })
    console.log('standardList', valueListforedit)
  } else {
   valueListforedit = ''
@@ -180,6 +265,7 @@ export default function viewcheckItem (props) {
     console.log('*&*&', updateCheckItemValue)
   }
   let handleStandardSelect = function (newValue: any, actionMeta: any) {
+    console.log('newValue', newValue)
     if (actionMeta.action === 'select-option') {
       let selectedStandard = newValue
       props.setSelectedStandard(selectedStandard)
@@ -212,7 +298,23 @@ export default function viewcheckItem (props) {
     }
     props.setStandardsData(standards)
   }
+  let handleStandardValue = function (event) {
+    props.setModalOpenStatus(false)
+    let newStandardValue = {...props.newStandardValue}
+    let standards = JSON.parse(JSON.stringify(props.standards))
+    console.log('NameInputBox', NameInputBox, NameInputBox.value)
+    console.log(DescriptionBox, DescriptionBox.value)
+    console.log(ReferenceBox, ReferenceBox.value)
+    newStandardValue.name = NameInputBox.value
+    newStandardValue.description = DescriptionBox.value
+    newStandardValue.reference = ReferenceBox.value
+    newStandardValue.type = 'NEW_CREATE'
+    console.log('newStandardValue', newStandardValue)
+    standards.push(newStandardValue)
+    props.setStandardsData(standards)
+  }
   let handlePrincipleSelect = function (newValue: any, actionMeta: any) {
+    console.log('newValue', newValue)
     if (actionMeta.action === 'select-option') {
       let selectedPrinciple = newValue
       props.setSelectedPrinciple(selectedPrinciple)
@@ -244,23 +346,26 @@ export default function viewcheckItem (props) {
     }
     props.setPrinciplesData(principles)
   }
-  let handleValueSelect = function (newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      let selectedValue = newValue
-      props.setSelectedValue(selectedValue)
-    }
-    if (actionMeta.action === 'clear') {
-      let selectedValue = null
+  let handleValueSelect = function (event) {
+    let selectedValue = event.target.value
+    if (selectedValue.trim() !== '') {
       props.setSelectedValue(selectedValue)
     }
   }
   let addValue = function () {
-    let values = props.values
+    console.log(props)
+    let values = JSON.parse(JSON.stringify(props.values))
+    let obj = {}
+    obj.value = props.selectedValue
+    obj.name = props.selectedValue
+    obj.requires_check_items = []
+    obj.type = 'NEW'
     if (props.selectedValue !== null) {
-      values.push(props.selectedValue)
+      values.push(obj)
+      console.log('values', values)
       props.setValuesData(values)
     }
-    let selectedValue = null
+    let selectedValue = ''
     props.setSelectedValue(selectedValue)
   }
   let removeValue = function (index) {
@@ -276,29 +381,34 @@ export default function viewcheckItem (props) {
     }
     props.setValuesData(values)
   }
-  let handleCheckitemSelect = function (newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      let selectedCheckitem = newValue
-      props.setSelectedCheckitem(selectedCheckitem)
+  let addRequireCheckItem = function (index) {
+    let values = JSON.parse(JSON.stringify(props.values))
+    let selectedValue = values[index]
+    let selectedCheckItemArray = JSON.parse(JSON.stringify(props.selectedCheckitem))
+    selectedValue.requires_check_items.push(selectedCheckItemArray[index])
+    values[index] = selectedValue
+    if (selectedCheckItemArray[index] !== null) {
+      props.setValuesData(values)
     }
-    if (actionMeta.action === 'clear') {
-      let selectedCheckitem = null
-      props.setSelectedCheckitem(selectedCheckitem)
-    }
+    selectedCheckItemArray[index] = null
+    props.setSelectedCheckitem(selectedCheckItemArray)
   }
-  let addCheckitementry = function () {
-    let checkitems = props.checkitems
-    if (props.selectedCheckitem !== null) {
-      checkitems.push(props.selectedCheckitem)
-      props.setCheckitemsData(checkitems)
+  let removeCheckItem = function (valueIndex, checkItemIndex) {
+    let values = JSON.parse(JSON.stringify(props.values))
+    let selectedValue = values[valueIndex]
+    let requiresCheckItems = selectedValue.requires_check_items
+    let removeItem = requiresCheckItems.splice(checkItemIndex, 1)
+    if (removeItem[0].type === 'OLD') {
+      let obj = {}
+      obj.op = 'remove'
+      obj.path = '/values/' + valueIndex + '/requires_check_items/' + checkItemIndex
+      let payload = JSON.parse(JSON.stringify(props.payload))
+      payload.push(obj)
+      props.setPayload(payload)
     }
-    let selectedCheckitem = null
-    props.setSelectedCheckitem(selectedCheckitem)
-  }
-  let removeCheckitem = function (index) {
-    let checkitems = JSON.parse(JSON.stringify(props.checkitems))
-    checkitems.splice(index, 1)
-    props.setCheckitemsData(checkitems)
+    selectedValue.requires_check_items = requiresCheckItems
+    values[valueIndex] = selectedValue
+    props.setValuesData(values)
   }
   let editCheckItemCancel = function () {
     let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': true}
@@ -337,6 +447,12 @@ export default function viewcheckItem (props) {
     if (props.checkitembyId.resources[0].values.length > 0) {
       let values = props.checkitembyId.resources[0].values.map(function (data, index) {
         data.type = 'OLD'
+        if (data.requires_check_items.length > 0) {
+          data.requires_check_items = data.requires_check_items.map(function (checkItem, ix) {
+            checkItem.type = 'OLD'
+            return checkItem
+          })
+        }
         return data
       })
       props.setValuesData(values)
@@ -372,17 +488,17 @@ export default function viewcheckItem (props) {
       obj = {}
       obj.op = 'replace'
       obj.path = '/description'
-      obj.value = props.updateCheckItemValue.description
+      obj.value = ''
       payload.push(obj)
       // edit category payload
-      if (props.reviewCategories) {
-        obj = {}
-        obj.op = 'replace'
-        obj.path = '/type'
-        obj.value = props.reviewCategories.id
-        payload.push(obj)
-      }
-      // edit values payload
+      // if (props.reviewCategories) {
+      //   obj = {}
+      //   obj.op = 'replace'
+      //   obj.path = '/type'
+      //   obj.value = props.reviewCategories.id
+      //   payload.push(obj)
+      // }
+      // add remove payload value
       if (props.payload.length > 0) {
         payload = payload.concat(props.payload)
       }
@@ -392,10 +508,33 @@ export default function viewcheckItem (props) {
             obj = {}
             obj.op = 'add'
             obj.path = '/values/-'
-            obj.value = data.id
-            obj.name = data.name
-            obj.description = data.description
+            let value = {}
+            value.name = data.name
+            value.description = ''
+            if (data.requires_check_items.length > 0) {
+              value.requires_check_items = []
+              data.requires_check_items.forEach(function (checkItem, idx) {
+                let ob = {}
+                ob.id = checkItem.id
+                value.requires_check_items.push(ob)
+              })
+            }
+            obj.value = value
             payload.push(obj)
+          }
+          if (data.type === 'OLD') {
+            if (data.requires_check_items.length > 0) {
+              data.requires_check_items.forEach(function (checkItem, idx) {
+                if (checkItem.type === 'NEW') {
+                  let obj = {}
+                  obj.op = 'add'
+                  obj.path = '/values/' + index + '/requires_check_items/-'
+                  obj.value = {}
+                  obj.value.id = checkItem.id
+                  payload.push(obj)
+                }
+              })
+            }
           }
         })
       }
@@ -411,6 +550,7 @@ export default function viewcheckItem (props) {
           }
         })
       }
+      // edit Standards Payload
       if (props.standards.length > 0) {
         props.standards.forEach(function (data, index) {
           if (data.type === 'NEW') {
@@ -418,22 +558,28 @@ export default function viewcheckItem (props) {
             obj.op = 'add'
             obj.path = '/standards/-'
             obj.value = data.id
-            obj.name = data.name
-            obj.description = data.description
-            obj.reference = data.reference
+          }
+          if (data.type === 'NEW_CREATE') {
+            obj = {}
+            obj.op = 'add'
+            obj.path = '/standards/-'
+            let value = {}
+            value.name = data.name
+            value.description = data.description
+            value.reference = data.reference
+            obj.value = value
             payload.push(obj)
           }
         })
       }
-      // props.createTemplates(payload)
       let updatePayload = {}
       updatePayload.urlPart = {}
       updatePayload.urlPart.check_item_template_id = parseInt(props.match.params.id)
       updatePayload.payloadPart = payload
       // eslint-disable-next-line
-      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      //mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.updateCheckitem(updatePayload)
-      console.log('payload', updatePayload, props)
+      console.log('payload', payload, props)
     }
   }
     return (
@@ -632,9 +778,9 @@ export default function viewcheckItem (props) {
                                                       Values
                                                   </span>
                                           <div className='form-group m-form__group row'>
-                                            {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label> */}
                                             <div className='col-8'>
-                                              <Select
+                                              <input type='text' className='form-control m-input' value={props.selectedValue} placeholder='Enter Value' onChange={handleValueSelect} />
+                                              {/* <Select
                                                 // className='col-7 input-sm m-input'
                                                 placeholder='Select Category'
                                                 isClearable
@@ -643,11 +789,12 @@ export default function viewcheckItem (props) {
                                                 isSearchable={false}
                                                 name={'roleSelected'}
                                                 options={checkitemsvalueOptions}
-                                              />
+                                              /> */}
                                             </div>
                                             <button type='button' onClick={addValue} className='btn btn-outline-info col-2 btn-sm'>Add</button>
                                           </div>
-                                          <span className='m-list-search__result-item'>
+                                          {valueListforedit}
+                                          {/* <span className='m-list-search__result-item'>
                                             <div className='m-section m-section--last'>
                                               <div className='m-section__content'>
                                                 <div className='m-demo'>
@@ -661,7 +808,7 @@ export default function viewcheckItem (props) {
                                                                     Select Check Item
                                                                 </span>
                                                         <div className='form-group m-form__group row'>
-                                                          {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label> */}
+                                                          {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label>
                                                           <div className='col-8'>
                                                             <Select
                                                               // className='col-7 input-sm m-input'
@@ -688,7 +835,7 @@ export default function viewcheckItem (props) {
                                                 </div>
                                               </div>
                                             </div>
-                                          </span>
+                                          </span> */}
                                         </div>
                                       </div>
                                     </div>
@@ -780,7 +927,7 @@ export default function viewcheckItem (props) {
                                   />
                                 </div>
                                 <button onClick={addStandardData} className='btn btn-outline-info col-2 btn-sm'>Add</button>
-                                <button className='btn btn-outline-info col-2 btn-sm'>New</button>
+                                <button onClick={openModal} className='btn btn-outline-info col-2 btn-sm'>New</button>
                               </div>
                             </span>
                             <span className='m-list-search__result-item'>
@@ -812,6 +959,43 @@ export default function viewcheckItem (props) {
               </div>
             </div>)}
             <div>
+              <ReactModal isOpen={props.modalIsOpen}
+                onRequestClose={closeModal}
+                style={customStyles} >
+                {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+                <div className=''>
+                  <div className='modal-dialog'>
+                    <div className='modal-content'>
+                      <div className='modal-header'>
+                        <h4 className='modal-title' id='exampleModalLabel'>New Standard</h4>
+                        <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                          <span aria-hidden='true'>×</span>
+                        </button>
+                      </div>
+                      <div className='modal-body'>
+                        <form>
+                          {/* {messageBlock} */}
+                          <div className='form-group'>
+                            <label htmlFor='component-name' className='form-control-label'>Name:</label>
+                            <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' />
+                          </div>
+                          <div className='form-group'>
+                            <label htmlFor='description-text' className='form-control-label'>Description:</label>
+                            <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} autoComplete='off' />
+                          </div>
+                          <div className='form-group'>
+                            <label htmlFor='component-name' className='form-control-label'>Reference:</label>
+                            <input type='text' className='form-control' ref={input => (ReferenceBox = input)} id='component-name' autoComplete='off' />
+                          </div>
+                        </form>
+                      </div>
+                      <div className='modal-footer'>
+                        <button type='button' onClick={handleStandardValue} className='btn btn-outline-info btn-sm'>Add</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ReactModal>
               <ReactModal isOpen={props.editCheckItemsSettings.isDeleteModalOpen}
                 onRequestClose={closeDeleteModal}
                 className='modal-dialog'
@@ -854,6 +1038,7 @@ export default function viewcheckItem (props) {
       componentTypecomponent: PropTypes.any,
       componentTypecomponents: PropTypes.any,
       checkitembyId: PropTypes.any,
+      // eslint-disable-next-line
       match: PropTypes.any,
       componentTypeComponentCheckitems: PropTypes.any,
       componentTypeComponentPrinciples: PropTypes.any,
@@ -863,12 +1048,12 @@ export default function viewcheckItem (props) {
       selectedStandard: PropTypes.any,
       selectedPrinciple: PropTypes.any,
       selectedValue: PropTypes.any,
-      selectedCheckitem: PropTypes.any,
+      // selectedCheckitem: PropTypes.any,
       principles: PropTypes.any,
       standards: PropTypes.any,
       values: PropTypes.any,
       payload: PropTypes.any,
-      checkitems: PropTypes.any,
+      modalIsOpen: PropTypes.any,
       setStandardsData: PropTypes.func,
       setPrinciplesData: PropTypes.func,
       setValuesData: PropTypes.func,

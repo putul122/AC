@@ -76,7 +76,9 @@ const api = {
   deleteCheckitem: function (componentId) {
     return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
   },
-  updateCheckItem: 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateCheckItemTemplate',
+  updateCheckItem: function (checkItemTemplateId) {
+    return 'https://ac-eco-dev.ecoconductor.com/api/update/UpdateCheckItemTemplate?check_item_template_id=' + checkItemTemplateId
+  },
   deleteReviewTemplate: function (componentId) {
     return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
   }

@@ -283,10 +283,10 @@ export default function addcheckItem (props) {
     props.setPrinciplesData(principles)
   }
   let handleValueSelect = function (event) {
-      let selectedValue = event.target.value
-      if (selectedValue.trim() !== '') {
-        props.setSelectedValue(selectedValue)
-      }
+    let selectedValue = event.target.value
+    if (selectedValue.trim() !== '') {
+      props.setSelectedValue(selectedValue)
+    }
   }
   let addValue = function () {
     console.log(props)

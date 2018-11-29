@@ -19,6 +19,7 @@ const SET_VALUES_DATA = 'ViewCheckItemReducer/SET_VALUES_DATA'
 const SET_SELECTED_CHECKITEM = 'ViewCheckItemReducer/SET_CHECKITEM_VALUE'
 const SET_CHECKITEMS_DATA = 'ViewCheckItemReducer/SET_CHECKITEMS_DATA'
 const SET_PAYLOAD = 'ViewCheckItemReducer/SET_PAYLOAD'
+const SET_SELECTED_TYPE = 'addcheckItemReducer/SET_SELECTED_TYPE'
 // const SET_ADD_CHECKITEM_VALUE = 'ViewCheckItemReducer/SET_ADD_CHECKITEM_VALUE'
 // const SET_NEW_STANDARD_VALUE = 'ViewCheckItemReducer/SET_NEW_STANDARD_VALUE'
 
@@ -43,7 +44,8 @@ export const actions = {
     SET_VALUES_DATA,
     SET_PAYLOAD,
     SET_SELECTED_CHECKITEM,
-    SET_CHECKITEMS_DATA
+    SET_CHECKITEMS_DATA,
+    SET_SELECTED_TYPE
 }
 
 export const actionCreators = {
@@ -59,7 +61,8 @@ export const actionCreators = {
   setValuesData: createAction(SET_VALUES_DATA),
   setSelectedCheckitem: createAction(SET_SELECTED_CHECKITEM),
   setCheckitemsData: createAction(SET_CHECKITEMS_DATA),
-  setPayload: createAction(SET_PAYLOAD)
+  setPayload: createAction(SET_PAYLOAD),
+  setSelectedType: createAction(SET_SELECTED_TYPE)
 }
 
 export const initialState = {
@@ -79,7 +82,7 @@ export const initialState = {
   selectedValue: null,
   checkitems: [],
   payload: [],
-  selectedCheckitem: null,
+  selectedCheckitem: [],
   componentTypeProperties: '',
   editCheckItemsSettings: {
     isDeleteModalOpen: false,
@@ -182,6 +185,10 @@ export default handleActions(
       ...state,
       updateCheckItemResponse: '',
       deleteCheckItemResponse: ''
+    }),
+    [SET_SELECTED_TYPE]: (state, action) => ({
+      ...state,
+      selectedType: action.payload
     })
   },
   initialState

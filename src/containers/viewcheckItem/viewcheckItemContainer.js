@@ -4,6 +4,7 @@ import ViewCheckItem from '../../components/viewcheckItem/viewcheckItemComponent
 import { actions as sagaActions } from '../../redux/sagas/'
 import _ from 'lodash'
 import { actionCreators } from '../../redux/reducers/viewcheckItemReducer/viewcheckItemReducerReducer'
+import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -29,7 +30,9 @@ export function mapStateToProps (state, props) {
     updateCheckItemValue: state.viewcheckItemReducer.updateCheckItemValue,
     payload: state.viewcheckItemReducer.payload,
     componentTypeComponent: state.basicReducer.componentTypeComponent,
-    componentTypeComponents: state.basicReducer.componentTypeComponents
+    componentTypeComponents: state.basicReducer.componentTypeComponents,
+    selectedType: state.addcheckItemReducer.selectedType,
+    modalIsOpen: state.basicReducer.modalIsOpen
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -56,7 +59,9 @@ export const propsMapping: Callbacks = {
   setValuesData: actionCreators.setValuesData,
   setSelectedCheckitem: actionCreators.setSelectedCheckitem,
   setCheckitemsData: actionCreators.setCheckitemsData,
-  setPayload: actionCreators.setPayload
+  setPayload: actionCreators.setPayload,
+  setSelectedType: actionCreators.setSelectedType,
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus
 }
 
 // If you want to use the function mapping
@@ -88,19 +93,12 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-    // let appPackage = JSON.parse(localStorage.getItem('packages'))
-    // console.log('***********', appPackage)
-    // let componentTypes = appPackage.resources[0].component_types
-    // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-    //     return obj.key === 'Check Item'
-    // }), 'component_type')
-    // console.log('component_type iddddd', componentTypeId)
-    let payload = {
-     'template_id': this.props.match.params.id
-    }
-    this.props.fetchCheckItemById && this.props.fetchCheckItemById(payload)
-    let appPackage = JSON.parse(localStorage.getItem('packages'))
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      let payload = {
+      'template_id': this.props.match.params.id
+      }
+      this.props.fetchCheckItemById && this.props.fetchCheckItemById(payload)
+      let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
       let checkItemTemplatesId = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Check Item Template'
@@ -155,6 +153,21 @@ export default compose(
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.deleteCheckItemResponse.error_message, deleteCheckItemResponse.error_code)
+        }
+        // this.props.resetResponse()
+        this.props.history.push('/checkitems')
+      }
+      if (nextProps.updateCheckItemResponse && nextProps.updateCheckItemResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
+        // this.props.setUserActionSettings(userActionSettings)
+        if (nextProps.updateCheckItemResponse.error_code === null) {
+          // eslint-disable-next-line
+          toastr.success('Successfully updated CheckItem ' +  nextProps.updateCheckItemResponse.resources[0].id , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateCheckItemResponse.error_message, nextProps.updateCheckItemResponse.error_code)
         }
         // this.props.resetResponse()
         this.props.history.push('/checkitems')
