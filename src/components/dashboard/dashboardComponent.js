@@ -14,10 +14,10 @@ export default function Dashboard (props) {
   let datasets = []
   let lineOption = {
     responsive: true,
-    // title: {
-    //   display: true,
-    //   text: 'Top 5 Technology'
-    // },
+    title: {
+      display: true,
+      text: 'Reviews Compliant & Per Month'
+    },
     maintainAspectRatio: true,
     scales: {
       yAxes: [{
@@ -34,7 +34,7 @@ export default function Dashboard (props) {
           display: true,
           scaleLabel: {
             display: true,
-            labelString: 'Reviews Compliant & Per Month'
+            labelString: 'Month'
           }
       }]
     }
