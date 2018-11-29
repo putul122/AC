@@ -13,6 +13,7 @@ export default function ReviewApproval (props) {
   let Reviewer = ''
   let Approver = ''
   let Artefact = ''
+  let Artefactid
   let checkItemList = ''
   let Compliant = ''
   let contextId = props.match.params.id
@@ -173,7 +174,7 @@ export default function ReviewApproval (props) {
                   {/* {messageBlock} */}
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
-                    <div className='col-8'>
+                    <div className='col-8 m--margin-top-10'>
                       <span>{reviewName}</span>
                     </div>
                   </div>
@@ -218,7 +219,7 @@ export default function ReviewApproval (props) {
                                 <div className='form-group m-form__group row'>
                                   {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
                                   <div className='col-4'><b>Review Artefact</b></div>
-                                  <div className='col-8'><p>{Artefact}</p></div>
+                                  <div className='col-8'><a href={'/review_artefact/' + Artefactid}>{Artefact}</a></div>
                                 </div>
                               </span>
                               <span className='m-list-search__result-item'>
@@ -236,7 +237,7 @@ export default function ReviewApproval (props) {
                   </div>
                 </div>
               </div>
-              <div className='col-md-6'>
+              <div className='col-md-6 m--margin-top-50'>
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>

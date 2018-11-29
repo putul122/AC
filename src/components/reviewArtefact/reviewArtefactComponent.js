@@ -21,6 +21,7 @@ var divStyle = {
   }
 export default function ReviewArtefact (props) {
   console.log('EDCProperties---', props)
+  console.log('componentdata', props.reviewData)
   let reviewName = ''
   let reviewDescription = ''
   let reviewArtefactPropertiesList = ''
@@ -54,11 +55,11 @@ export default function ReviewArtefact (props) {
     props.setCurrentTab(payload)
   }
 
-  if (props.reviewData && props.reviewData !== '') {
-    reviewName = props.reviewData.resources[0].name
-    reviewDescription = props.reviewData.resources[0].description
-    startNode.name = props.reviewData.resources[0].name
-    startNode.title = props.reviewData.resources[0].title
+  if (props.componentTypeComponentData && props.componentTypeComponentData !== '') {
+    reviewName = props.componentTypeComponentData.resources[0].name
+    reviewDescription = props.componentTypeComponentData.resources[0].description
+    startNode.name = props.componentTypeComponentData.resources[0].name
+    startNode.title = props.componentTypeComponentData.resources[0].title
   }
 if (props.reviewArtefactPropertiesdata && props.reviewArtefactPropertiesdata !== '') {
     reviewArtefactPropertiesList = props.reviewArtefactPropertiesdata.resources.map(function (property, index) {
@@ -329,5 +330,6 @@ if (props.reviewArtefactPropertiesdata && props.reviewArtefactPropertiesdata !==
   reviewArtefactPropertiesdata: PropTypes.any,
   reviewArtefactRelationshipsdata: PropTypes.any,
   reviewData: PropTypes.any,
+  componentTypeComponentData: PropTypes.any,
   showTabs: PropTypes.any
 }

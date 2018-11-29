@@ -43,8 +43,14 @@ export const FETCH_REVIEWARTEFACT_PROPERTIES_FAILURE = 'saga/Basic/FETCH_REVIEWA
 export const FETCH_REVIEWARTEFACT_RELATIONSHIPS = 'saga/Basic/FETCH_REVIEWARTEFACT_RELATIONSHIPS'
 export const FETCH_REVIEWARTEFACT_RELATIONSHIPS_SUCCESS = 'saga/Basic/FETCH_REVIEWARTEFACT_RELATIONSHIPS_SUCCESS'
 export const FETCH_REVIEWARTEFACT_RELATIONSHIPS_FAILURE = 'saga/Baisc/FETCH_REVIEWARTEFACT_RELATIONSHIPS_FAILURE'
+export const FETCH_COMPONENT_TYPE_COMPONENT = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENT'
+export const FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS'
+export const FETCH_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/Basic/FETCH_COMPONENT_TYPE_COMPONENT_FAILURE'
 
 export const actionCreators = {
+  fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
+  fetchComponentTypeComponentSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS),
+  fetchComponentTypeComponentFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FAILURE),
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
   fetchClientAccessTokenSuccess: createAction(FETCH_CLIENT_ACCESS_TOKEN_SUCCESS),
   fetchClientAccessTokenFailure: createAction(FETCH_CLIENT_ACCESS_TOKEN_FAILURE),
@@ -89,6 +95,7 @@ export const actionCreators = {
 export default function * watchBasic () {
   yield [
     takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
+    takeLatest(FETCH_COMPONENT_TYPE_COMPONENT, getComponentTypeComponent),
     takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
     takeLatest(FETCH_BUSINESS_UNITS, getBusinessUnits),
     takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
@@ -114,6 +121,20 @@ export function * getClientAccessToken (action) {
     yield put(actionCreators.fetchClientAccessTokenSuccess(clientAccessToken.data))
   } catch (error) {
     yield put(actionCreators.fetchClientAccessTokenFailure(error))
+  }
+}
+
+export function * getComponentTypeComponent (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponent(action.payload.component_id)
+      // {params: action.payload}
+    )
+    yield put(actionCreators.fetchComponentTypeComponentSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentTypeComponentFailure(error))
   }
 }
 

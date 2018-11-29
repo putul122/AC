@@ -39,7 +39,7 @@ export default function ReviewDraft (props) {
   if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
     reviewStatus = props.reviewData.resources[0].status
     reviewReason = props.reviewData.resources[0].reason
-    reviewArtefact = props.reviewData.resources[0].review_artefact_id
+    // reviewArtefact = props.reviewData.resources[0].review_artefact_id
     reviewArtefactName = props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'
   }
   if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
@@ -633,22 +633,28 @@ export default function ReviewDraft (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
                     <div className='col-8'>
-                      <div className='row'>
+                      <div className='row m--margin-top-10'>
                         <div className='col-md-5'><span>{reviewArtefactName}</span></div>
-                        <div className='col-md-7'>
+                        {/* <div className='col-md-7'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
-                        </div>
+                        </div> */}
                         {/* <div className='col-md-5 float-right'>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
                         </div> */}
                       </div>
                       <br />
-                      <div className='form-group m-form__group row'>
-                        &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='checkbox checkbox--danger'>
-                          <input type='checkbox' checked={props.draftEdit.isCancel} onChange={handleCancel} /> Cancel Review
+                      <div className='row'>
+                        <div className='col-md-5'>
+                          &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='checkbox checkbox--danger' style={{'marginLeft': '-10px'}}>
+                            <input type='checkbox' checked={props.draftEdit.isCancel} onChange={handleCancel} /> Cancel Review
                           <span />
-                        </label>
+                          </label>
+                        </div>
+                        <div className='col-md-7'>
+                          <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
+                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -724,7 +730,7 @@ export default function ReviewDraft (props) {
         <div>
           <ReactModal isOpen={props.connectArtefactSettings.isModalOpen}
             onRequestClose={closeModal}
-            className='modal-dialog'
+            className='modal-dialog modal-lg'
             style={{'content': {'top': '20%'}}}
             >
             <div className={''}>

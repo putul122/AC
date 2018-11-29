@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     reviewData: state.reviewArtefactReducer.reviewData,
     reviewArtefactPropertiesdata: state.reviewArtefactReducer.reviewArtefactPropertiesdata,
     reviewArtefactRelationshipsdata: state.reviewArtefactReducer.reviewArtefactRelationshipsdata,
-    showTabs: state.reviewArtefactReducer.showTabs
+    showTabs: state.reviewArtefactReducer.showTabs,
+    componentTypeComponentData: state.reviewArtefactReducer.componentTypeComponentData
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -21,6 +22,7 @@ export const propsMapping: Callbacks = {
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   fetchReviewArtefactProperties: sagaActions.basicActions.fetchReviewArtefactProperties,
   fetchReviewArtefactRelationships: sagaActions.basicActions.fetchReviewArtefactRelationships,
+  fetchComponentTypeComponent: sagaActions.basicActions.fetchComponentTypeComponent,
   setCurrentTab: actionCreators.setCurrentTab
 }
 
@@ -49,12 +51,11 @@ export default compose(
       //   }), 'component_type_property')
       //   contextId = componentId
       // }
-      let reviewdatapayload = {
-        'review_id': this.props.match.params.id
+      let artefectdatapayload = {
+        'component_id': this.props.match.params.id
       }
-      this.props.fetchReviewById && this.props.fetchReviewById(reviewdatapayload)
+      this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(artefectdatapayload)
       let payload = {
-        // 'review_id': this.props.match.params.id
         'review_artefact_id': this.props.match.params.id
       }
       this.props.fetchReviewArtefactProperties && this.props.fetchReviewArtefactProperties(payload)

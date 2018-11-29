@@ -33,6 +33,8 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+       // eslint-disable-next-line
+       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         'review_id': this.props.match.params.id
       }
@@ -43,6 +45,21 @@ export default compose(
       mApp && mApp.block('#agreementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // eslint-disable-next-line
       mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
+      if (nextProps.reviewbyId && nextProps.reviewbyId !== '' && nextProps.reviewbyId !== this.props.reviewbyId) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.reviewbyId.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.reviewbyId.error_message, nextProps.reviewbyId.error_code)
+        }
+      }
     }
-  })
+ })
 )(ViewReview)

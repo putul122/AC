@@ -292,7 +292,7 @@ return (
                       <i className='flaticon-notes m--font-brand' />
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Draft</h3>
+                      <h3 style={{'marginRight': '40px'}}>Reviews in Draft</h3>
                       <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5>
                     </span>
                     {/* <span className='m-widget17__desc'>

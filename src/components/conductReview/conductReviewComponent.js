@@ -11,6 +11,7 @@ export default function ConductReview (props) {
   let ReviewStatus = ''
   let ReviewReason = ''
   let Artefact = ''
+  let Artefectid = ''
   let Category = ''
   let checkItemList = ''
   let contextId = props.match.params.id
@@ -101,6 +102,7 @@ export default function ConductReview (props) {
     // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
     // props.setComplaint(complianceStatus)
     Artefact = props.reviewData.resources[0].review_artefact_name
+    Artefectid = props.reviewData.resources[0].review_artefact_id
   }
   if (props.checkItems.length > 0) {
     let notToDisplay = []
@@ -383,7 +385,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                     <div className='col-8'>
-                      <span className='m-input' >{Artefact}</span>
+                      <a href={'/review_artefact/' + Artefectid}>{Artefact}</a>
                     </div>
                   </div>
                 </div>
@@ -456,10 +458,10 @@ export default function ConductReview (props) {
                     <span />
                   </label>
                 </div>
-                {props.checkboxSelected.draft && (<div className='col-md-12'>
+                {props.checkboxSelected.draft && (<div className='col-md-12 m-demo'>
                   <div className={props.validationClass.draft}>
                     <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
-                    <div className='col-8'>
+                    <div className='col-8 m-demo__preview'>
                       {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
                       <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                     </div>
