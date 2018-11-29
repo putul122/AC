@@ -1,34 +1,10 @@
 import React from 'react'
 import Select from 'react-select'
-// import moment from 'moment'
 import PropTypes from 'prop-types'
 import styles from './addcheckItemComponent.scss'
-// import DataModelComponent from '../dataModel/dataModelComponent'
 // import _ from 'lodash'
 import ReactModal from 'react-modal'
-// import Select from 'react-select'
-// import CreatableSelect from 'react-select/lib/Creatable'
-// import DatePicker from 'react-datepicker'
-// import 'react-datepicker/dist/react-datepicker.css'
-// ReactModal.setAppElement('#root')
-// const NEWCOMPONENT = '99999'
-// const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
-// var divStyle = {
-//   width: '900px',
-//   height: '600px',
-//   // 'overflowY': 'scroll',
-//   // 'overflowX': 'scroll',
-//   'border': '1px solid #000000',
-//   'background-color': '#FFFFFF'
-// }
-// const formatAmount = (x) => {
-//   let parts = x.toString().split('.')
-//   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-//   if (typeof parts[1] !== 'undefined') {
-//     parts[1] = parts[1].substring(0, 2)
-//   }
-//   return parts.join('.')
-// }
+ReactModal.setAppElement('#root')
 const customStyles = {
   content: {
     top: '50%',
@@ -55,17 +31,43 @@ export default function addcheckItem (props) {
   let standardsOptions = []
   let principlesOptions = []
   let checkitemsvalueOptions = []
-  let reviewCategoryOptions = []
+  let typeOptions = []
   let standardList = ''
   let principleList = ''
   let valueList = ''
-  let checkitemList = ''
+  // let checkitemList = ''
   // let standardName = ''
   // let standardDescription = ''
   // let standardReference = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
+  let handleTypeChange = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option') {
+      let selectedType = newValue
+      props.setSelectedType(selectedType)
+    }
+    if (actionMeta.action === 'clear') {
+      let selectedType = null
+      props.setSelectedType(selectedType)
+    }
+  }
+  let handleCheckItemSelect = function (index) {
+    console.log('index', index)
+    let selectedCheckitem = JSON.parse(JSON.stringify(props.selectedCheckitem))
+    return function (newValue: any, actionMeta: any) {
+      console.log('newValue', newValue)
+      console.log('actionMeta', actionMeta)
+      if (actionMeta.action === 'select-option') {
+        selectedCheckitem[index] = newValue
+        props.setSelectedCheckitem(selectedCheckitem)
+      }
+      if (actionMeta.action === 'clear') {
+        selectedCheckitem[index] = null
+        props.setSelectedCheckitem(selectedCheckitem)
+      }
+    }
+  }
   if (props.componentTypeComponentCheckitems && props.componentTypeComponentCheckitems !== '') {
      checkItemsOptions = props.componentTypeComponentCheckitems.resources.map(function (data, index) {
       data.label = data.name
@@ -91,7 +93,7 @@ export default function addcheckItem (props) {
     })
   }
   if (props.reviewCategories && props.reviewCategories !== '') {
-    reviewCategoryOptions = props.reviewCategories.map(function (data, index) {
+    typeOptions = props.reviewCategories.map(function (data, index) {
       data.label = data.name
       return data
     })
@@ -122,25 +124,72 @@ export default function addcheckItem (props) {
     principleList = ''
     console.log('standardList', principleList)
   }
-    if (props.checkitems.length > 0) {
-    console.log(props.checkitems)
-    checkitemList = props.checkitems.map(function (data, index) {
-      return (<span className='m-list-search__result-item' key={index}>
-        <span className='m-list-search__result-item-text'>{data.name}</span>
-        <button type='button' onClick={(event) => { removeCheckitem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
-      </span>)
-    })
-    console.log('standardList', checkitemList)
-  } else {
-    checkitemList = ''
-    console.log('standardList', checkitemList)
-  }
+  //   if (props.checkitems.length > 0) {
+  //   console.log(props.checkitems)
+  //   checkitemList = props.checkitems.map(function (data, index) {
+  //     return (<span className='m-list-search__result-item' key={index}>
+  //       <span className='m-list-search__result-item-text'>{data.name}</span>
+  //       <button type='button' onClick={(event) => { removeCheckitem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+  //     </span>)
+  //   })
+  //   console.log('standardList', checkitemList)
+  // } else {
+  //   checkitemList = ''
+  //   console.log('standardList', checkitemList)
+  // }
   if (props.values.length > 0) {
     console.log(props.values)
-   valueList = props.values.map(function (data, index) {
-      return (<span className='m-list-search__result-item' key={index}>
-        <span className='m-list-search__result-item-text'>{data.name}</span>
-        <button type='button' onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+    valueList = props.values.map(function (data, index) {
+      let checkList = []
+      if (data.requiresCheckItems.length > 0) {
+        checkList = data.requiresCheckItems.map(function (checkItem, ix) {
+          return (<span className='m-list-search__result-item' key={ix}>
+            <span className='m-list-search__result-item-text'>{checkItem.name}</span>
+            <button type='button' onClick={(event) => { removeCheckItem(index, ix) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
+          </span>)
+        })
+      }
+      return (<span className='m-list-search__result-item'>
+        <div className='m-section m-section--last'>
+          <div className='m-section__content'>
+            <div className='m-demo'>
+              <div className='m-demo__preview'>
+                <div className='m-list-search'>
+                  <div className='m-list-search__results'>
+                    <span className='m-list-search__result-item'>
+                      <span className='m-list-search__result-item-text'>{data.value.name}</span>
+                      <button onClick={(event) => { removeValue(index) }} className='btn btn-outline-danger btn-sm pull-right'>Retmove</button>
+                    </span>
+                    <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                Select Check Item
+                            </span>
+                    <div className='form-group m-form__group row'>
+                      <div className='col-8'>
+                        <Select
+                          // className='col-7 input-sm m-input'
+                          placeholder='Select CheckItem'
+                          isClearable
+                          value={props.selectedCheckitem[index] || null}
+                          onChange={handleCheckItemSelect(index)}
+                          isSearchable={false}
+                          name={'checkItemSelected'}
+                          options={checkItemsOptions}
+                        />
+                      </div>
+                      <button type='button' onClick={(event) => { addRequireCheckItem(index) }} className='btn btn-outline-info col-2 btn-sm'>Add</button>
+                    </div>
+                    <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                Selected Check Item
+                            </span>
+                    <div className='m-demo__preview'>
+                      {checkList}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </span>)
     })
     console.log('standardList', valueList)
@@ -161,14 +210,27 @@ export default function addcheckItem (props) {
     addCheckitemValue.name = value
     props.setAddCheckitemValue(addCheckitemValue)
   }
+  let handleDescriptionChange = function (event) {
+    let value = event.target.value
+    let addCheckitemValue = {...props.addCheckitemValue}
+    addCheckitemValue.description = value
+    props.setAddCheckitemValue(addCheckitemValue)
+  }
   let handleStandardValue = function (event) {
-    // let value = event.target.value
+    props.setModalOpenStatus(false)
     let newStandardValue = {...props.newStandardValue}
+    let standards = JSON.parse(JSON.stringify(props.standards))
+    console.log('NameInputBox', NameInputBox, NameInputBox.value)
+    console.log(DescriptionBox, DescriptionBox.value)
+    console.log(ReferenceBox, ReferenceBox.value)
     newStandardValue.name = NameInputBox.value
     newStandardValue.description = DescriptionBox.value
     newStandardValue.reference = ReferenceBox.value
-    props.setNewStandardValue(newStandardValue)
-    console.log('values for standard', newStandardValue)
+    newStandardValue.type = 'NEW'
+    console.log('newStandardValue', newStandardValue)
+    standards.push(newStandardValue)
+    props.setStandardsData(standards)
+    // props.setNewStandardValue(newStandardValue)
   }
   let handleStandardSelect = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
@@ -183,7 +245,9 @@ export default function addcheckItem (props) {
   let addStandardData = function () {
     let standards = props.standards
     if (props.selectedStandard !== null) {
-      standards.push(props.selectedStandard)
+      let selectedStandard = JSON.parse(JSON.stringify(props.selectedStandard))
+      selectedStandard.type = 'OLD'
+      standards.push(selectedStandard)
       props.setStandardsData(standards)
     }
     let selectedStandard = null
@@ -229,9 +293,14 @@ export default function addcheckItem (props) {
     }
   }
   let addValue = function () {
-    let values = props.values
+    console.log(props)
+    let values = JSON.parse(JSON.stringify(props.values))
+    let obj = {}
+    obj.value = props.selectedValue
+    obj.requiresCheckItems = []
     if (props.selectedValue !== null) {
-      values.push(props.selectedValue)
+      values.push(obj)
+      console.log('values', values)
       props.setValuesData(values)
     }
     let selectedValue = null
@@ -242,44 +311,51 @@ export default function addcheckItem (props) {
     values.splice(index, 1)
     props.setValuesData(values)
   }
-  let handleCheckitemSelect = function (newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      let selectedCheckitem = newValue
-      props.setSelectedCheckitem(selectedCheckitem)
+  let addRequireCheckItem = function (index) {
+    let values = JSON.parse(JSON.stringify(props.values))
+    let selectedValue = values[index]
+    let selectedCheckItemArray = JSON.parse(JSON.stringify(props.selectedCheckitem))
+    selectedValue.requiresCheckItems.push(selectedCheckItemArray[index])
+    values[index] = selectedValue
+    if (selectedCheckItemArray[index] !== null) {
+      props.setValuesData(values)
     }
-    if (actionMeta.action === 'clear') {
-      let selectedCheckitem = null
-      props.setSelectedCheckitem(selectedCheckitem)
-    }
+    selectedCheckItemArray[index] = null
+    props.setSelectedCheckitem(selectedCheckItemArray)
   }
-  let addCheckitementry = function () {
-    let checkitems = props.checkitems
-    if (props.selectedCheckitem !== null) {
-      checkitems.push(props.selectedCheckitem)
-      props.setCheckitemsData(checkitems)
-    }
-    let selectedCheckitem = null
-    props.setSelectedCheckitem(selectedCheckitem)
-  }
-  let removeCheckitem = function (index) {
-    let checkitems = JSON.parse(JSON.stringify(props.checkitems))
-    checkitems.splice(index, 1)
-    props.setCheckitemsData(checkitems)
+  let removeCheckItem = function (valueIndex, checkItemIndex) {
+    let values = JSON.parse(JSON.stringify(props.values))
+    let selectedValue = values[valueIndex]
+    let requiresCheckItems = selectedValue.requiresCheckItems
+    requiresCheckItems.splice(checkItemIndex, 1)
+    selectedValue.requiresCheckItems = requiresCheckItems
+    values[valueIndex] = selectedValue
+    props.setValuesData(values)
   }
   let saveCheckitem = function (event) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let payload = {}
     payload.name = props.addCheckitemValue.name
-    payload.description = ''
-    payload.type_id = props.reviewCategories.id
+    payload.description = props.addCheckitemValue.description
+    payload.type_id = props.selectedType.id || null
+    payload.values = []
     if (props.values.length > 0) {
-      payload.values = props.values.map(function (data, index) {
-        let obj = {}
-        // obj.id = data.id
-        obj.name = data.name
-        obj.description = data.description
-        return obj
+      props.values.forEach(function (data, index) {
+        if (data.value) {
+          let obj = {}
+          obj.name = data.value.name
+          obj.description = data.value.description
+          obj.requires_check_items = []
+          if (data.requiresCheckItems.length > 0) {
+            data.requiresCheckItems.forEach(function (checkItem, idx) {
+              let ob = {}
+              ob.id = checkItem.id
+              obj.requires_check_items.push(ob)
+            })
+          }
+          payload.values.push(obj)
+        }
       })
     } else {
       payload.values = []
@@ -293,21 +369,25 @@ export default function addcheckItem (props) {
     } else {
       payload.principles = []
     }
-    // payload.name = props.newStandardValue.name
-    // payload.description = props.newStandardValue.description
-    // payload.reference = props.newStandardValue.reference
-     if (props.standards.length > 0) {
-      payload.standards = props.standards.map(function (data, index) {
-        let obj = {}
-        obj.id = data.id
-        obj.name = props.newStandardValue.name
-        obj.description = props.newStandardValue.description
-        obj.reference = props.newStandardValue.reference
-        return obj
+    if (props.standards.length > 0) {
+      payload.standards = []
+      props.standards.forEach(function (data, index) {
+        if (data.type === 'OLD') {
+          let obj = {}
+          obj.id = data.id
+          payload.standards.push(obj)
+        } else if (data.type === 'NEW') {
+          let obj = {}
+          obj.name = data.name
+          obj.description = data.description
+          obj.reference = data.reference
+          payload.standards.push(obj)
+        }
       })
     } else {
       payload.standards = []
     }
+    console.log('createPAyload', payload)
     props.createCheckItem(payload)
   }
     return (
@@ -321,7 +401,7 @@ export default function addcheckItem (props) {
                   <div className='col-8'>
                     <div className='form-group m-form__group has-danger'>
                       <input type='text' className='form-control m-input m--margin-top-10' value={props.addCheckitemValue.name} onChange={handleNameChange} placeholder='Check Item Name' aria-describedby='basic-addon2' />
-                      <input type='text' className='form-control m-input m--margin-top-10' value={''} placeholder='Check Item Description' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input m--margin-top-10' value={props.addCheckitemValue.description} placeholder='Check Item Description' onChange={handleDescriptionChange} aria-describedby='basic-addon2' />
                     </div>
                   </div>
                   <div className='col-4 float-right m--margin-top-10'>
@@ -350,13 +430,13 @@ export default function addcheckItem (props) {
                                 <div className='col-8'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Type'
                                     isClearable
                                     // defaultValue={dvalue}
-                                    // onChange={handleRelationshipPropertySelect(index, childIndex)}
+                                    onChange={handleTypeChange}
                                     isSearchable={false}
-                                    name={'roleSelected'}
-                                    options={reviewCategoryOptions}
+                                    name={'typeSelected'}
+                                    options={typeOptions}
                                   />
                                 </div>
                               </div>
@@ -376,7 +456,7 @@ export default function addcheckItem (props) {
                                             <div className='col-8'>
                                               <Select
                                                 // className='col-7 input-sm m-input'
-                                                placeholder='Select Category'
+                                                placeholder='Select Value'
                                                 isClearable
                                                 value={props.selectedValue}
                                                 onChange={handleValueSelect}
@@ -387,48 +467,7 @@ export default function addcheckItem (props) {
                                             </div>
                                             <button type='button' onClick={addValue} className='btn btn-outline-info col-2 btn-sm'>Add</button>
                                           </div>
-                                          <span className='m-list-search__result-item'>
-                                            <div className='m-section m-section--last'>
-                                              <div className='m-section__content'>
-                                                <div className='m-demo'>
-                                                  <div className='m-demo__preview'>
-                                                    <div className='m-list-search'>
-                                                      <div className='m-list-search__results'>
-                                                        <span className='m-list-search__result-item'>
-                                                          {valueList}
-                                                        </span>
-                                                        <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                                                    Select Check Item
-                                                                </span>
-                                                        <div className='form-group m-form__group row'>
-                                                          {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label> */}
-                                                          <div className='col-8'>
-                                                            <Select
-                                                              // className='col-7 input-sm m-input'
-                                                              placeholder='Select Category'
-                                                              isClearable
-                                                              value={props.selectedCheckitem}
-                                                              onChange={handleCheckitemSelect}
-                                                              isSearchable={false}
-                                                              name={'roleSelected'}
-                                                              options={checkItemsOptions}
-                                                            />
-                                                          </div>
-                                                          <button type='button' onClick={addCheckitementry} className='btn btn-outline-info col-2 btn-sm'>Add</button>
-                                                        </div>
-                                                        <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                                                    Selected Check Item
-                                                                </span>
-                                                        <div className='m-demo__preview'>
-                                                          {checkitemList}
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </span>
+                                          {valueList}
                                         </div>
                                       </div>
                                     </div>
@@ -457,7 +496,7 @@ export default function addcheckItem (props) {
                                 <div className='col-6'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Principle'
                                     isClearable
                                     value={props.selectedPrinciple}
                                     onChange={handlePrincipleSelect}
@@ -508,7 +547,7 @@ export default function addcheckItem (props) {
                                 <div className='col-6'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Standard'
                                     isClearable
                                     value={props.selectedStandard}
                                     onChange={handleStandardSelect}
@@ -568,15 +607,15 @@ export default function addcheckItem (props) {
                       {/* {messageBlock} */}
                       <div className='form-group'>
                         <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                        <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' required />
+                        <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' />
                       </div>
                       <div className='form-group'>
                         <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                        <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} autoComplete='off' required />
+                        <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} autoComplete='off' />
                       </div>
                       <div className='form-group'>
                         <label htmlFor='component-name' className='form-control-label'>Reference:</label>
-                        <input type='text' className='form-control' ref={input => (ReferenceBox = input)} id='component-name' autoComplete='off' required />
+                        <input type='text' className='form-control' ref={input => (ReferenceBox = input)} id='component-name' autoComplete='off' />
                       </div>
                     </form>
                   </div>
@@ -601,11 +640,11 @@ export default function addcheckItem (props) {
     selectedStandard: PropTypes.any,
     selectedPrinciple: PropTypes.any,
     selectedValue: PropTypes.any,
-    selectedCheckitem: PropTypes.any,
+    // selectedCheckitem: PropTypes.any,
     principles: PropTypes.any,
     standards: PropTypes.any,
     values: PropTypes.any,
-    checkitems: PropTypes.any,
+    selectedType: PropTypes.any,
     setStandardsData: PropTypes.func,
     setPrinciplesData: PropTypes.func,
     setValuesData: PropTypes.func,

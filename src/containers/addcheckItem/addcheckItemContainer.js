@@ -28,7 +28,8 @@ export function mapStateToProps (state, props) {
     newStandardValue: state.addcheckItemReducer.newStandardValue,
     modalIsOpen: state.basicReducer.modalIsOpen,
     createCheckItemResponse: state.addcheckItemReducer.createCheckItemResponse,
-    addStandard: state.addcheckItemReducer.addStandard
+    addStandard: state.addcheckItemReducer.addStandard,
+    selectedType: state.addcheckItemReducer.selectedType
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -52,7 +53,8 @@ export const propsMapping: Callbacks = {
   setCheckitemsData: actionCreators.setCheckitemsData,
   setAddCheckitemValue: actionCreators.setAddCheckitemValue,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setNewStandardValue: actionCreators.setNewStandardValue
+  setNewStandardValue: actionCreators.setNewStandardValue,
+  setSelectedType: actionCreators.setSelectedType
 
   // fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents
 }

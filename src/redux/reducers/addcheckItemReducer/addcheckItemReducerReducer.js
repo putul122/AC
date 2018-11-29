@@ -21,6 +21,7 @@ const SET_SELECTED_CHECKITEM = 'addcheckItemReducer/SET_CHECKITEM_VALUE'
 const SET_CHECKITEMS_DATA = 'addcheckItemReducer/SET_CHECKITEMS_DATA'
 const SET_ADD_CHECKITEM_VALUE = 'addcheckItemReducer/SET_ADD_CHECKITEM_VALUE'
 const SET_NEW_STANDARD_VALUE = 'addcheckItemReducer/SET_NEW_STANDARD_VALUE'
+const SET_SELECTED_TYPE = 'addcheckItemReducer/SET_SELECTED_TYPE'
 
 export const actions = {
   CREATE_CHECKITEM_SUCCESS,
@@ -41,7 +42,8 @@ export const actions = {
   SET_CHECKITEMS_DATA,
   SET_ADD_CHECKITEM_VALUE,
   ADD_STANDARD_SUCCESS,
-  SET_NEW_STANDARD_VALUE
+  SET_NEW_STANDARD_VALUE,
+  SET_SELECTED_TYPE
 }
 
 export const actionCreators = {
@@ -56,7 +58,8 @@ export const actionCreators = {
   setSelectedCheckitem: createAction(SET_SELECTED_CHECKITEM),
   setCheckitemsData: createAction(SET_CHECKITEMS_DATA),
   setAddCheckitemValue: createAction(SET_ADD_CHECKITEM_VALUE),
-  setNewStandardValue: createAction(SET_NEW_STANDARD_VALUE)
+  setNewStandardValue: createAction(SET_NEW_STANDARD_VALUE),
+  setSelectedType: createAction(SET_SELECTED_TYPE)
 }
 
 export const initialState = {
@@ -74,8 +77,9 @@ export const initialState = {
   selectedPrinciple: null,
   values: [],
   selectedValue: null,
+  selectedType: null,
   checkitems: [],
-  selectedCheckitem: null,
+  selectedCheckitem: [],
   addCheckitemValue: {
     'name': '',
     'description': ''
@@ -165,6 +169,10 @@ export default handleActions(
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       createCheckItemResponse: ''
+    }),
+    [SET_SELECTED_TYPE]: (state, action) => ({
+      ...state,
+      selectedType: action.payload
     })
   },
   initialState
