@@ -11,7 +11,7 @@ class LandingPage extends React.Component {
     <div className=''>
       <div className='m-content col-xl-12'>
         <div>
-          <img alt='' src='/assets/Architecture_Compliance.png' style={{width: '100%'}} />
+          <img alt='' src='/assets/Architecture_Compliance.jpg' style={{width: '100%'}} />
         </div>
       </div>
     </div>
