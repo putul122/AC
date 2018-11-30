@@ -18,6 +18,7 @@ export default function ViewReview (props) {
   let ReviewArtefactId = ''
   let contextId = props.match.params.id
   let checkItemList = ''
+  let complianceStatus = ''
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -45,6 +46,7 @@ export default function ViewReview (props) {
     ReviewCategory = props.reviewbyId.resources[0].review_category
     ReviewArtefact = props.reviewbyId.resources[0].review_artefact_name
     ReviewArtefactId = props.reviewbyId.resources[0].review_artefact_id
+    complianceStatus = props.reviewbyId.resources[0].compliance_status
     if (props.reviewbyId.resources[0].check_items.length > 0) {
       checkItemList = props.reviewbyId.resources[0].check_items.map(function (data, index) {
         if (data.type === null || data.type === 'Radio') {
@@ -165,6 +167,12 @@ export default function ViewReview (props) {
                                       Review Stage
                                     </span>
                                     <span className='m-widget13__text  m--font-brand'>{reviewstage}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
+                                      Compliance Status
+                                    </span>
+                                    <span className='m-widget13__text  m--font-brand'>{complianceStatus}</span>
                                   </div>
                                 </div>
                               </div>

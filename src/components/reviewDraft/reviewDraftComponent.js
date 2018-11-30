@@ -665,14 +665,18 @@ export default function ReviewDraft (props) {
                       <textarea className='form-control m-input m-input--air' value={props.draftEdit.cancelReason} onChange={handleCancelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                     </div>
                   </div>)}
-                  {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
-                    <div className='col-8'>{reviewStatus}</div>
-                  </div>)}
-                  {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
-                    <div className='col-8'>{reviewReason}</div>
-                  </div>)}
+                  <div className='m-demo'>
+                    <div className='m-demo__preview'>
+                      {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
+                        <div className='col-8 m--margin-top-10'>{reviewStatus}</div>
+                      </div>)}
+                      {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
+                        <div className='col-8 m--margin-top-10'>{reviewReason}</div>
+                      </div>)}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className='col-md-6'>

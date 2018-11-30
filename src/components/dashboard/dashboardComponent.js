@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import './dashboardComponent.scss'
 import {defaults, Pie, Line} from 'react-chartjs-2'
 import _ from 'lodash'
 defaults.global.legend.display = false
@@ -169,9 +170,9 @@ export default function Dashboard (props) {
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
                     <div className='m-portlet__head-title'>
-                      <h3 className='m-portlet__head-text m--font-light'>
+                      {/* <h3 className='m-portlet__head-text m--font-light'>
                         Reviews in Draft
-                      </h3>
+                      </h3> */}
                     </div>
                   </div>
                 </div>
@@ -188,14 +189,16 @@ export default function Dashboard (props) {
                     </div>
                     <div className='m-widget17__stats'>
                       <div className='m-widget17__items m-widget17__items-col2'>
-                        <div className='m-widget17__item' style={{'marginTop': '-7.87rem'}}>
+                        <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                           <span className='m-widget17__icon'>
-                            <i className='flaticon-folder-4 m--font-brand' />
-                            <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsInDraft}</h4>
+                            <i className='flaticon-notes m--font-brand' />
                           </span>
-                          {/* <span className='m-widget17__subtitle'>
-                            <h3><a href='/applications'>Applications</a></h3>
-                            <h4>R {formatAmount(applicationCost)}</h4>
+                          <span className='m-widget17__subtitle'>
+                            <h3 style={{'marginRight': '40px'}}>Reviews in Draft</h3>
+                            <h4 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsInDraft}</h4>
+                          </span>
+                          {/* <span className='m-widget17__desc'>
+                            <h1>{softwareCount}</h1>
                           </span> */}
                         </div>
                       </div>
@@ -237,13 +240,13 @@ export default function Dashboard (props) {
                 <div className='m-portlet__head'>
                   <div className='m-portlet__head-caption'>
                     <div className='m-portlet__head-title'>
-                      <h3 className='m-portlet__head-text m--font-light'>
+                      {/* <h3 className='m-portlet__head-text m--font-light'>
                         Reviews in Progress
-                      </h3>
+                      </h3> */}
                     </div>
                   </div>
                 </div>
-                <div className='m-portlet__body' style={{'height': '150px'}}>
+                {/* <div className='m-portlet__body' style={{'height': '150px'}}>
                   <div className='m-widget17'>
                     <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
                       <div className='m-widget17__chart'>
@@ -261,6 +264,35 @@ export default function Dashboard (props) {
                             <i className='flaticon-truck m--font-brand' />
                             <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsInProgress}</h4>
                           </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> */}
+                <div className='m-portlet__body' style={{'height': '150px'}}>
+                  <div className='m-widget17'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                      <div className='m-widget17__chart'>
+                        <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                          <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                          <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                            <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                        <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                      </div>
+                    </div>
+                    <div className='m-widget17__stats'>
+                      <div className='m-widget17__items m-widget17__items-col2'>
+                        <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                          <span className='m-widget17__icon'>
+                            <i className='flaticon-truck m--font-brand' />
+                          </span>
+                          <span className='m-widget17__subtitle'>
+                            <h3 style={{'marginRight': '40px'}}>Reviews in Progress</h3>
+                            <h4 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsInProgress}</h4>
+                          </span>
+                          {/* <span className='m-widget17__desc'>
+                            <h1>{softwareCount}</h1>
+                          </span> */}
                         </div>
                       </div>
                     </div>
