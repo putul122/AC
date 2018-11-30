@@ -125,47 +125,43 @@ export default function ViewReview (props) {
                                 <span className='m-list-search__result-category m-list-search__result-category--first'>Review Details</span>
                                 <div className='m-widget13'>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text' style={{'width': '25%', 'color': '#000000'}}>
                                       Name:
                                     </span>
-                                    <span className='m-widget13__text'>
-                                      {reviewname}
-                                    </span>
+                                    <span className='m-widget13__text'>{reviewname}</span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text' style={{'width': '25%', 'color': '#000000'}}>
                                       Description:
                                     </span>
-                                    <span className='m-widget13__text'>
-                                      {reviewdescription}
-                                    </span>
+                                    <span className='m-widget13__text'>{reviewdescription}</span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                       Review Category:
                                     </span>
                                     <span className='m-widget13__text'>{ReviewCategory}</span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                     Reviewer:
                                     </span>
                                     <span className='m-widget13__text'>{Reviewer}</span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                     Approver:
                                     </span>
                                     <span className='m-widget13__text'>{Approver}</span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                     Review Artefact
                                     </span>
                                     <span className='m-widget13__text'><a href={'/review_artefact/' + ReviewArtefactId}>{ReviewArtefact}</a></span>
                                   </div>
                                   <div className='m-widget13__item'>
-                                    <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                    <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                       Review Stage
                                     </span>
                                     <span className='m-widget13__text  m--font-brand'>{reviewstage}</span>
