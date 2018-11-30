@@ -45,18 +45,9 @@ class LeftNavigation extends React.Component {
             </li>
             <li className={styles.navicon}>
               <a href='/checkitems'>
-                <i className='
-                fa fa-check-square-o fa-2x' />
+                <i className='fa fa-check-square-o fa-2x' />
                 <span className={styles.navtext}>
                 Check Items
-                </span>
-              </a>
-            </li>
-            <li className={styles.navicon}>
-              <a href='/users'>
-                <i className='fa fa-address-book-o fa-2x' />
-                <span className={styles.navtext}>
-                Users
                 </span>
               </a>
             </li>
@@ -65,6 +56,14 @@ class LeftNavigation extends React.Component {
                 <i className='fa fa-object-group fa-2x' />
                 <span className={styles.navtext}>
                 Templates
+                </span>
+              </a>
+            </li>
+            <li className={styles.navicon}>
+              <a href='/users'>
+                <i className='fa fa-address-book-o fa-2x' />
+                <span className={styles.navtext}>
+                Users
                 </span>
               </a>
             </li>

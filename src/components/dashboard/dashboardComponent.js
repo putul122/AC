@@ -8,7 +8,7 @@ const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '
 export default function Dashboard (props) {
   let reviewsInDraft = ''
   let reviewsInProgress = ''
-  let reviewsCompleted = ''
+  // let reviewsCompleted = ''
   let lineData = {}
   let pieChartData = {}
   let datasets = []
@@ -43,7 +43,7 @@ export default function Dashboard (props) {
     if (props.reviewsSummary.resources.length > 0) {
       reviewsInDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
       reviewsInProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress']
-      reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
+      // reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
       let data1 = props.reviewsSummary.resources[0].compliant_by_month.map(function (data, index) {
         data.type = 'CompliantByMonth'
         return data
@@ -269,7 +269,7 @@ export default function Dashboard (props) {
               </div>
             </div>
           </div>
-          <div className='row' id='agreementSummary'>
+          {/* <div className='row' id='agreementSummary'>
             <div className='col-md-12'>
               <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force'>
                 <div className='m-portlet__head'>
@@ -306,7 +306,7 @@ export default function Dashboard (props) {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className='col-md-6'>
           <div className='m-portlet m-portlet--full-height'>

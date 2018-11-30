@@ -22,7 +22,7 @@ let reviewsCancelled
 let searchTextBox
 let reviewList = ''
 let totalNoPages
-let perPage = 10
+let perPage = props.perPage
 let currentPage = props.currentPage
 let nextClass = ''
 let previousClass = ''
