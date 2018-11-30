@@ -22,19 +22,17 @@ export default function CheckItemModal (props) {
     let principleList = ''
     let standardList = ''
     // let principleType = ''
-    let openPrincipleModal = function (event) {
-        event.preventDefault()
-        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true}
+    let openPrincipleModal = function (data) {
+        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true, 'principleData': data}
         props.setModalSetting(modalSettings)
     }
-    let openStandardModal = function (event) {
-        event.preventDefault()
-        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': true, 'isPrincipleModalOpen': false}
+    let openStandardModal = function (data) {
+        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': true, 'isPrincipleModalOpen': false, 'standardData': data}
         props.setModalSetting(modalSettings)
     }
     let closeModal = function (event) {
         event.preventDefault()
-        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false}
+        let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false, 'principleData': '', 'standardData': ''}
         props.setModalSetting(modalSettings)
     }
     if (props.checkItemData && props.checkItemData !== '') {
@@ -43,7 +41,7 @@ export default function CheckItemModal (props) {
         principleList = props.checkItemData.principles.map(function (data, index) {
           return (
             <tr key={index}>
-              <td><a href={''} onClick={openPrincipleModal}>{data.name}</a></td>
+              <td><a href={''} onClick={(event) => { event.preventDefault(); openPrincipleModal(data) }}>{data.name}</a></td>
             </tr>
           )
         })
@@ -59,7 +57,7 @@ export default function CheckItemModal (props) {
         standardList = props.checkItemData.standards.map(function (data, index) {
           return (
             <tr key={index}>
-              <td><a href={''} onClick={openStandardModal}>{data.name}</a></td>
+              <td><a href={''} onClick={(event) => { event.preventDefault(); openStandardModal(data) }}>{data.name}</a></td>
             </tr>
           )
         })

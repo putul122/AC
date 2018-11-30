@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../../components/headerComponent/headerComponent.js'
+import Header from '../../containers/header/headerContainer.js'
 import LeftNavigation from '../../components/leftNavigation/leftNavigation.js'
 import ViewReview from '../../containers/viewReview/viewReviewContainer.js'
 
