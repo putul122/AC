@@ -44,6 +44,7 @@ export default function viewcheckItem (props) {
   let valuesList = ''
   let valuename = ''
   let checkitemname = ''
+  let checkItemType = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
@@ -73,6 +74,7 @@ export default function viewcheckItem (props) {
  // code for data of checkitem
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
+    checkItemType = props.checkitembyId.resources[0].type
     if (props.checkitembyId.resources.length > 0) {
       principlename = props.checkitembyId.resources[0].principles
       principleList = principlename.map(function (data, index) {
@@ -640,6 +642,11 @@ export default function viewcheckItem (props) {
                             <span className='m-list-search__result-item'>
                               <div className='form-group m-form__group row'>
                                 <label htmlFor='example-email-input' className='col-4 col-form-label'>Type</label>
+                                <div className='col-8'>
+                                  <div className='m-portlet__head-text'>
+                                    {checkItemType}
+                                  </div>
+                                </div>
                                 {/* <div className='col-8'>
                                   <div className='m-radio-inline pull-left'>
                                     <label htmlFor='example-email-input' className='m-radio'>
@@ -756,7 +763,7 @@ export default function viewcheckItem (props) {
                                 <div className='col-8'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Type'
                                     isClearable
                                     // defaultValue={dvalue}
                                     // onChange={handleRelationshipPropertySelect(index, childIndex)}
@@ -864,7 +871,7 @@ export default function viewcheckItem (props) {
                                 <div className='col-6'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Principle'
                                     isClearable
                                     value={props.selectedPrinciple}
                                     onChange={handlePrincipleSelect}
@@ -917,7 +924,7 @@ export default function viewcheckItem (props) {
                                 <div className='col-6'>
                                   <Select
                                     // className='col-7 input-sm m-input'
-                                    placeholder='Select Category'
+                                    placeholder='Select Standard'
                                     isClearable
                                     value={props.selectedStandard}
                                     onChange={handleStandardSelect}
