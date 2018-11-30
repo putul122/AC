@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
+import styles from './viewcheckItemComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
   content: {
@@ -139,7 +140,7 @@ if (props.modalSettings.standardData !== '') {
           <div className='m-section m-section--last'>
             <div className='m-section__content'>
               <div className='m-demo'>
-                <div className='m-demo__preview'>
+                <div className={styles.mDemoPreview}>
                   <div className='m-list-search'>
                     <div className='m-list-search__results'>
                       <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -246,7 +247,7 @@ if (props.modalSettings.standardData !== '') {
       <div className='m-section m-section--last'>
         <div className='m-section__content'>
           <div className='m-demo'>
-            <div className='m-demo__preview'>
+            <div className={styles.mDemoPreview}>
               <div className='m-list-search'>
                 <div className='m-list-search__results'>
                   <span className='m-list-search__result-item'>
@@ -274,7 +275,7 @@ if (props.modalSettings.standardData !== '') {
                   <span className='m-list-search__result-category m-list-search__result-category--first'>
                               Selected Check Item
                           </span>
-                  <div className='m-demo__preview'>
+                  <div className={styles.mDemoPreview}>
                     {checkList}
                   </div>
                 </div>
@@ -667,7 +668,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Details</span>
@@ -697,7 +698,7 @@ if (props.modalSettings.standardData !== '') {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -731,7 +732,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Principles</span>
@@ -757,7 +758,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Standards</span>
@@ -785,7 +786,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Details</span>
@@ -810,7 +811,7 @@ if (props.modalSettings.standardData !== '') {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -833,48 +834,6 @@ if (props.modalSettings.standardData !== '') {
                                             <button type='button' onClick={addValue} className='btn btn-outline-info col-2 btn-sm'>Add</button>
                                           </div>
                                           {valueListforedit}
-                                          {/* <span className='m-list-search__result-item'>
-                                            <div className='m-section m-section--last'>
-                                              <div className='m-section__content'>
-                                                <div className='m-demo'>
-                                                  <div className='m-demo__preview'>
-                                                    <div className='m-list-search'>
-                                                      <div className='m-list-search__results'>
-                                                        <span className='m-list-search__result-item'>
-                                                          {valueListforedit}
-                                                        </span>
-                                                        <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                                                    Select Check Item
-                                                                </span>
-                                                        <div className='form-group m-form__group row'>
-                                                          {/* <label htmlFor='example-email-input' className='col-2 col-form-label'>Select</label>
-                                                          <div className='col-8'>
-                                                            <Select
-                                                              // className='col-7 input-sm m-input'
-                                                              placeholder='Select Category'
-                                                              isClearable
-                                                              value={props.selectedCheckitem}
-                                                              onChange={handleCheckitemSelect}
-                                                              isSearchable={false}
-                                                              name={'roleSelected'}
-                                                              options={checkItemsOptions}
-                                                            />
-                                                          </div>
-                                                          <button type='button' onClick={addCheckitementry} className='btn btn-outline-info col-2 btn-sm'>Add</button>
-                                                        </div>
-                                                        <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                                                    Selected Check Item
-                                                                </span>
-                                                        <div className='m-demo__preview'>
-                                                          {checkitemListforedit}
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </span> */}
                                         </div>
                                       </div>
                                     </div>
@@ -893,7 +852,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Principles</span>
@@ -919,7 +878,7 @@ if (props.modalSettings.standardData !== '') {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -946,7 +905,7 @@ if (props.modalSettings.standardData !== '') {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Standards</span>
@@ -973,7 +932,7 @@ if (props.modalSettings.standardData !== '') {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>

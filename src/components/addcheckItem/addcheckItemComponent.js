@@ -153,7 +153,7 @@ export default function addcheckItem (props) {
         <div className='m-section m-section--last'>
           <div className='m-section__content'>
             <div className='m-demo'>
-              <div className='m-demo__preview'>
+              <div className={styles.mDemoPreview}>
                 <div className='m-list-search'>
                   <div className='m-list-search__results'>
                     <span className='m-list-search__result-item'>
@@ -181,7 +181,7 @@ export default function addcheckItem (props) {
                     <span className='m-list-search__result-category m-list-search__result-category--first'>
                                 Selected Check Item
                             </span>
-                    <div className='m-demo__preview'>
+                    <div className={styles.mDemoPreview}>
                       {checkList}
                     </div>
                   </div>
@@ -416,7 +416,7 @@ export default function addcheckItem (props) {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Details</span>
@@ -441,7 +441,7 @@ export default function addcheckItem (props) {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -483,7 +483,7 @@ export default function addcheckItem (props) {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Principles</span>
@@ -509,7 +509,7 @@ export default function addcheckItem (props) {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
@@ -534,7 +534,7 @@ export default function addcheckItem (props) {
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
-                      <div className='m-demo__preview'>
+                      <div className={styles.mDemoPreview}>
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>Standards</span>
@@ -561,7 +561,7 @@ export default function addcheckItem (props) {
                               <div className='m-section m-section--last'>
                                 <div className='m-section__content'>
                                   <div className='m-demo'>
-                                    <div className='m-demo__preview'>
+                                    <div className={styles.mDemoPreview}>
                                       <div className='m-list-search'>
                                         <div className='m-list-search__results'>
                                           <span className='m-list-search__result-category m-list-search__result-category--first'>
