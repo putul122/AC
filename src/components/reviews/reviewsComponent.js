@@ -93,8 +93,8 @@ let handleTemplateSelect = function (newValue: any, actionMeta: any) {
   }
 }
 if (props.reviews && props.reviews !== '') {
-  let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
-  reviewList = sortedArray.map(function (data, index) {
+  // let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
+  reviewList = props.reviews.resources.map(function (data, index) {
     let link = ''
     if (data.stage === 'In Progress') {
       link = '/conduct_review/'
