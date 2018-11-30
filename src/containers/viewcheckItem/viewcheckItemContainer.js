@@ -32,7 +32,8 @@ export function mapStateToProps (state, props) {
     componentTypeComponent: state.basicReducer.componentTypeComponent,
     componentTypeComponents: state.basicReducer.componentTypeComponents,
     selectedType: state.addcheckItemReducer.selectedType,
-    modalIsOpen: state.basicReducer.modalIsOpen
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    modalSettings: state.viewcheckItemReducer.modalSettings
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -61,7 +62,8 @@ export const propsMapping: Callbacks = {
   setCheckitemsData: actionCreators.setCheckitemsData,
   setPayload: actionCreators.setPayload,
   setSelectedType: actionCreators.setSelectedType,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  setModalSetting: actionCreators.setModalSetting
 }
 
 // If you want to use the function mapping
@@ -93,6 +95,8 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let payload = {
       'template_id': this.props.match.params.id
@@ -119,6 +123,10 @@ export default compose(
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.checkitembyId && nextProps.checkitembyId !== this.props.checkitembyId && this.props.checkitembyId === '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+      }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '') {
         if (nextProps.componentTypeProperties.error_code === null) {
           let appPackage = JSON.parse(localStorage.getItem('packages'))

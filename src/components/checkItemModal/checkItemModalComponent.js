@@ -21,7 +21,14 @@ export default function CheckItemModal (props) {
     let checkItemName = ''
     let principleList = ''
     let standardList = ''
-    // let principleType = ''
+    let principleName = ''
+    let principleStatement = ''
+    let principleRationale = ''
+    let principleImplication = ''
+    let principleType = ''
+    let standardName = ''
+    let standardDescription = ''
+    let standardReference = ''
     let openPrincipleModal = function (data) {
         let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true, 'principleData': data}
         props.setModalSetting(modalSettings)
@@ -70,6 +77,18 @@ export default function CheckItemModal (props) {
         ))
       }
    }
+  if (props.modalSettings.principleData !== '') {
+    principleName = props.modalSettings.principleData.name
+    principleStatement = props.modalSettings.principleData.statement
+    principleRationale = '' // props.modalSettings.principleData.rationale
+    principleImplication = props.modalSettings.principleData.implication
+    principleType = props.modalSettings.principleData.type
+  }
+  if (props.modalSettings.standardData !== '') {
+    standardName = props.modalSettings.standardData.name
+    standardDescription = props.modalSettings.standardData.description
+    standardReference = props.modalSettings.standardData.reference
+  }
     // let closePrincipleModal = function () {
     //     event.preventDefault()
     //     let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false}
@@ -161,7 +180,7 @@ export default function CheckItemModal (props) {
           <div className='modal-dialog modal-lg'>
             <div className='modal-content'>
               <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'>View Principles: Principle 03: Business</h4>
+                <h4 className='modal-title' id='exampleModalLabel'>View Principles: {principleName}</h4>
                 <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                   <span aria-hidden='true'>×</span>
                 </button>
@@ -176,48 +195,34 @@ export default function CheckItemModal (props) {
                             <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
                                 Statement:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                </span>
+                            <span className='m-widget13__text'>{principleStatement}</span>
                           </div>
                           <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Rationale:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry
-                                </span>
+                            <span className='m-widget13__text'>{principleRationale}</span>
                           </div>
                           <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Implication:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                </span>
+                            <span className='m-widget13__text'>{principleImplication}</span>
                           </div>
                           <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Type:
                                 </span>
-                            <span className='m-widget13__text'>
-                                XYZABC
-                                </span>
+                            <span className='m-widget13__text'>{principleType}</span>
                           </div>
-                          <div className='m-widget13__item'>
+                          {/* <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Strategic Theme:
                                 </span>
                             <span className='m-widget13__text'>
                                 Keenthemes
                                 </span>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -253,27 +258,19 @@ export default function CheckItemModal (props) {
                             <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
                                 Name:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                </span>
+                            <span className='m-widget13__text'>{standardName}</span>
                           </div>
                           <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Description:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry
-                                </span>
+                            <span className='m-widget13__text'>{standardDescription}</span>
                           </div>
                           <div className='m-widget13__item'>
                             <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
                                 Reference:
                                 </span>
-                            <span className='m-widget13__text'>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                </span>
+                            <span className='m-widget13__text'>{standardReference}</span>
                           </div>
                         </div>
                       </div>

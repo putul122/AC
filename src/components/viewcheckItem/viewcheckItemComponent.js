@@ -28,6 +28,14 @@ export default function viewcheckItem (props) {
   console.log('Data for values', props.componentTypeComponentCheckitemsvalues)
   console.log('data for category', props.reviewCategories, props.deleteCheckitem, props.updateCheckItemValue, props.setPrinciplesData)
   console.log('***', props.selectedStandard, props.setUpdateCheckItemValue, props.setStandardsData, props.setValuesData, props.setCheckitemsData)
+  let principleName = ''
+  let principleStatement = ''
+  let principleRationale = ''
+  let principleImplication = ''
+  let principleType = ''
+  let standardName = ''
+  let standardDescription = ''
+  let standardReference = ''
   let checkItemsOptions = []
   let standardsOptions = []
   let principlesOptions = []
@@ -48,6 +56,19 @@ export default function viewcheckItem (props) {
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
+  let openPrincipleModal = function (data) {
+    let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true, 'principleData': data}
+    props.setModalSetting(modalSettings)
+  }
+  let openStandardModal = function (data) {
+      let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': true, 'isPrincipleModalOpen': false, 'standardData': data}
+      props.setModalSetting(modalSettings)
+  }
+  let closePrincipleStandardModal = function (event) {
+      event.preventDefault()
+      let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false, 'principleData': '', 'standardData': ''}
+      props.setModalSetting(modalSettings)
+  }
   let handleCheckItemSelect = function (index) {
     console.log('index', index)
     let selectedCheckitem = JSON.parse(JSON.stringify(props.selectedCheckitem))
@@ -71,7 +92,18 @@ export default function viewcheckItem (props) {
   let closeModal = function () {
     props.setModalOpenStatus(false)
   }
- // code for data of checkitem
+ if (props.modalSettings.principleData !== '') {
+  principleName = props.modalSettings.principleData.name
+  principleStatement = props.modalSettings.principleData.statement
+  principleRationale = '' // props.modalSettings.principleData.rationale
+  principleImplication = props.modalSettings.principleData.implication
+  principleType = props.modalSettings.principleData.type
+}
+if (props.modalSettings.standardData !== '') {
+  standardName = props.modalSettings.standardData.name
+  standardDescription = props.modalSettings.standardData.description
+  standardReference = props.modalSettings.standardData.reference
+}
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
     checkItemType = props.checkitembyId.resources[0].type
@@ -80,7 +112,7 @@ export default function viewcheckItem (props) {
       principleList = principlename.map(function (data, index) {
         return (
           <tr key={index}>
-            <td><a href={''}>{data.name}</a></td>
+            <td><a href={''} onClick={(event) => { event.preventDefault(); openPrincipleModal(data) }} >{data.name}</a></td>
           </tr>
         )
       })
@@ -88,7 +120,7 @@ export default function viewcheckItem (props) {
       standardList = standardname.map(function (data, index) {
         return (
           <tr key={index}>
-            <td><a href={''}>{data.name}</a></td>
+            <td><a href={''} onClick={(event) => { event.preventDefault(); openStandardModal(data) }} >{data.name}</a></td>
           </tr>
         )
       })
@@ -1029,6 +1061,118 @@ export default function viewcheckItem (props) {
                   </div>
                 </div>
               </ReactModal>
+              <ReactModal isOpen={props.modalSettings.isPrincipleModalOpen}
+                onRequestClose={closePrincipleStandardModal}
+                style={customStyles}>
+                <div className={''}>
+                  <div className='modal-dialog modal-lg'>
+                    <div className='modal-content'>
+                      <div className='modal-header'>
+                        <h4 className='modal-title' id='exampleModalLabel'>View Principles: {principleName}</h4>
+                        <button type='button' onClick={closePrincipleStandardModal} className='close' data-dismiss='modal' aria-label='Close'>
+                          <span aria-hidden='true'>×</span>
+                        </button>
+                      </div>
+                      <div className='modal-body'>
+                        <div className='row m--margin-top-20'>
+                          <div className='col-xl-12'>
+                            <div className=''>
+                              <div className='m-portlet__body'>
+                                <div className='m-widget13'>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
+                                        Statement:
+                                        </span>
+                                    <span className='m-widget13__text'>{principleStatement}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Rationale:
+                                        </span>
+                                    <span className='m-widget13__text'>{principleRationale}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Implication:
+                                        </span>
+                                    <span className='m-widget13__text'>{principleImplication}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Type:
+                                        </span>
+                                    <span className='m-widget13__text'>{principleType}</span>
+                                  </div>
+                                  {/* <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Strategic Theme:
+                                        </span>
+                                    <span className='m-widget13__text'>
+                                        Keenthemes
+                                        </span>
+                                  </div> */}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='modal-footer'>
+                        <button type='button' onClick={closePrincipleStandardModal} className='btn btn-sm btn-info'>Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ReactModal>
+              <ReactModal isOpen={props.modalSettings.isStandardModalOpen}
+                onRequestClose={closePrincipleStandardModal}
+                style={customStyles}>
+                <div className={''}>
+                  <div className='modal-dialog modal-lg'>
+                    <div className='modal-content'>
+                      <div className='modal-header'>
+                        <h4 className='modal-title' id='exampleModalLabel'>View Standard</h4>
+                        <button type='button' onClick={closePrincipleStandardModal} className='close' data-dismiss='modal' aria-label='Close'>
+                          <span aria-hidden='true'>×</span>
+                        </button>
+                      </div>
+                      <div className='modal-body'>
+                        <div className='row m--margin-top-20'>
+                          <div className='col-xl-12'>
+                            <div className=''>
+                              <div className='m-portlet__body'>
+                                <div className='m-widget13'>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc' style={{'width': '15%', 'color': '#000000'}}>
+                                        Name:
+                                        </span>
+                                    <span className='m-widget13__text'>{standardName}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Description:
+                                        </span>
+                                    <span className='m-widget13__text'>{standardDescription}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text m-widget13__number-bolder' style={{'width': '15%', 'color': '#000000'}}>
+                                        Reference:
+                                        </span>
+                                    <span className='m-widget13__text'>{standardReference}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='modal-footer'>
+                        <button type='button' onClick={closePrincipleStandardModal} className='btn btn-sm btn-info'>Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ReactModal>
             </div>
           </div>
         </div>
@@ -1056,6 +1200,7 @@ export default function viewcheckItem (props) {
       selectedPrinciple: PropTypes.any,
       selectedValue: PropTypes.any,
       // selectedCheckitem: PropTypes.any,
+      modalSettings: PropTypes.any,
       principles: PropTypes.any,
       standards: PropTypes.any,
       values: PropTypes.any,
