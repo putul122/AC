@@ -635,10 +635,10 @@ export default function ReviewDraft (props) {
                     <div className='col-8'>
                       <div className='row m--margin-top-10'>
                         <div className='col-md-5'><span>{reviewArtefactName}</span></div>
-                        {/* <div className='col-md-7'>
+                        <div className='col-md-7'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
-                        </div> */}
+                        </div>
                         {/* <div className='col-md-5 float-right'>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
                         </div> */}
@@ -651,10 +651,10 @@ export default function ReviewDraft (props) {
                           <span />
                           </label>
                         </div>
-                        <div className='col-md-7'>
+                        {/* <div className='col-md-7'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
