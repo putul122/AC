@@ -14,6 +14,7 @@ export default function ReviewDraft (props) {
   let reviewReason = ''
   let reviewArtefactName = null
   let reviewArtefact = null
+  let reviewArtefactId = ''
   let checkItemsOptions = []
   let categoryOptions = []
   let relationsOptions = []
@@ -39,8 +40,12 @@ export default function ReviewDraft (props) {
   if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
     reviewStatus = props.reviewData.resources[0].status
     reviewReason = props.reviewData.resources[0].reason
-    // reviewArtefact = props.reviewData.resources[0].review_artefact_id
+    reviewArtefactId = props.reviewData.resources[0].review_artefact_id
     reviewArtefactName = props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'
+    // if (reviewArtefactId == null) {
+    //   return
+    //   reviewArtefactName = <a>props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'</a>
+    // }
   }
   if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
     categoryOptions = props.reviewProperties.category.map(function (data, index) {
@@ -505,7 +510,8 @@ export default function ReviewDraft (props) {
   }
   let connectArtefact = function (event) {
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
     let payload = {}
     payload.reviewId = contextId
     payload.data = []
@@ -525,7 +531,8 @@ export default function ReviewDraft (props) {
   }
   let disconnectArtefact = function (event) {
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // eslint-disable-next-line
     let payload = {}
     payload.reviewId = contextId
     payload.data = []
@@ -634,8 +641,15 @@ export default function ReviewDraft (props) {
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
                     <div className='col-8'>
                       <div className='row m--margin-top-10'>
-                        <div className='col-md-5'><span>{reviewArtefactName}</span></div>
-                        <div className='col-md-7'>
+                        {/* <div className='col-md-9'> */}
+                        {(reviewArtefactId !== null) && (<div className='col-md-6'>
+                          <a href={'/review_artefact/' + reviewArtefactId}>{reviewArtefactName}</a>
+                        </div>)}
+                        {(reviewArtefactId == null) && (<div className='col-md-6'>
+                          <span>{reviewArtefactName}</span>
+                        </div>)}
+                        {/* </div> */}
+                        <div className='col-md-6'>
                           <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
                         </div>
