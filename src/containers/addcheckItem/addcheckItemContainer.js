@@ -13,7 +13,7 @@ export function mapStateToProps (state, props) {
     componentTypeComponentCheckitems: state.addcheckItemReducer.componentTypeComponentCheckitems,
     componentTypeComponentPrinciples: state.addcheckItemReducer.componentTypeComponentPrinciples,
     componentTypeComponentStandards: state.addcheckItemReducer.componentTypeComponentStandards,
-    componentTypeComponentCheckitemsvalues: state.addcheckItemReducer.componentTypeComponentCheckitemsvalues,
+    // componentTypeComponentCheckitemsvalues: state.addcheckItemReducer.componentTypeComponentCheckitemsvalues,
     componentTypeProperties: state.addcheckItemReducer.componentTypeProperties,
     reviewCategories: state.addcheckItemReducer.reviewCategories,
     selectedStandard: state.addcheckItemReducer.selectedStandard,
@@ -38,7 +38,7 @@ export const propsMapping: Callbacks = {
   fetchComponentTypeComponentsforcheckitems: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitems,
   fetchComponentTypeComponentsforprinciples: sagaActions.checkitemActions.fetchComponentTypeComponentsforprinciples,
   fetchComponentTypeComponentsforstandards: sagaActions.checkitemActions.fetchComponentTypeComponentsforstandards,
-  fetchComponentTypeComponentsforcheckitemvalues: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitemvalues,
+  // fetchComponentTypeComponentsforcheckitemvalues: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitemvalues,
   fetchComponentTypeProperties: sagaActions.checkitemActions.fetchComponentTypeProperties,
   createCheckItem: sagaActions.checkitemActions.createCheckItem,
   addStandard: sagaActions.checkitemActions.addStandard,
@@ -103,10 +103,10 @@ export default compose(
         return obj.key === 'Standard'
       }), 'component_type')
       this.props.fetchComponentTypeComponentsforstandards && this.props.fetchComponentTypeComponentsforstandards(standardId)
-      let checkItemValueId = _.result(_.find(componentTypes, function (obj) {
-        return obj.key === 'Check Item Value Template'
-      }), 'component_type')
-      this.props.fetchComponentTypeComponentsforcheckitemvalues && this.props.fetchComponentTypeComponentsforcheckitemvalues(checkItemValueId)
+      // let checkItemValueId = _.result(_.find(componentTypes, function (obj) {
+      //   return obj.key === 'Check Item Value Template'
+      // }), 'component_type')
+      // this.props.fetchComponentTypeComponentsforcheckitemvalues && this.props.fetchComponentTypeComponentsforcheckitemvalues(checkItemValueId)
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
     componentWillReceiveProps: function (nextProps) {
@@ -143,8 +143,6 @@ export default compose(
       if (nextProps.createCheckItemResponse && nextProps.createCheckItemResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
-        // this.props.setUserActionSettings(userActionSettings)
         if (nextProps.createCheckItemResponse.error_code === null) {
           // eslint-disable-next-line
           toastr.success('Successfully added CheckItem ' +  nextProps.createCheckItemResponse.resources[0].id , 'Nice!')

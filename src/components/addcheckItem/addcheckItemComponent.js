@@ -20,25 +20,13 @@ const customStyles = {
 }
 
 export default function addcheckItem (props) {
-  console.log('*****', props)
-  console.log('Data for addcheckitem', props.componentTypeComponentCheckitems)
-  console.log('Data for principle', props.componentTypeComponentPrinciples)
-  console.log('Data for standard', props.componentTypeComponentStandards)
-  console.log('Data for values', props.componentTypeComponentCheckitemsvalues)
-  console.log('data for category', props.reviewCategories, props.addStandard, props.newStandardValue, props.setPrinciplesData)
-  console.log('***', props.selectedStandard, props.setStandardsData, props.setValuesData, props.setCheckitemsData)
   let checkItemsOptions = []
   let standardsOptions = []
   let principlesOptions = []
-  // let checkitemsvalueOptions = []
   let typeOptions = []
   let standardList = ''
   let principleList = ''
   let valueList = ''
-  // let checkitemList = ''
-  // let standardName = ''
-  // let standardDescription = ''
-  // let standardReference = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
@@ -86,12 +74,6 @@ export default function addcheckItem (props) {
        return data
      })
    }
-  //  if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
-  //   checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
-  //     data.label = data.name
-  //     return data
-  //   })
-  // }
   if (props.reviewCategories && props.reviewCategories !== '') {
     typeOptions = props.reviewCategories.map(function (data, index) {
       data.label = data.name
@@ -99,46 +81,26 @@ export default function addcheckItem (props) {
     })
   }
   if (props.standards.length > 0) {
-    console.log(props.standards)
     standardList = props.standards.map(function (data, index) {
       return (<span className='m-list-search__result-item' key={index}>
         <span className='m-list-search__result-item-text'>{data.name}</span>
         <button type='button' onClick={(event) => { removeStandard(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
       </span>)
     })
-    console.log('standardList', standardList)
   } else {
     standardList = ''
-    console.log('standardList', standardList)
   }
   if (props.principles.length > 0) {
-    console.log(props.principles)
     principleList = props.principles.map(function (data, index) {
       return (<span className='m-list-search__result-item' key={index}>
         <span className='m-list-search__result-item-text'>{data.name}</span>
         <button type='button' onClick={(event) => { removePrinciple(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
       </span>)
     })
-    console.log('standardList', principleList)
   } else {
     principleList = ''
-    console.log('standardList', principleList)
   }
-  //   if (props.checkitems.length > 0) {
-  //   console.log(props.checkitems)
-  //   checkitemList = props.checkitems.map(function (data, index) {
-  //     return (<span className='m-list-search__result-item' key={index}>
-  //       <span className='m-list-search__result-item-text'>{data.name}</span>
-  //       <button type='button' onClick={(event) => { removeCheckitem(index) }} className='btn btn-outline-danger btn-sm pull-right'>Remove</button>
-  //     </span>)
-  //   })
-  //   console.log('standardList', checkitemList)
-  // } else {
-  //   checkitemList = ''
-  //   console.log('standardList', checkitemList)
-  // }
   if (props.values.length > 0) {
-    console.log(props.values)
     valueList = props.values.map(function (data, index) {
       let checkList = []
       if (data.requiresCheckItems.length > 0) {
@@ -220,14 +182,10 @@ export default function addcheckItem (props) {
     props.setModalOpenStatus(false)
     let newStandardValue = {...props.newStandardValue}
     let standards = JSON.parse(JSON.stringify(props.standards))
-    console.log('NameInputBox', NameInputBox, NameInputBox.value)
-    console.log(DescriptionBox, DescriptionBox.value)
-    console.log(ReferenceBox, ReferenceBox.value)
     newStandardValue.name = NameInputBox.value
     newStandardValue.description = DescriptionBox.value
     newStandardValue.reference = ReferenceBox.value
     newStandardValue.type = 'NEW'
-    console.log('newStandardValue', newStandardValue)
     standards.push(newStandardValue)
     props.setStandardsData(standards)
     // props.setNewStandardValue(newStandardValue)
@@ -296,7 +254,6 @@ export default function addcheckItem (props) {
     obj.requiresCheckItems = []
     if (props.selectedValue !== null) {
       values.push(obj)
-      console.log('values', values)
       props.setValuesData(values)
     }
     let selectedValue = ''
@@ -632,7 +589,6 @@ export default function addcheckItem (props) {
     componentTypeComponentCheckitems: PropTypes.any,
     componentTypeComponentPrinciples: PropTypes.any,
     componentTypeComponentStandards: PropTypes.any,
-    componentTypeComponentCheckitemsvalues: PropTypes.any,
     reviewCategories: PropTypes.any,
     selectedStandard: PropTypes.any,
     selectedPrinciple: PropTypes.any,
@@ -642,13 +598,9 @@ export default function addcheckItem (props) {
     standards: PropTypes.any,
     values: PropTypes.any,
     selectedType: PropTypes.any,
-    setStandardsData: PropTypes.func,
-    setPrinciplesData: PropTypes.func,
-    setValuesData: PropTypes.func,
-    setCheckitemsData: PropTypes.func,
     addCheckitemValue: PropTypes.any,
-    newStandardValue: PropTypes.any,
+    // newStandardValue: PropTypes.any,
     createCheckItem: PropTypes.func,
-    addStandard: PropTypes.func,
+    // addStandard: PropTypes.func,
     modalIsOpen: PropTypes.any
  }

@@ -29,8 +29,6 @@ export function mapStateToProps (state, props) {
     checkitems: state.viewcheckItemReducer.checkitems,
     updateCheckItemValue: state.viewcheckItemReducer.updateCheckItemValue,
     payload: state.viewcheckItemReducer.payload,
-    componentTypeComponent: state.basicReducer.componentTypeComponent,
-    componentTypeComponents: state.basicReducer.componentTypeComponents,
     selectedType: state.addcheckItemReducer.selectedType,
     modalIsOpen: state.basicReducer.modalIsOpen,
     modalSettings: state.viewcheckItemReducer.modalSettings
@@ -41,15 +39,12 @@ export const propsMapping: Callbacks = {
   setEditCheckItemSettings: actionCreators.setEditCheckItemSettings,
   setUpdateCheckItemValue: actionCreators.setUpdateCheckItemValue,
   resetResponse: actionCreators.resetResponse,
-  fetchComponentTypeComponent: sagaActions.basicActions.fetchComponentTypeComponent,
-  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   fetchCheckItemById: sagaActions.checkitemActions.fetchCheckItemById,
   deleteCheckitem: sagaActions.checkitemActions.deleteCheckitem,
   updateCheckitem: sagaActions.checkitemActions.updateCheckitem,
   fetchComponentTypeComponentsforcheckitems: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitems,
   fetchComponentTypeComponentsforprinciples: sagaActions.checkitemActions.fetchComponentTypeComponentsforprinciples,
   fetchComponentTypeComponentsforstandards: sagaActions.checkitemActions.fetchComponentTypeComponentsforstandards,
-  fetchComponentTypeComponentsforcheckitemvalues: sagaActions.checkitemActions.fetchComponentTypeComponentsforcheckitemvalues,
   fetchComponentTypeProperties: sagaActions.checkitemActions.fetchComponentTypeProperties,
   setReviewCategoryData: actionCreators.setReviewCategoryData,
   setSelectedStandard: actionCreators.setSelectedStandard,
@@ -116,10 +111,6 @@ export default compose(
         return obj.key === 'Standard'
       }), 'component_type')
       this.props.fetchComponentTypeComponentsforstandards && this.props.fetchComponentTypeComponentsforstandards(standardId)
-      let checkItemValueId = _.result(_.find(componentTypes, function (obj) {
-        return obj.key === 'Check Item Value Template'
-      }), 'component_type')
-      this.props.fetchComponentTypeComponentsforcheckitemvalues && this.props.fetchComponentTypeComponentsforcheckitemvalues(checkItemValueId)
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
     componentWillReceiveProps: function (nextProps) {
@@ -153,8 +144,6 @@ export default compose(
       if (nextProps.deleteCheckItemResponse && nextProps.deleteCheckItemResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
-        // this.props.setUserActionSettings(userActionSettings)
         if (nextProps.deleteCheckItemResponse.error_code === null) {
           // eslint-disable-next-line
           toastr.success('Successfully deleted CheckItem ' +  nextProps.deleteCheckItemResponse.resources[0].id , 'Nice!')
@@ -168,8 +157,6 @@ export default compose(
       if (nextProps.updateCheckItemResponse && nextProps.updateCheckItemResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        // let userActionSettings = {...this.props.userActionSettings, 'isUpdateModalOpen': false, 'updateUserData': ''}
-        // this.props.setUserActionSettings(userActionSettings)
         if (nextProps.updateCheckItemResponse.error_code === null) {
           // eslint-disable-next-line
           toastr.success('Successfully updated CheckItem ' +  nextProps.updateCheckItemResponse.resources[0].id , 'Nice!')

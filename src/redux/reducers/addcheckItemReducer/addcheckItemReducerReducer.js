@@ -4,7 +4,6 @@ import {
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
     FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
     ADD_STANDARD_SUCCESS
 } from '../../sagas/checkItem/checkItemSaga'
@@ -29,7 +28,6 @@ export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-  FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
   FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
   SET_REVIEW_CATEGORY_DATA,
   SET_SELECTED_STANDARD,
@@ -68,7 +66,6 @@ export const initialState = {
   componentTypeComponentCheckitems: '',
   componentTypeComponentPrinciples: '',
   componentTypeComponentStandards: '',
-  componentTypeComponentCheckitemsvalues: '',
   componentTypeProperties: '',
   reviewCategories: '',
   standards: [],
@@ -113,10 +110,6 @@ export default handleActions(
     [FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS]: (state, action) => ({
       ...state,
       componentTypeComponentStandards: action.payload
-    }),
-    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS]: (state, action) => ({
-      ...state,
-      componentTypeComponentCheckitemsvalues: action.payload
     }),
     [SET_STANDARDS_DATA]: (state, action) => ({
       ...state,

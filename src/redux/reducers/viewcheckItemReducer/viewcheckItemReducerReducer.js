@@ -3,7 +3,6 @@ import {FETCH_CHECKITEM_BY_ID_SUCCESS, DELETE_CHECKITEM_SUCCESS, UPDATE_CHECKITE
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-  FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
   FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS} from '../../sagas/checkItem/checkItemSaga'
 // Name Spaced Action Types
 const SET_EDIT_CHECKITEM_SETTINGS = 'ViewCheckItemReducer/SET_EDIT_CHECKITEM_SETTINGS'
@@ -21,8 +20,6 @@ const SET_CHECKITEMS_DATA = 'ViewCheckItemReducer/SET_CHECKITEMS_DATA'
 const SET_PAYLOAD = 'ViewCheckItemReducer/SET_PAYLOAD'
 const SET_SELECTED_TYPE = 'ViewCheckItemReducer/SET_SELECTED_TYPE'
 const SET_MODAL_SETTING = 'ViewCheckItemReducer/SET_MODAL_SETTING'
-// const SET_ADD_CHECKITEM_VALUE = 'ViewCheckItemReducer/SET_ADD_CHECKITEM_VALUE'
-// const SET_NEW_STANDARD_VALUE = 'ViewCheckItemReducer/SET_NEW_STANDARD_VALUE'
 
 export const actions = {
     FETCH_CHECKITEM_BY_ID_SUCCESS,
@@ -34,7 +31,6 @@ export const actions = {
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
     FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS,
     FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
     SET_REVIEW_CATEGORY_DATA,
     SET_SELECTED_STANDARD,
@@ -75,7 +71,6 @@ export const initialState = {
   componentTypeComponentCheckitems: '',
   componentTypeComponentPrinciples: '',
   componentTypeComponentStandards: '',
-  componentTypeComponentCheckitemsvalues: '',
   reviewCategories: '',
   standards: [],
   selectedStandard: null,
@@ -146,10 +141,6 @@ export default handleActions(
     [FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS]: (state, action) => ({
       ...state,
       componentTypeComponentStandards: action.payload
-    }),
-    [FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS]: (state, action) => ({
-      ...state,
-      componentTypeComponentCheckitemsvalues: action.payload
     }),
     [FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS]: (state, action) => ({
       ...state,

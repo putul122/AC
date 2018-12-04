@@ -22,9 +22,6 @@ export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_FAILURE = 'saga/check
 export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARD'
 export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARD_SUCCESS'
 export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_FAILURE = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARD_FAILURE'
-export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_VALUES'
-export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS'
-export const FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_FAILURE = 'saga/checkitem/FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_FAILURE'
 export const FETCH_COMPONENT_TYPE_PROPERTIES = 'saga/checkitem/FETCH_COMPONENT_TYPE_PROPERTIES'
 export const FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS = 'saga/checkitem/FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS'
 export const FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE = 'saga/checkitem/FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE'
@@ -37,9 +34,6 @@ export const ADD_STANDARD_FAILURE = 'saga/checkitem/ADD_STANDARD_FAILURE'
 export const UPDATE_CHECKITEM = 'saga/checkitem/UPDATE_CHECKITEM'
 export const UPDATE_CHECKITEM_SUCCESS = 'saga/checkitem/UPDATE_CHECKITEM_SUCCESS'
 export const UPDATE_CHECKITEM_FAILURE = 'saga/checkitem/UPDATE_CHECKITEM_FAILURE'
-// export const FETCH_REVIEW_ARTEFACTS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS'
-// export const FETCH_REVIEW_ARTEFACTS_SUCCESS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_SUCCESS'
-// export const FETCH_REVIEW_ARTEFACTS_FAILURE = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_FAILURE'
 
 export const actionCreators = {
   fetchCheckItems: createAction(FETCH_CHECKITEMS),
@@ -60,9 +54,6 @@ export const actionCreators = {
   fetchComponentTypeComponentsforstandards: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS),
   fetchComponentTypeComponentsforstandardsSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS),
   fetchComponentTypeComponentsforstandardsFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_FAILURE),
-  fetchComponentTypeComponentsforcheckitemvalues: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES),
-  fetchComponentTypeComponentsforcheckitemvaluesSuccess: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_SUCCESS),
-  fetchComponentTypeComponentsforcheckitemvaluesFailure: createAction(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES_FAILURE),
   fetchComponentTypeProperties: createAction(FETCH_COMPONENT_TYPE_PROPERTIES),
   fetchComponentTypePropertiesSuccess: createAction(FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS),
   fetchComponentTypePropertiesFailure: createAction(FETCH_COMPONENT_TYPE_PROPERTIES_FAILURE),
@@ -85,7 +76,7 @@ export default function * watchCheckItems () {
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS, getComponentTypeComponentsCheckitems),
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES, getComponentTypeComponentsPrinciples),
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS, getComponentTypeComponentsStandards),
-      takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES, getComponentTypeComponentscheckitemvalues),
+      // takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES, getComponentTypeComponentscheckitemvalues),
       takeLatest(FETCH_COMPONENT_TYPE_PROPERTIES, getComponentTypeProperties),
       takeLatest(DELETE_CHECKITEM, deleteCheckitem),
       takeLatest(ADD_STANDARD, addStandard),
@@ -202,19 +193,6 @@ export function * addStandard (action) {
   }
 }
 
-export function * getComponentTypeComponentscheckitemvalues (action) {
-  try {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
-    const componentTypescheckitemvalues = yield call(
-      axios.get,
-      api.getComponentTypeComponents(action.payload)
-    )
-    yield put(actionCreators.fetchComponentTypeComponentsforcheckitemvaluesSuccess(componentTypescheckitemvalues.data))
-  } catch (error) {
-    yield put(actionCreators.fetchComponentTypeComponentsforcheckitemvaluesFailure(error))
-  }
-}
-
 export function * getComponentTypeProperties (action) {
   try {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
@@ -241,16 +219,3 @@ export function * createCheckItem (action) {
     yield put(actionCreators.createCheckItemFailure(error))
   }
 }
-// export function * updateReview (action) {
-//   try {
-//     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
-//     const review = yield call(
-//       axios.patch,
-//       api.updateReview,
-//       action.payload
-//     )
-//     yield put(actionCreators.updateReviewsSuccess(review.data))
-//   } catch (error) {
-//     yield put(actionCreators.updateReviewsFailure(error))
-//   }
-// }

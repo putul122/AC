@@ -19,16 +19,7 @@ const customStyles = {
 }
 
 export default function viewcheckItem (props) {
-  console.log('EDC', props.componentTypecomponent)
-  console.log('EDC', props.componentTypecomponents)
-  console.log('checkitemby id', props.checkitembyId)
-  console.log('****', props.setEditCheckItemSettings)
-  console.log('Data for addcheckitem', props.componentTypeComponentCheckitems)
-  console.log('Data for principle', props.componentTypeComponentPrinciples)
-  console.log('Data for standard', props.componentTypeComponentStandards)
-  console.log('Data for values', props.componentTypeComponentCheckitemsvalues)
-  console.log('data for category', props.reviewCategories, props.deleteCheckitem, props.updateCheckItemValue, props.setPrinciplesData)
-  console.log('***', props.selectedStandard, props.setUpdateCheckItemValue, props.setStandardsData, props.setValuesData, props.setCheckitemsData)
+  // console.log('***', props.selectedStandard, props.setUpdateCheckItemValue, props.setStandardsData, props.setValuesData, props.setCheckitemsData)
   let principleName = ''
   let principleStatement = ''
   let principleRationale = ''
@@ -179,13 +170,6 @@ if (props.modalSettings.standardData !== '') {
       return data
     })
   }
-//   if (props.componentTypeComponentCheckitemsvalues && props.componentTypeComponentCheckitemsvalues !== '') {
-//    checkitemsvalueOptions = props.componentTypeComponentCheckitemsvalues.resources.map(function (data, index) {
-//      data.label = data.name
-//      data.type = 'NEW'
-//      return data
-//    })
-//  }
  if (props.reviewCategories && props.reviewCategories !== '') {
    reviewCategoryOptions = props.reviewCategories.map(function (data, index) {
      data.label = data.name
@@ -593,6 +577,7 @@ if (props.modalSettings.standardData !== '') {
             obj.op = 'add'
             obj.path = '/standards/-'
             obj.value = data.id
+            payload.push(obj)
           }
           if (data.type === 'NEW_CREATE') {
             obj = {}
@@ -1140,33 +1125,25 @@ if (props.modalSettings.standardData !== '') {
     }
     viewcheckItem.propTypes = {
       editCheckItemsSettings: PropTypes.any,
-      setEditCheckItemSettings: PropTypes.func,
       updateCheckItemValue: PropTypes.any,
-      setUpdateCheckItemValue: PropTypes.func,
-      deleteCheckitem: PropTypes.func,
+      // deleteCheckitem: PropTypes.func,
       updateCheckitem: PropTypes.func,
-      componentTypecomponent: PropTypes.any,
-      componentTypecomponents: PropTypes.any,
       checkitembyId: PropTypes.any,
       // eslint-disable-next-line
       match: PropTypes.any,
       componentTypeComponentCheckitems: PropTypes.any,
       componentTypeComponentPrinciples: PropTypes.any,
       componentTypeComponentStandards: PropTypes.any,
-      componentTypeComponentCheckitemsvalues: PropTypes.any,
       reviewCategories: PropTypes.any,
       selectedStandard: PropTypes.any,
       selectedPrinciple: PropTypes.any,
       selectedValue: PropTypes.any,
-      // selectedCheckitem: PropTypes.any,
+      // eslint-disable-next-line
+      selectedCheckitem: PropTypes.any,
       modalSettings: PropTypes.any,
       principles: PropTypes.any,
       standards: PropTypes.any,
       values: PropTypes.any,
       payload: PropTypes.any,
-      modalIsOpen: PropTypes.any,
-      setStandardsData: PropTypes.func,
-      setPrinciplesData: PropTypes.func,
-      setValuesData: PropTypes.func,
-      setCheckitemsData: PropTypes.func
+      modalIsOpen: PropTypes.any
  }
