@@ -84,7 +84,7 @@ export const initialState = {
   componentTypeProperties: '',
   editCheckItemsSettings: {
     isDeleteModalOpen: false,
-    isEditFlag: true
+    isEditFlag: false
   },
   modalSettings: {
     isViewCheckItemOpen: false,
@@ -96,6 +96,7 @@ export const initialState = {
   updateCheckitemValue: {
     'name': '',
     'description': '',
+    'typeSelected': null,
     'originalCheckItems': [],
     'originalStandards': [],
     'originalValues': [],

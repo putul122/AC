@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
+import _ from 'lodash'
 import styles from './viewcheckItemComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
@@ -45,6 +46,7 @@ export default function viewcheckItem (props) {
   let valuename = ''
   let checkitemname = ''
   let checkItemType = ''
+  let checkItemTypeId = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
@@ -99,6 +101,7 @@ if (props.modalSettings.standardData !== '') {
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
     checkItemType = props.checkitembyId.resources[0].type
+    checkItemTypeId = props.checkitembyId.resources[0].type_id
     if (props.checkitembyId.resources.length > 0) {
       principlename = props.checkitembyId.resources[0].principles
       principleList = principlename.map(function (data, index) {
@@ -294,6 +297,18 @@ if (props.modalSettings.standardData !== '') {
       props.setSelectedStandard(selectedStandard)
     }
   }
+  let handleTypeSelect = function (newValue: any, actionMeta: any) {
+    let updateCheckItemValue = {...props.updateCheckItemValue}
+    console.log('newValue', newValue)
+    if (actionMeta.action === 'select-option') {
+      updateCheckItemValue.typeSelected = newValue
+      props.setUpdateCheckItemValue(updateCheckItemValue)
+    }
+    if (actionMeta.action === 'clear') {
+      updateCheckItemValue.typeSelected = null
+      props.setUpdateCheckItemValue(updateCheckItemValue)
+    }
+  }
   let addStandardData = function () {
     let standards = props.standards
     console.log(props)
@@ -430,14 +445,22 @@ if (props.modalSettings.standardData !== '') {
     props.setValuesData(values)
   }
   let editCheckItemCancel = function () {
-    let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': true}
+    let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': false}
     props.setEditCheckItemSettings(editCheckItemsSettings)
   }
   let CheckItemEdit = function () {
-    let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': false}
+    let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': true}
     props.setEditCheckItemSettings(editCheckItemsSettings)
     let updateCheckItemValue = {...props.updateCheckItemValue}
     updateCheckItemValue.name = checkitemname
+    let typeObject = null
+    if (checkItemTypeId !== '') {
+      typeObject = _.find(reviewCategoryOptions, function (obj) {
+        return obj.id === checkItemTypeId
+      })
+      console.log('typeObject', typeObject)
+    }
+    updateCheckItemValue.typeSelected = typeObject
     props.setUpdateCheckItemValue(updateCheckItemValue)
     if (props.checkitembyId.resources[0].standards.length > 0) {
       let standards = props.checkitembyId.resources[0].standards.map(function (data, index) {
@@ -509,14 +532,13 @@ if (props.modalSettings.standardData !== '') {
       obj.path = '/description'
       obj.value = ''
       payload.push(obj)
-      // edit category payload
-      // if (props.reviewCategories) {
-      //   obj = {}
-      //   obj.op = 'replace'
-      //   obj.path = '/type'
-      //   obj.value = props.reviewCategories.id
-      //   payload.push(obj)
-      // }
+      if (props.updateCheckItemValue.typeSelected !== null) {
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/type'
+        obj.value = props.updateCheckItemValue.typeSelected.id
+        payload.push(obj)
+      }
       // add remove payload value
       if (props.payload.length > 0) {
         payload = payload.concat(props.payload)
@@ -597,7 +619,7 @@ if (props.modalSettings.standardData !== '') {
       updatePayload.urlPart.check_item_template_id = parseInt(props.match.params.id)
       updatePayload.payloadPart = payload
       // eslint-disable-next-line
-      //mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.updateCheckitem(updatePayload)
       console.log('payload', payload, props)
     }
@@ -605,11 +627,11 @@ if (props.modalSettings.standardData !== '') {
     return (
       <div>
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          {props.editCheckItemsSettings.isEditFlag && (<br />)}
+          {!props.editCheckItemsSettings.isEditFlag && (<br />)}
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
-                {!props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
+                {props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className='form-group m-form__group has-danger'>
                       <input type='text' className='form-control m-input' value={props.updateCheckItemValue.name} onChange={handletitleChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
@@ -622,7 +644,7 @@ if (props.modalSettings.standardData !== '') {
                     </div>
                   </div>
                 </div>)}
-                {props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
+                {!props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className='m-portlet__head-text'>
                       {checkitemname}
@@ -648,7 +670,7 @@ if (props.modalSettings.standardData !== '') {
             </div>
           </div>
           <div className='m-portlet__body'>
-            {props.editCheckItemsSettings.isEditFlag && (<div className='row'>
+            {!props.editCheckItemsSettings.isEditFlag && (<div className='row'>
               <div className='col-xl-4'>
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
@@ -766,7 +788,7 @@ if (props.modalSettings.standardData !== '') {
                 </div>
               </div>
             </div>)}
-            {!props.editCheckItemsSettings.isEditFlag && (<div className='row'>
+            {props.editCheckItemsSettings.isEditFlag && (<div className='row'>
               <div className='col-xl-4'>
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
@@ -783,8 +805,8 @@ if (props.modalSettings.standardData !== '') {
                                     // className='col-7 input-sm m-input'
                                     placeholder='Select Type'
                                     isClearable
-                                    // defaultValue={dvalue}
-                                    // onChange={handleRelationshipPropertySelect(index, childIndex)}
+                                    value={props.updateCheckItemValue.typeSelected}
+                                    onChange={handleTypeSelect}
                                     isSearchable={false}
                                     name={'roleSelected'}
                                     options={reviewCategoryOptions}
