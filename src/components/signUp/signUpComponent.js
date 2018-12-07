@@ -26,16 +26,16 @@ export default function SignUp (props) {
       let nameArray = name.split(' ', 2)
       // name.split(' ', 2)[0] + Math.random()
       // To set unique user id in your system when it is available
-      window.fcWidget.setExternalId(EmailBox.value)
-      // To set user name
-      // window.fcWidget.user.setFirstName(name)
-      // To set user email
-      window.fcWidget.user.setEmail(EmailBox.value)
-      // To set user properties
-      window.fcWidget.user.setProperties({
-        plan: 'Estate',                 // meta property 1
-        status: 'Active'                // meta property 2
-      })
+      // window.fcWidget.setExternalId(EmailBox.value)
+      // // To set user name
+      // // window.fcWidget.user.setFirstName(name)
+      // // To set user email
+      // window.fcWidget.user.setEmail(EmailBox.value)
+      // // To set user properties
+      // window.fcWidget.user.setProperties({
+      //   plan: 'Estate',                 // meta property 1
+      //   status: 'Active'                // meta property 2
+      // })
       let payload = {
         'first_name': nameArray[0],
         'last_name': nameArray[1],

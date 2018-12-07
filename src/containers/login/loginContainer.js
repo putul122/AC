@@ -25,6 +25,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
@@ -42,9 +60,14 @@ export default compose(
         if (!nextProps.loggedInresponse.error_code) {
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
+          // eslint-disable-next-line
+          toastr.success('You are logged in', 'Success !')
           this.props.history.push('/dashboard')
         } else {
           // error in login
+          // eslint-disable-next-line
+          toastr.error(nextProps.loggedInresponse.error_message, nextProps.loggedInresponse.error_code)
+          // window.location.href = window.location.origin
         }
 
         if (nextProps.loggedInresponse !== this.props.loggedInresponse) {
