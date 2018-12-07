@@ -67,7 +67,7 @@ export default compose(
           // error in login
           // eslint-disable-next-line
           toastr.error(nextProps.loggedInresponse.error_message, nextProps.loggedInresponse.error_code)
-          // window.location.href = window.location.origin
+          window.location.href = window.location.origin
         }
 
         if (nextProps.loggedInresponse !== this.props.loggedInresponse) {

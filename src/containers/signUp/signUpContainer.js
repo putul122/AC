@@ -68,6 +68,7 @@ export default compose(
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.createUserResponse.error_message, nextProps.createUserResponse.error_code)
+          window.location.href = window.location.origin
         }
         if (nextProps.createUserResponse !== this.props.createUserResponse) {
           this.props.setCreateUserProcessStatus(false)
