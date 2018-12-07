@@ -15,6 +15,8 @@ const SET_QUICKSLIDE_FLAG = 'BasicReducer/SET_QUICKSLIDE_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
 const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
+const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
+const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
 
 export const actions = {
   INCREMENT,
@@ -28,6 +30,8 @@ export const actions = {
   SET_NOTIFICATION_FLAG,
   RESET_NOTIFICATION_RESPONSE,
   FETCH_PACKAGE_SUCCESS,
+  SET_API_CALLING_STATUS,
+  TOGGLE_FLIPIN_X,
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS
 }
 
@@ -39,7 +43,9 @@ export const actionCreators = {
   setQuickslideFlag: createAction(SET_QUICKSLIDE_FLAG),
   setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
-  resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE)
+  setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
+  resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE),
+  toggleFlipInX: createAction(TOGGLE_FLIPIN_X)
 }
 
 export const initialState = {
@@ -48,6 +54,7 @@ export const initialState = {
   count: 0,
   string: 'string',
   clientAccessToken: '',
+  isApiCalling: false,
   // client_id: 'eco_conductor_web_ui',
   client_id: 'telkom_eco_web_ui',
   // client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
@@ -58,6 +65,7 @@ export const initialState = {
   notificationFlag: false,
   updateNotificationViewStatusResponse: '',
   packages: '',
+  flipInX: 'm-login--signin',
   componentTypeComponents: ''
 }
 
@@ -87,6 +95,10 @@ export default handleActions(
       ...state,
       modalIsOpen: action.payload
     }),
+    [SET_API_CALLING_STATUS]: (state, action) => ({
+      ...state,
+      isApiCalling: action.payload
+    }),
     [SET_QUICKSLIDE_FLAG]: (state, action) => ({
       ...state,
       isQuickSlideOpen: action.payload
@@ -94,6 +106,9 @@ export default handleActions(
     [SET_LOGINSLIDE_FLAG]: (state, action) => ({
       ...state,
       isLoginSlideOpen: action.payload
+    }),
+    [TOGGLE_FLIPIN_X]: (state, action) => ({ ...state,
+      flipInX: action.payload
     }),
     [SET_NOTIFICATION_FLAG]: (state, action) => ({ ...state,
       notificationFlag: action.payload,

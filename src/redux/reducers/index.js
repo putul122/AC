@@ -20,6 +20,7 @@ import discussionReducer from './discussionReducer/discussionReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
 import checkItemModalReducer from './checkItemModalReducer/checkItemModalReducerReducer'
 import reviewArtefactReducer from './reviewArtefactReducer/reviewArtefactReducerReducer'
+import signUpReducer from './signUpReducer/signUpReducerReducer'
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -41,5 +42,6 @@ export default combineReducers({
     discussionReducer,
     newDiscussionReducer,
     reviewArtefactReducer,
+    signUpReducer,
     checkItemModalReducer
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
 import * as signalR from '@aspnet/signalr'
-import { authContext } from '../../config/adal'
+// import { authContext } from '../../config/adal'
 const notificationAlert = {
   background: '#ff006c',
   border: '1px solid #ff006c'
@@ -75,6 +75,14 @@ export default function HeaderComponent (props) {
       loginSlideClass = 'm-dropdown--close'
       props.setLoginslideFlag(false)
     }
+    let logOut = function (event) {
+      event.preventDefault()
+      localStorage.removeItem('isLoggedin')
+      localStorage.removeItem('showToasterSuccess')
+      localStorage.removeItem('userAccessToken')
+      props.setLoginslideFlag(false)
+      props.history.push('/')
+    }
     return (
       <div>
         <header id='m_header' className='m-grid__item    m-header ' m-minimize-offset='200' m-minimize-mobile-offset='200' >
@@ -133,7 +141,9 @@ export default function HeaderComponent (props) {
                               <div className='m-dropdown__content'>
                                 <ul className='m-nav m-nav--skin-light'>
                                   <li className='m-nav__item'>
-                                    <a href='javascript:void(0);' onClick={(event) => { localStorage.removeItem('userAccessToken'); authContext.logOut() }} className='btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder'>Logout</a>
+                                    {/* <a href='javascript:void(0);' onClick={(event) => { localStorage.removeItem('userAccessToken'); authContext.logOut() }} className='btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder'>Logout</a> */}
+                                    {/* <a href='javascript:void(0);' onClick={(event) => { localStorage.removeItem('userAccessToken');logOut() }} className='btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder'>Logout</a> */}
+                                    <a href='javascript:void(0);' onClick={logOut} className='btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder'>Logout</a>
                                   </li>
                                 </ul>
                               </div>
@@ -179,5 +189,6 @@ HeaderComponent.propTypes = {
   isQuickSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
-  setLoginslideFlag: PropTypes.func
+  setLoginslideFlag: PropTypes.func,
+  history: PropTypes.any
 }

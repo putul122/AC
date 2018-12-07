@@ -5,6 +5,7 @@ import watchTemplates, {actionCreators as templateActions} from './template/temp
 import watchSoftwares, {actionCreators as softwareActions} from './software/softwareSaga'
 import watchEntitlements, {actionCreators as entitlementActions} from './entitlement/entitlementSaga'
 import watchLoginUser, {actionCreators as loginActions} from './login/loginSaga'
+import watchCreateUser, {actionCreators as signUpActions} from './signUp/signUpSaga'
 import watchApplicationActivity, {actionCreators as applicationActivityActions} from './applicationActivity/applicationActivitySaga'
 import watchUserActions, {actionCreators as userActions} from './user/userSaga'
 import watchDiscussions, {actionCreators as discussionActions} from './discussion/discussionSaga'
@@ -13,6 +14,7 @@ import watchCheckItems, {actionCreators as checkitemActions} from './checkItem/c
 export const actions = {
   basicActions,
   applicationActions,
+  signUpActions,
   reviewActions,
   softwareActions,
   entitlementActions,
@@ -34,6 +36,7 @@ export default function * rootSaga () {
     watchApplicationActivity(),
     watchUserActions(),
     watchTemplates(),
+    watchCreateUser(),
     watchDiscussions(),
     watchCheckItems()
   ]
