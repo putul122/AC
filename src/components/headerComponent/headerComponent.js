@@ -81,7 +81,8 @@ export default function HeaderComponent (props) {
       localStorage.removeItem('showToasterSuccess')
       localStorage.removeItem('userAccessToken')
       props.setLoginslideFlag(false)
-      props.history.push('/')
+      // props.history.push('/')
+      window.location.href = window.location.origin
     }
     return (
       <div>
@@ -189,6 +190,6 @@ HeaderComponent.propTypes = {
   isQuickSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
-  setLoginslideFlag: PropTypes.func,
-  history: PropTypes.any
+  setLoginslideFlag: PropTypes.func
+  // history: PropTypes.any
 }

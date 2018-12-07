@@ -57,7 +57,7 @@ export default compose(
       // }
       if (nextProps.loggedInresponse) {
         console.log('login response', nextProps.loggedInresponse.error_code)
-        if (!nextProps.loggedInresponse.error_code) {
+        if (nextProps.loggedInresponse.error_code === null) {
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
           // eslint-disable-next-line
