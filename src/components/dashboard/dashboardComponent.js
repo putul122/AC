@@ -53,6 +53,8 @@ export default function Dashboard (props) {
         data.type = 'NonCompliantByMonth'
         return data
       })
+      console.log('data1', data1)
+      console.log('data2', data2)
       let dataArray = data1.concat(data2)
       dataArray = _.orderBy(dataArray, ['month'], ['asc'])
       let length = dataArray.length
@@ -60,7 +62,7 @@ export default function Dashboard (props) {
       let compliantByMonth = []
       let nonCompliantByMonth = []
       for (let i = 0; i < length;) {
-        if (dataArray[i]['month'] === dataArray[i + 1]['month']) {
+        if (dataArray[i + 1] && dataArray[i]['month'] === dataArray[i + 1]['month']) {
           labels.push(dataArray[i]['month'])
           if (dataArray[i]['type'] === 'CompliantByMonth') {
             compliantByMonth.push(dataArray[i]['count'])
