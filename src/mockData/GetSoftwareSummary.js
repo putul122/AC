@@ -5,9 +5,9 @@ const SoftwareSummaryData = {
     software_count: 0,
     cost: 0,
     cost_by_technology_classification: {
-    Class 1: 120,
-    Class 2: 200.2,
-    Someting: 50
+    'Class 1': 120,
+    'Class 2': 200.2,
+    'Someting': 50
     },
     count_by_technology_classification: null
     }
