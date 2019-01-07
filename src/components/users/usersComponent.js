@@ -23,7 +23,7 @@ export default function Users (props) {
   let pageArray = []
   let userOptions = ''
   let userList = ''
-  let userCount = ''
+  let userCount = props.totalCount
   let roleOptions = []
   console.log('roles', searchTextBox, userName, email, props.updatePayload, props)
   if (props.roles && props.roles !== '') {
@@ -179,16 +179,16 @@ export default function Users (props) {
   }
   let listUsers = function () {
     if (props.users !== '') {
-      if (props.users.resources.length > 0) {
-        userList = props.users.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+      if (props.users.length > 0) {
+        userList = props.users.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
               <td>{data.first_name + ' ' + data.last_name}</td>
               <td>{data.email}</td>
               <td>{data.roles.toString()}</td>
               <td>
-                <button onClick={(event) => { openUpdateModal(data) }} className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;
-                <button onClick={(event) => { openDeleteModal(data) }} className='btn btn-outline-danger btn-sm'>Delete</button>
+                <button onClick={(event) => { event.preventDefault(); openUpdateModal(data) }} className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;
+                <button onClick={(event) => { event.preventDefault(); openDeleteModal(data) }} className='btn btn-outline-danger btn-sm'>Delete</button>
               </td>
             </tr>
           )
@@ -204,8 +204,8 @@ export default function Users (props) {
     }
   }
   if (props.users && props.users !== '') {
-    totalUserPages = Math.ceil(props.users.resources.length / perPage)
-    userCount = props.users.total_count
+    totalUserPages = Math.ceil(props.users.length / perPage)
+    // userCount = props.users.total_count
     console.log('totalUserPages', totalUserPages)
     let i = 1
     while (i <= totalUserPages) {
@@ -270,25 +270,35 @@ export default function Users (props) {
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    // const value = searchTextBox.value
-    // agreementsList = ''
-    // let payload = {
-    //   'search': value || '',
-    //   'page_size': props.perPage,
-    //   'page': currentPage
-    // }
-    // // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // props.setComponentTypeLoading(true)
-    // // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage})
-    //   if (found.length > 0) { return group }
-    // })
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let searchText = searchTextBox ? searchTextBox.value : ''
+    let originalData = props.copyUsers
+    if (searchText.trim() !== '') {
+      if (originalData !== '') {
+        let list = _.filter(originalData, function (data, index) {
+          if ((data.first_name && (data.first_name.toLowerCase()).match(searchText.toLowerCase())) || (data.last_name && (data.last_name.toLowerCase()).match(searchText.toLowerCase()))) {
+            return data
+          }
+        })
+        let payload = {}
+        payload.users = list
+        payload.copyUsers = props.copyUsers
+        payload.totalCount = props.totalCount
+        props.setUsersData(payload)
+      }
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
+    } else {
+      let payload = {}
+      payload.users = props.copyUsers
+      payload.copyUsers = props.copyUsers
+      payload.totalCount = props.totalCount
+      props.setUsersData(payload)
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
+    }
+    props.setCurrentPage(1)
   }, 500)
 
   let handlePrevious = function (event) {
@@ -668,5 +678,8 @@ export default function Users (props) {
     userRoles: PropTypes.any,
     currentPage: PropTypes.any,
     users: PropTypes.any,
-    perPage: PropTypes.any
+    // eslint-disable-next-line
+    copyUsers: PropTypes.any,
+    perPage: PropTypes.any,
+    totalCount: PropTypes.any
  }

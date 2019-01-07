@@ -162,7 +162,7 @@ export default function Templates (props) {
             <h3>Templates</h3>
           </div>
           <div className='col-md-2'>
-            <a href='/add_template' className='btn btn-outline-info btn-sm'>Add Templates</a>&nbsp;
+            <a href='/add_template' className='btn btn-outline-info btn-sm'>Add Template</a>&nbsp;
           </div>
         </div>
         <div className='row' id='agreementSummary'>

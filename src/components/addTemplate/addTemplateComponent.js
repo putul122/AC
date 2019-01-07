@@ -106,7 +106,7 @@ export default function AddTemplate (props) {
                 <div className='row ' style={{width: '100%'}}>
                   <div className='col-8 m-form m-form--state m-form--fit'>
                     <div className={props.validationClass}>
-                      <input type='text' className='form-control m-input' value={props.addTemplateValue.name} onChange={handleNameChange} placeholder='Trmplate Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input' value={props.addTemplateValue.name} onChange={handleNameChange} placeholder='Template Name' aria-describedby='basic-addon2' />
                     </div>
                   </div>
                   <div className='col-4 float-right'>

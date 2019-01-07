@@ -14,6 +14,7 @@ const SET_PER_PAGE = 'UsersReducer/SET_PER_PAGE'
 const SET_ROLE_DATA = 'UsersReducer/SET_ROLE_DATA'
 const SET_UPDATE_PAYLOAD = 'UsersReducer/SET_UPDATE_PAYLOAD'
 const RESET_RESPONSE = 'TemplateDetailReducer/RESET_RESPONSE'
+const SET_USERS_DATA = 'UsersReducer/SET_USERS_DATA'
 
 export const actions = {
   FETCH_EX_USERS_SUCCESS,
@@ -28,7 +29,8 @@ export const actions = {
   SET_ROLE_DATA,
   RESET_RESPONSE,
   FETCH_ROLES_SUCCESS,
-  SET_UPDATE_PAYLOAD
+  SET_UPDATE_PAYLOAD,
+  SET_USERS_DATA
 }
 
 export const actionCreators = {
@@ -37,16 +39,20 @@ export const actionCreators = {
   setPerPage: createAction(SET_PER_PAGE),
   setRoleData: createAction(SET_ROLE_DATA),
   setUpdatePayload: createAction(SET_UPDATE_PAYLOAD),
-  resetResponse: createAction(RESET_RESPONSE)
+  resetResponse: createAction(RESET_RESPONSE),
+  setUsersData: createAction(SET_USERS_DATA)
 }
 
 export const initialState = {
   externalUsers: '',
   users: '',
+  copyUsers: '',
+  totalCount: '',
   selectedUser: '',
   updatePayload: [],
   userRoles: '',
   roles: '',
+  getUserResponse: '',
   createUserResponse: '',
   updateUserResponse: '',
   deleteUserResponse: '',
@@ -72,8 +78,8 @@ export default handleActions(
       externalUsers: action.payload
     }),
     [FETCH_USERS_SUCCESS]: (state, action) => ({
-        ...state,
-        users: action.payload
+      ...state,
+      getUserResponse: action.payload
     }),
     [FETCH_USER_SUCCESS]: (state, action) => ({
       ...state,
@@ -109,6 +115,7 @@ export default handleActions(
     }),
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
+      getUserResponse: '',
       createUserResponse: '',
       deleteUserResponse: '',
       updateUserResponse: '',
@@ -122,6 +129,12 @@ export default handleActions(
     [SET_UPDATE_PAYLOAD]: (state, action) => ({
       ...state,
       updatePayload: action.payload
+    }),
+    [SET_USERS_DATA]: (state, action) => ({
+      ...state,
+      users: action.payload.users,
+      copyUsers: action.payload.copyUsers,
+      totalCount: action.payload.totalCount
     })
   },
   initialState

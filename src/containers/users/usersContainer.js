@@ -12,16 +12,19 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     externalUsers: state.usersReducer.externalUsers,
     users: state.usersReducer.users,
+    copyUsers: state.usersReducer.copyUsers,
     selectedUser: state.usersReducer.selectedUser,
     roles: state.usersReducer.roles,
     userRoles: state.usersReducer.userRoles,
     updatePayload: state.usersReducer.updatePayload,
+    getUserResponse: state.usersReducer.getUserResponse,
     createUserResponse: state.usersReducer.createUserResponse,
     updateUserResponse: state.usersReducer.updateUserResponse,
     deleteUserResponse: state.usersReducer.deleteUserResponse,
     userActionSettings: state.usersReducer.userActionSettings,
     currentPage: state.usersReducer.currentPage,
-    perPage: state.usersReducer.perPage
+    perPage: state.usersReducer.perPage,
+    totalCount: state.usersReducer.totalCount
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -39,7 +42,8 @@ export const propsMapping: Callbacks = {
   setUserActionSettings: actionCreators.setUserActionSettings,
   setRoleData: actionCreators.setRoleData,
   setUpdatePayload: actionCreators.setUpdatePayload,
-  resetResponse: actionCreators.resetResponse
+  resetResponse: actionCreators.resetResponse,
+  setUsersData: actionCreators.setUsersData
 }
 
 // If you want to use the function mapping
@@ -75,15 +79,8 @@ export default compose(
       this.props.fetchUsers && this.props.fetchUsers()
       this.props.fetchRoles && this.props.fetchRoles()
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      // // eslint-disable-next-line
-      // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // let payload = {
-      //   'search': '',
-      //   'page_size': 10,
-      //   'page': 1
-      // }
-      // this.props.fetchAgreements && this.props.fetchAgreements(payload)
-      // this.props.fetchAgreementsSummary && this.props.fetchAgreementsSummary()
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -96,6 +93,21 @@ export default compose(
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
         }
+      }
+      if (nextProps.getUserResponse && nextProps.getUserResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.getUserResponse.error_code === null) {
+          let payload = {}
+          payload.users = nextProps.getUserResponse.resources
+          payload.copyUsers = nextProps.getUserResponse.resources
+          payload.totalCount = nextProps.getUserResponse.total_count
+          nextProps.setUsersData(payload)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.getUserResponse.error_message, nextProps.getUserResponse.error_code)
+        }
+        this.props.resetResponse()
       }
       if (nextProps.createUserResponse && nextProps.createUserResponse !== '') {
         // eslint-disable-next-line
