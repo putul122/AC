@@ -90,9 +90,16 @@ export const initialState = {
     approver: '',
     isCancel: false,
     cancelReason: '',
+    document_reference: '',
+    document_version: '',
     checkItems: []
   },
-  validationClass: 'form-group m-form__group row',
+  validationClass: {
+    cancelValidationClass: 'form-group m-form__group row',
+    categoryValidationClass: 'form-group m-form__group row',
+    approverValidationClass: 'form-group m-form__group row',
+    reviewerValidationClass: 'form-group m-form__group row'
+  },
   connectArtefactSettings: {
     isConnected: false,
     isModalOpen: false,

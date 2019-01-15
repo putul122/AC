@@ -15,10 +15,12 @@ console.log('reviewlist', props.reviews)
 // let softwareCount
 let reviewName = ''
 let reviewDescription = ''
-let reviewsinDraft
-let reviewsinProgress
-let reviewsCompleted
-let reviewsCancelled
+let reviewsinDraft = ''
+let reviewsinProgress = ''
+let reviewsCompleted = ''
+let reviewsCancelled = ''
+let reviewsApproved = ''
+let reviewsAcceptance = ''
 let searchTextBox
 let reviewList = ''
 let totalNoPages
@@ -55,22 +57,38 @@ if (props.componentTypeComponents && props.componentTypeComponents !== '') {
     })
   } else {}
 }
-let addReview = function () {
-  // eslint-disable-next-line
-  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-  let name = reviewName.value
-  let description = reviewDescription.value
-  let payload = {}
-  payload.name = name
-  payload.description = description
-  if (props.addReviewSettings.templateSelected) {
-    payload.review_template_id = props.addReviewSettings.templateSelected.id
+let handleReviewName = function (event) {
+  let value = event.target.value
+  if (value.trim() !== '') {
+    let addReviewSettings = {...props.addReviewSettings, 'reviewName': value, 'nameValidationClass': 'form-group m-form__group row'}
+    props.setAddReviewSettings(addReviewSettings)
+  } else {
+    let addReviewSettings = {...props.addReviewSettings, 'reviewName': value}
+    props.setAddReviewSettings(addReviewSettings)
   }
-  props.createReviews(payload)
-  console.log('add payload', payload)
+}
+let addReview = function () {
+  let reviewName = props.addReviewSettings.reviewName
+  if (reviewName.trim() === '') {
+    let addReviewSettings = {...props.addReviewSettings, 'nameValidationClass': 'form-group m-form__group row has-danger'}
+    props.setAddReviewSettings(addReviewSettings)
+  } else {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let name = props.addReviewSettings.reviewName
+    let description = reviewDescription.value
+    let payload = {}
+    payload.name = name
+    payload.description = description
+    if (props.addReviewSettings.templateSelected) {
+      payload.review_template_id = props.addReviewSettings.templateSelected.id
+    }
+    props.createReviews(payload)
+    console.log('add payload', payload)
+  }
 }
 let closeModal = function () {
-  let addReviewSettings = {...props.addReviewSettings, 'isModalOpen': false}
+  let addReviewSettings = {...props.addReviewSettings, 'isModalOpen': false, 'nameValidationClass': 'form-group m-form__group row', 'reviewName': ''}
   props.setAddReviewSettings(addReviewSettings)
 }
 let openAddReview = function () {
@@ -234,10 +252,12 @@ let handleNext = function (event) {
 }
 if (props.reviewsSummary && props.reviewsSummary !== '') {
   if (props.reviewsSummary.resources.length > 0) {
-    reviewsinDraft = props.reviewsSummary.resources[0].count_by_stage['Draft']
-    reviewsinProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress']
-    reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed']
-    reviewsCancelled = props.reviewsSummary.resources[0].count_by_stage['Cancelled']
+    reviewsinDraft = props.reviewsSummary.resources[0].count_by_stage['Draft'] || 0
+    reviewsinProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress'] || 0
+    reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed'] || 0
+    reviewsCancelled = props.reviewsSummary.resources[0].count_by_stage['Cancelled'] || 0
+    reviewsApproved = props.reviewsSummary.resources[0].count_by_stage['In Approval'] || 0
+    reviewsAcceptance = props.reviewsSummary.resources[0].count_by_stage['In Acceptance'] || 0
   }
 }
 console.log('******', reviewsinDraft)
@@ -263,7 +283,7 @@ return (
       </div>
     </div>
     <div className='row' id='softwareSummary'>
-      <div className='col-xl-3'>
+      <div className='col-xl-2'>
         <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
@@ -290,10 +310,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinDraft}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3 style={{'marginRight': '40px'}}>Reviews in Draft</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -305,7 +326,7 @@ return (
           </div>
         </div>
       </div>
-      <div className='col-xl-3'>
+      <div className='col-xl-2'>
         <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
@@ -332,10 +353,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Progress</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinProgress}</h5>
+                      <h3 style={{'marginRight': '40px'}}>Reviews in Approval</h3>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -347,7 +369,93 @@ return (
           </div>
         </div>
       </div>
-      <div className='col-xl-3'>
+      <div className='col-xl-2'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
+          <div className='m-portlet__head'>
+            <div className='m-portlet__head-caption'>
+              <div className='m-portlet__head-title'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
+                 Activity
+                </h3> */}
+              </div>
+            </div>
+          </div>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
+            <div className='m-widget17'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                <div className='m-widget17__chart'>
+                  <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                    <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                    <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                  <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                </div>
+              </div>
+              <div className='m-widget17__stats'>
+                <div className='m-widget17__items m-widget17__items-col2'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                    <span className='m-widget17__icon'>
+                      <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinProgress}</h4>
+                    </span>
+                    <span className='m-widget17__subtitle'>
+                      <h3>Reviews in Progress</h3>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinProgress}</h5> */}
+                    </span>
+                    {/* <span className='m-widget17__desc'>
+                      <h1>{reviewsinProgress}</h1>
+                    </span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='col-xl-2'>
+        <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
+          <div className='m-portlet__head'>
+            <div className='m-portlet__head-caption'>
+              <div className='m-portlet__head-title'>
+                {/* <h3 className='m-portlet__head-text m--font-light'>
+                 Activity
+                </h3> */}
+              </div>
+            </div>
+          </div>
+          <div className='m-portlet__body' style={{'height': '150px'}}>
+            <div className='m-widget17'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                <div className='m-widget17__chart'>
+                  <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                    <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
+                    <div className='chartjs-size-monitor-shrink' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
+                      <div style={{position: 'absolute', width: '200%', height: '200%', left: 0, top: 0}} /></div></div>
+                  <canvas id='m_chart_activities' width={509} height={16} className='chartjs-render-monitor' style={{display: 'block', width: 509, height: 50}} />
+                </div>
+              </div>
+              <div className='m-widget17__stats'>
+                <div className='m-widget17__items m-widget17__items-col2'>
+                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                    <span className='m-widget17__icon'>
+                      <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
+                    </span>
+                    <span className='m-widget17__subtitle'>
+                      <h3 style={{'marginRight': '40px'}}>Reviews in Acceptance</h3>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
+                    </span>
+                    {/* <span className='m-widget17__desc'>
+                      <h1>{softwareCount}</h1>
+                    </span> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='col-xl-2'>
         <div className='m-portlet m-portlet--bordered-semi  m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
@@ -374,10 +482,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCompleted}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews Completed</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCompleted}</h5>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCompleted}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -389,7 +498,7 @@ return (
           </div>
         </div>
       </div>
-      <div className='col-xl-3'>
+      <div className='col-xl-2'>
         <div className='m-portlet m-portlet--bordered-semi m-portlet--skin-light  m-portlet--rounded-force'>
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
@@ -416,10 +525,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCancelled}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews Cancelled</h3>
-                      <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCancelled}</h5>
+                      {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCancelled}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
                       <h1>{softwareCount}</h1>
@@ -537,12 +647,12 @@ return (
                 </button>
               </div>
               <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>
-                <div className='col-md-12'>
+                <div className='col-md-12 m-form m-form--state m-form--fit'>
                   {/* {messageBlock} */}
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name</label>
+                  <div className={props.addReviewSettings.nameValidationClass}>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name *</label>
                     <div className='col-8'>
-                      <input className='form-control m-input' type='email' placeholder='Enter Review Name' ref={input => (reviewName = input)} id='example-userName-input' />
+                      <input className='form-control m-input' type='email' placeholder='Enter Review Name' onChange={handleReviewName} value={props.addReviewSettings.reviewName} ref={input => (reviewName = input)} id='example-userName-input' />
                     </div>
                   </div>
                   <div className='form-group m-form__group row'>

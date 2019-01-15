@@ -22,6 +22,7 @@ export default function ReviewDraft (props) {
   let usersOptions = []
   let checkItemList = ''
   let contextId = props.match.params.id
+  let cancelValidationClass = props.validationClass.cancelValidationClass
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -98,14 +99,12 @@ export default function ReviewDraft (props) {
     }
   }
   let handleApproverSelect = function (newValue: any, actionMeta: any) {
-    console.group('Value Changed first select')
-    console.log(newValue)
-    console.log(`action: ${actionMeta.action}`)
-    console.groupEnd()
     if (actionMeta.action === 'select-option') {
       let selectedApprover = newValue
-      console.log(newValue)
       props.setSelectedApprover(selectedApprover)
+      let validationClass = {...props.validationClass}
+      validationClass.approverValidationClass = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
     }
     if (actionMeta.action === 'clear') {
       let selectedApprover = null
@@ -113,14 +112,12 @@ export default function ReviewDraft (props) {
     }
   }
   let handleReviewerSelect = function (newValue: any, actionMeta: any) {
-    console.group('Value Changed first select')
-    console.log(newValue)
-    console.log(`action: ${actionMeta.action}`)
-    console.groupEnd()
     if (actionMeta.action === 'select-option') {
       let selectedReviewer = newValue
-      console.log(newValue)
       props.setSelectedReviewer(selectedReviewer)
+      let validationClass = {...props.validationClass}
+      validationClass.reviewerValidationClass = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
     }
     if (actionMeta.action === 'clear') {
       let selectedReviewer = null
@@ -133,13 +130,22 @@ export default function ReviewDraft (props) {
     draftEdit.cancelReason = event.target.value
     props.setDraftEditData(draftEdit)
     if (event.target.value !== '') {
-      let validationClass = props.validationClass
-      validationClass = 'form-group m-form__group row'
+      let validationClass = {...props.validationClass}
+      validationClass.cancelValidationClass = 'form-group m-form__group row'
       props.setValidationClass(validationClass)
     }
   }
+  let handleReferenceChange = function (event) {
+    let draftEdit = {...props.draftEdit}
+    draftEdit.document_reference = event.target.value
+    props.setDraftEditData(draftEdit)
+  }
+  let handleVersionChange = function (event) {
+    let draftEdit = {...props.draftEdit}
+    draftEdit.document_version = event.target.value
+    props.setDraftEditData(draftEdit)
+  }
   let handleNameChange = function (event) {
-    console.log('event', event.target)
     let draftEdit = {...props.draftEdit}
     draftEdit.name = event.target.value
     props.setDraftEditData(draftEdit)
@@ -161,6 +167,9 @@ export default function ReviewDraft (props) {
     if (actionMeta.action === 'select-option') {
       let selectedCategory = newValue
       props.setSelectedCategory(selectedCategory)
+      let validationClass = {...props.validationClass}
+      validationClass.categoryValidationClass = 'form-group m-form__group row'
+      props.setValidationClass(validationClass)
     }
     if (actionMeta.action === 'clear') {
       let selectedCategory = null
@@ -268,6 +277,19 @@ export default function ReviewDraft (props) {
   let saveReview = function (event) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    if (props.selectedCategory === null || props.selectedApprover === null || props.selectedReviewer === null) {
+      let validationClass = {...props.validationClass}
+      if (props.selectedCategory === null) {
+        validationClass.categoryValidationClass = 'form-group m-form__group row has-danger'
+      }
+      if (props.selectedApprover === null) {
+        validationClass.approverValidationClass = 'form-group m-form__group row has-danger'
+      }
+      if (props.selectedReviewer === null) {
+        validationClass.reviewerValidationClass = 'form-group m-form__group row has-danger'
+      }
+      props.setValidationClass(validationClass)
+    }
     let updatePayload = []
     let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
     delete draftEdit.checkItems
@@ -367,145 +389,165 @@ export default function ReviewDraft (props) {
     props.updateReviews(payload)
   }
   let submitReview = function (event) {
-    let updatePayload = []
-    let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
-    delete draftEdit.checkItems
-    delete draftEdit.isCancel
-    delete draftEdit.cancelReason
-    for (let x in draftEdit) {
-      if (draftEdit.hasOwnProperty(x)) {
-        if (x === 'category') {
-          if (props.selectedCategory) {
-            let obj = {}
-            obj.op = 'replace'
-            obj.path = '/review_category'
-            obj.value = props.selectedCategory.id || props.draftEdit.category
-            updatePayload.push(obj)
-          }
-        } else if (x === 'reviewer') {
-          if (props.selectedReviewer) {
-            let obj = {}
-            obj.op = 'replace'
-            obj.path = '/reviewer'
-            obj.value = props.selectedReviewer.first_name + ' ' + props.selectedReviewer.last_name
-            updatePayload.push(obj)
-            obj = {}
-            obj.op = 'replace'
-            obj.path = '/reviewer_id'
-            obj.value = props.selectedReviewer.id
-            updatePayload.push(obj)
+    console.log('on submit')
+    if (props.selectedCategory === null || props.selectedApprover === null || props.selectedReviewer === null) {
+      let validationClass = {...props.validationClass}
+      if (props.selectedCategory === null) {
+        validationClass.categoryValidationClass = 'form-group m-form__group row has-danger'
+      }
+      if (props.selectedApprover === null) {
+        validationClass.approverValidationClass = 'form-group m-form__group row has-danger'
+      }
+      if (props.selectedReviewer === null) {
+        validationClass.reviewerValidationClass = 'form-group m-form__group row has-danger'
+      }
+      props.setValidationClass(validationClass)
+    } else {
+      let updatePayload = []
+      let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
+      delete draftEdit.checkItems
+      delete draftEdit.isCancel
+      delete draftEdit.cancelReason
+      for (let x in draftEdit) {
+        if (draftEdit.hasOwnProperty(x)) {
+          if (x === 'category') {
+            if (props.selectedCategory) {
+              let obj = {}
+              obj.op = 'replace'
+              obj.path = '/review_category'
+              obj.value = props.selectedCategory.id || props.draftEdit.category
+              updatePayload.push(obj)
+            }
+          } else if (x === 'reviewer') {
+            if (props.selectedReviewer) {
+              let obj = {}
+              obj.op = 'replace'
+              obj.path = '/reviewer'
+              obj.value = props.selectedReviewer.first_name + ' ' + props.selectedReviewer.last_name
+              updatePayload.push(obj)
+              obj = {}
+              obj.op = 'replace'
+              obj.path = '/reviewer_id'
+              obj.value = props.selectedReviewer.id
+              updatePayload.push(obj)
+            } else {
+              let obj = {}
+              obj.op = 'replace'
+              obj.path = '/reviewer'
+              obj.value = null
+              updatePayload.push(obj)
+              obj = {}
+              obj.op = 'replace'
+              obj.path = '/reviewer_id'
+              obj.value = null
+              updatePayload.push(obj)
+            }
+          } else if (x === 'approver') {
+            if (props.selectedApprover) {
+              let obj = {}
+              obj.op = 'replace'
+              obj.path = '/approver'
+              obj.value = props.selectedApprover.first_name + ' ' + props.selectedApprover.last_name
+              updatePayload.push(obj)
+              obj = {}
+              obj.op = 'replace'
+              obj.path = '/approver_id'
+              obj.value = props.selectedApprover.id
+              updatePayload.push(obj)
+            } else {
+              let obj = {}
+              obj.op = 'replace'
+              obj.path = '/approver'
+              obj.value = null
+              updatePayload.push(obj)
+              obj = {}
+              obj.op = 'replace'
+              obj.path = '/approver_id'
+              obj.value = null
+              updatePayload.push(obj)
+            }
           } else {
             let obj = {}
             obj.op = 'replace'
-            obj.path = '/reviewer'
-            obj.value = null
-            updatePayload.push(obj)
-            obj = {}
-            obj.op = 'replace'
-            obj.path = '/reviewer_id'
-            obj.value = null
+            obj.path = '/' + x
+            obj.value = props.draftEdit[x]
             updatePayload.push(obj)
           }
-        } else if (x === 'approver') {
-          if (props.selectedApprover) {
-            let obj = {}
-            obj.op = 'replace'
-            obj.path = '/approver'
-            obj.value = props.selectedApprover.first_name + ' ' + props.selectedApprover.last_name
-            updatePayload.push(obj)
-            obj = {}
-            obj.op = 'replace'
-            obj.path = '/approver_id'
-            obj.value = props.selectedApprover.id
-            updatePayload.push(obj)
-          } else {
-            let obj = {}
-            obj.op = 'replace'
-            obj.path = '/approver'
-            obj.value = null
-            updatePayload.push(obj)
-            obj = {}
-            obj.op = 'replace'
-            obj.path = '/approver_id'
-            obj.value = null
-            updatePayload.push(obj)
-          }
-        } else {
-          let obj = {}
-          obj.op = 'replace'
-          obj.path = '/' + x
-          obj.value = props.draftEdit[x]
-          updatePayload.push(obj)
         }
       }
-    }
-    // set reason in payload
-    let obj = {}
-    obj.op = 'replace'
-    obj.path = '/reason'
-    obj.value = props.draftEdit.cancelReason
-    updatePayload.push(obj)
+      // set reason in payload
+      let obj = {}
+      obj.op = 'replace'
+      obj.path = '/reason'
+      obj.value = props.draftEdit.cancelReason
+      updatePayload.push(obj)
 
-    if (props.updatePayload.length > 0) {
-      updatePayload = updatePayload.concat(props.updatePayload)
-    }
-    if (props.draftEdit.checkItems.length > 0) {
-      props.draftEdit.checkItems.forEach(function (data, index) {
-        if (data.type === 'NEW') {
+      if (props.updatePayload.length > 0) {
+        updatePayload = updatePayload.concat(props.updatePayload)
+      }
+      if (props.draftEdit.checkItems.length > 0) {
+        props.draftEdit.checkItems.forEach(function (data, index) {
+          if (data.type === 'NEW') {
+            let obj = {}
+            obj.op = 'add'
+            obj.path = '/check_items/-'
+            obj.value = data.id
+            updatePayload.push(obj)
+          }
+        })
+      }
+      if (props.draftEdit.isCancel) {
+        console.log('if cancel')
+        if (props.draftEdit.cancelReason !== null && props.draftEdit.cancelReason !== '') {
+          console.log('if inside')
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          console.log('update payload', updatePayload)
+          // set stage to approval
+          let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Cancelled'
+          }), 'id')
           let obj = {}
-          obj.op = 'add'
-          obj.path = '/check_items/-'
-          obj.value = data.id
+          obj.op = 'replace'
+          obj.path = '/stage'
+          obj.value = cancelledId
           updatePayload.push(obj)
+          // set status to Cancelled
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/status'
+          obj.value = 'Cancelled'
+          updatePayload.push(obj)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+        } else {
+          console.log('if else inside')
+          let validationClass = {...props.validationClass}
+          validationClass.cancelValidationClass = 'form-group m-form__group row has-danger'
+          console.log('validationClass', validationClass)
+          console.log(props.setValidationClass)
+          props.setValidationClass(validationClass)
         }
-      })
-    }
-    if (props.draftEdit.isCancel) {
-      if (props.draftEdit.cancelReason !== null && props.draftEdit.cancelReason !== '') {
+      } else {
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        console.log('update payload', updatePayload)
         // set stage to approval
-        let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Cancelled'
+        let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Approval'
         }), 'id')
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = cancelledId
+        obj.value = approvalId
         updatePayload.push(obj)
-        // set status to Cancelled
-        obj = {}
-        obj.op = 'replace'
-        obj.path = '/status'
-        obj.value = 'Cancelled'
-        updatePayload.push(obj)
+        console.log('update payload', updatePayload)
         let payload = {}
         payload.reviewId = contextId
         payload.data = updatePayload
         props.updateReviews(payload)
-      } else {
-        let validationClass = props.validationClass
-        validationClass = 'form-group m-form__group row has-danger'
-        props.setValidationClass(validationClass)
       }
-    } else {
-      // eslint-disable-next-line
-      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // set stage to approval
-      let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Approval'
-      }), 'id')
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/stage'
-      obj.value = approvalId
-      updatePayload.push(obj)
-      console.log('update payload', updatePayload)
-      let payload = {}
-      payload.reviewId = contextId
-      payload.data = updatePayload
-      props.updateReviews(payload)
     }
   }
   let connectArtefact = function (event) {
@@ -586,11 +628,11 @@ export default function ReviewDraft (props) {
                       <textarea className='form-control m-input m-input--air' onChange={handleDescriptionChange} value={props.draftEdit.description} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
                     </div>
                   </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Category</label>
+                  <div className={props.validationClass.categoryValidationClass}>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Category *</label>
                     <div className='col-8'>
                       <Select
-                        // className='col-7 input-sm m-input'
+                        className='form-control'
                         placeholder='Select Category'
                         isClearable
                         // defaultValue={props.selectedCategory}
@@ -603,11 +645,11 @@ export default function ReviewDraft (props) {
                       {/* <input className='form-control m-input' type='text' onChange={handleCategoryChange} placeholder='Enter Category' value={props.draftEdit.category} /> */}
                     </div>
                   </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer</label>
+                  <div className={props.validationClass.reviewerValidationClass}>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer *</label>
                     <div className='col-8'>
                       <Select
-                        // className='col-7 input-sm m-input'
+                        className='form-control'
                         placeholder='Select Reviewer'
                         isClearable
                         // defaultValue={dvalue}
@@ -620,11 +662,11 @@ export default function ReviewDraft (props) {
                       {/* <input className='form-control m-input' onChange={handleReviewerChange} type='text' placeholder='Enter Reviewer' value={props.draftEdit.reviewer} /> */}
                     </div>
                   </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver</label>
+                  <div className={props.validationClass.approverValidationClass}>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver *</label>
                     <div className='col-8'>
                       <Select
-                        // className='col-7 input-sm m-input'
+                        className='form-control'
                         placeholder='Select Approver'
                         isClearable
                         // defaultValue={dvalue}
@@ -642,21 +684,38 @@ export default function ReviewDraft (props) {
                     <div className='col-8'>
                       <div className='row m--margin-top-10'>
                         {/* <div className='col-md-9'> */}
-                        {(reviewArtefactId !== null) && (<div className='col-md-6'>
+                        {(reviewArtefactId !== null) && (<div className='col-md-10'>
                           <a href={'/review_artefact/' + reviewArtefactId}>{reviewArtefactName}</a>
                         </div>)}
-                        {(reviewArtefactId == null) && (<div className='col-md-6'>
+                        {(reviewArtefactId == null) && (<div className='col-md-10'>
                           <span>{reviewArtefactName}</span>
                         </div>)}
                         {/* </div> */}
-                        <div className='col-md-6'>
-                          <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
-                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
+                        <div className='col-md-2 float-right'>
+                          {reviewArtefactId === null && (<button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-right'>Connect</button>)}
+                          {reviewArtefactId !== null && (<button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>)}
                         </div>
                         {/* <div className='col-md-5 float-right'>
                           <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
                         </div> */}
                       </div>
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document No</label>
+                    <div className='col-8'>
+                      <input className='form-control m-input' type='text' placeholder='Enter Review Document No' value={props.draftEdit.document_reference} onChange={handleReferenceChange} id='example-userName-input' />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document Version</label>
+                    <div className='col-8'>
+                      <input className='form-control m-input' type='text' placeholder='Enter Review Document Version' value={props.draftEdit.document_version} onChange={handleVersionChange} id='example-userName-input' />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>&nbsp;</label>
+                    <div className='col-8'>
                       <br />
                       <div className='row'>
                         <div className='col-md-5'>
@@ -672,7 +731,7 @@ export default function ReviewDraft (props) {
                       </div>
                     </div>
                   </div>
-                  {props.draftEdit.isCancel && (<div className={props.validationClass}>
+                  {props.draftEdit.isCancel && (<div className={cancelValidationClass}>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Cancel Reason</label>
                     <div className='col-8'>
                       {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}

@@ -142,6 +142,8 @@ export default compose(
           draftEdit.category = nextProps.reviewData.resources[0].review_category_id || ''
           draftEdit.reviewer = nextProps.reviewData.resources[0].reviewer || ''
           draftEdit.approver = nextProps.reviewData.resources[0].approver || ''
+          draftEdit.document_reference = nextProps.reviewData.resources[0].document_reference || ''
+          draftEdit.document_version = nextProps.reviewData.resources[0].document_version || ''
           let checkItems = nextProps.reviewData.resources[0].check_items || []
           if (checkItems.length > 0) {
             checkItems = checkItems.map(function (data, index) {
@@ -237,7 +239,7 @@ export default compose(
         let componentTypeId = nextProps.connectArtefactSettings.selectedRelations.target_component_type.id
         this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeId)
       }
-      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.users.resources.length > 0 && nextProps.firstLoad) {
+      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.users && nextProps.users.resources.length > 0 && nextProps.firstLoad) {
         console.log('inside if -----------------------------------reviewProperties', nextProps, nextProps.reviewData)
         if (nextProps.reviewData && nextProps.reviewData !== null & nextProps.reviewData.error_code === null) {
           let defaultCategoryId = nextProps.reviewData.resources[0].review_category_id

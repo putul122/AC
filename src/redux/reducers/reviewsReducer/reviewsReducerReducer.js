@@ -36,7 +36,9 @@ export const initialState = {
   createReviewResponse: '',
   addReviewSettings: {
     isModalOpen: false,
-    templateSelected: null
+    templateSelected: null,
+    reviewName: '',
+    nameValidationClass: 'form-group m-form__group row'
   }
 
 }

@@ -4,12 +4,15 @@ import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
+import Select from 'react-select'
 
 export default function ConductReview (props) {
   console.log('props conduct', props)
   let reviewName = ''
   let ReviewStatus = ''
   let ReviewReason = ''
+  let documentReference = ''
+  let documentVersion = ''
   let Artefact = ''
   let Artefectid = ''
   let Category = ''
@@ -59,6 +62,53 @@ export default function ConductReview (props) {
       console.log('else')
     }
   }
+  let onCheckItemCheckboxChange = function (isChecked, compliance, data) {
+    let checkItems = JSON.parse(JSON.stringify(props.checkItems))
+    if (isChecked) {
+      data.compliance = compliance
+    } else {
+      data.compliance = null
+      data.compliance_comment = null
+    }
+    let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
+    if (index >= 0) {
+      checkItems[index] = data
+      props.setCheckItems(checkItems)
+    } else {
+      console.log('else')
+    }
+  }
+  let handleCheckItemSelectOption = function (data) {
+    return function (newValue: any, actionMeta: any) {
+      console.group('Value Changed first select')
+      console.log(newValue)
+      console.log(`action: ${actionMeta.action}`)
+      console.groupEnd()
+      console.log('data', data)
+      let checkItems = JSON.parse(JSON.stringify(props.checkItems))
+      let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
+      console.log('index', index)
+      if (actionMeta.action === 'select-option') {
+        if (index >= 0) {
+          data.compliance = newValue.name
+          checkItems[index] = data
+          props.setCheckItems(checkItems)
+        } else {
+          console.log('else')
+        }
+      }
+      if (actionMeta.action === 'clear') {
+        if (index >= 0) {
+          data.compliance = null
+          data.compliance_comment = null
+          checkItems[index] = data
+          props.setCheckItems(checkItems)
+        } else {
+          console.log('else')
+        }
+      }
+    }
+  }
   let handelReason = function (event) {
     let value = event.target.value
     props.setReason(value)
@@ -99,6 +149,8 @@ export default function ConductReview (props) {
     Category = props.reviewData.resources[0].review_category
     ReviewStatus = props.reviewData.resources[0].status
     ReviewReason = props.reviewData.resources[0].reason
+    documentReference = props.reviewData.resources[0].document_reference
+    documentVersion = props.reviewData.resources[0].document_version
     // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
     // props.setComplaint(complianceStatus)
     Artefact = props.reviewData.resources[0].review_artefact_name
@@ -135,6 +187,7 @@ export default function ConductReview (props) {
     checkItemList = _.filter(checkItems, function (checkItem) {
           return checkItem.display
       }).map(function (data, index) {
+      console.log('checkitem data', data)
       if (data.type === null || data.type === 'Radio') {
         let valueList = ''
         if (data.values.length > 0) {
@@ -151,11 +204,77 @@ export default function ConductReview (props) {
             <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
             <div className='col-8 float-left' >
               <div className='m-radio-inline pull-left' style={{width: '100%'}}>
-                {valueList}
-                <label htmlFor='example-email-input' className='col-8'>
+                <div className='row pull-left' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    {valueList}
+                  </div>
+                  <div className='col-md-8'>
+                    <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </span>)
+      }
+      if (data.type === 'Check') {
+        let valueList = ''
+        if (data.values.length > 0) {
+          valueList = data.values.map(function (valueData, valueIndex) {
+            return (<span><label htmlFor='example-email-input' className=''>
+              <input type='checkbox' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} onChange={(e) => onCheckItemCheckboxChange(e.target.checked, valueData.name, data)} /> {valueData.name + '  '}
+              <span />
+            </label>&nbsp;&nbsp;&nbsp;</span>)
+          })
+        }
+        console.log('valueList', valueList, typeof valueList)
+        return (<span className='m-list-search__result-item' key={index}>
+          <div className='form-group m-form__group row'>
+            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+            <div className='col-8 float-left' >
+              <div className='row pull-left' style={{width: '100%'}}>
+                <div className='col-md-4'>
+                  {valueList}
+                </div>
+                <div className='col-md-8'>
                   <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
-                  <span />
-                </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </span>)
+      }
+      if (data.type === 'Dropdown') {
+        let dropdownOptions = []
+        let defaultValue = null
+        if (data.values.length > 0) {
+          dropdownOptions = data.values.map(function (value, index) {
+            value.label = value.name
+            return value
+          })
+          defaultValue = _.find(dropdownOptions, function (obj) { return obj.name === data.compliance })
+        }
+        return (<span className='m-list-search__result-item' key={index}>
+          <div className='form-group m-form__group row'>
+            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+            <div className='col-8 float-left' >
+              <div className='row pull-left' style={{width: '100%'}}>
+                <div className='col-md-4'>
+                  <Select
+                    // className='col-7 input-sm m-input'
+                    placeholder='Select Roles'
+                    isClearable
+                    defaultValue={defaultValue}
+                    // value={props.userActionSettings.selectedRole}
+                    onChange={handleCheckItemSelectOption(data)}
+                    // isSearchable={false}
+                    name={'dropdown'}
+                    options={dropdownOptions}
+                  />
+                </div>
+                <div className='col-md-8'>
+                  <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                </div>
               </div>
             </div>
           </div>
@@ -367,7 +486,16 @@ export default function ConductReview (props) {
                   </div>
                 </div>
               </div>
-              <div className='col-md-6' />
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
+                    <div className='col-8'>
+                      <a href={'/review_artefact/' + Artefectid}>{Artefact}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-6'>
@@ -383,9 +511,9 @@ export default function ConductReview (props) {
               <div className='col-md-6'>
                 <div className='col-12'>
                   <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
+                    <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
                     <div className='col-8'>
-                      <a href={'/review_artefact/' + Artefectid}>{Artefact}</a>
+                      <span className='m-input' >{documentReference}</span>
                     </div>
                   </div>
                 </div>
@@ -415,7 +543,16 @@ export default function ConductReview (props) {
                   </div>
                 </div>
               </div>
-              <div className='col-md-6' />
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4'><b>Review Document Version</b></label>
+                    <div className='col-8'>
+                      <span className='m-input' >{documentVersion}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-12'>

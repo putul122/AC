@@ -11,6 +11,8 @@ import CheckItemModal from '../../containers/checkItemModal/checkItemModalContai
 export default function ReviewAcceptance (props) {
   let reviewName = ''
   let reviewComplaint = ''
+  let documentReference = ''
+  let documentVersion = ''
   let Artefact = ''
   let Category = ''
   let checkItemList = ''
@@ -42,7 +44,8 @@ export default function ReviewAcceptance (props) {
     // Description = props.reviewData.resources[0].description
     Category = props.reviewData.resources[0].review_category
     reviewComplaint = props.reviewData.resources[0].compliance_status
-    // Approver = props.reviewData.resources[0].approver
+    documentReference = props.reviewData.resources[0].document_reference
+    documentVersion = props.reviewData.resources[0].document_version
     Artefact = props.reviewData.resources[0].review_artefact_name
     if (props.reviewData.resources[0].check_items.length > 0) {
       checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
@@ -226,7 +229,16 @@ export default function ReviewAcceptance (props) {
                 </div>
               </div>
             </div>
-            <div className='col-md-6' />
+            <div className='col-md-6'>
+              <div className='col-12'>
+                <div className='form-group m-form__group row'>
+                  <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
+                  <div className='col-8'>
+                    <span lassName='m-input' >{Artefact}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className='row' style={{width: '100%'}}>
             <div className='col-md-6'>
@@ -242,9 +254,9 @@ export default function ReviewAcceptance (props) {
             <div className='col-md-6'>
               <div className='col-12'>
                 <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
+                  <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
                   <div className='col-8'>
-                    <span lassName='m-input' >{Artefact}</span>
+                    <span className='m-input' >{documentReference}</span>
                   </div>
                 </div>
               </div>
@@ -262,7 +274,16 @@ export default function ReviewAcceptance (props) {
                 </div>
               </div>
             </div>
-            <div className='col-md-6' />
+            <div className='col-md-6'>
+              <div className='col-12'>
+                <div className='form-group m-form__group row'>
+                  <label htmlFor='example-email-input' className='col-4'><b>Review Document Version</b></label>
+                  <div className='col-8'>
+                    <span className='m-input' >{documentVersion}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className='row' style={{width: '100%'}}>
             <div className='col-md-12'>
