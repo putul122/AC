@@ -256,8 +256,8 @@ if (props.reviewsSummary && props.reviewsSummary !== '') {
     reviewsinProgress = props.reviewsSummary.resources[0].count_by_stage['In Progress'] || 0
     reviewsCompleted = props.reviewsSummary.resources[0].count_by_stage['Completed'] || 0
     reviewsCancelled = props.reviewsSummary.resources[0].count_by_stage['Cancelled'] || 0
-    reviewsApproved = props.reviewsSummary.resources[0].count_by_stage['In Approval'] || 0
-    reviewsAcceptance = props.reviewsSummary.resources[0].count_by_stage['In Acceptance'] || 0
+    reviewsApproved = props.reviewsSummary.resources[0].count_by_stage['Approval'] || 0
+    reviewsAcceptance = props.reviewsSummary.resources[0].count_by_stage['Acceptance'] || 0
   }
 }
 console.log('******', reviewsinDraft)
