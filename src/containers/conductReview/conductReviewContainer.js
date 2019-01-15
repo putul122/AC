@@ -119,6 +119,10 @@ export default compose(
                 data.values.forEach(function (value, idx) {
                   if (compliance === value.name) {
                     // remove id from notToDisplay
+                    let notToDisplayIndex = notToDisplay.indexOf(data.id)
+                    if (notToDisplayIndex > -1) {
+                      notToDisplay.splice(notToDisplayIndex, 1)
+                    }
                   } else {
                     // add id to notToDisplay
                     if (value.requires_check_items.length > 0) {

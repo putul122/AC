@@ -1,9 +1,9 @@
 import React from 'react'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 // import styles from './acceptReviewComponent.scss'
-// import debounce from 'lodash/debounce'
+import Select from 'react-select'
+import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
@@ -14,6 +14,7 @@ export default function ReviewAcceptance (props) {
   let documentReference = ''
   let documentVersion = ''
   let Artefact = ''
+  let ArtefactId = ''
   let Category = ''
   let checkItemList = ''
   let contextId = props.match.params.id
@@ -47,8 +48,41 @@ export default function ReviewAcceptance (props) {
     documentReference = props.reviewData.resources[0].document_reference
     documentVersion = props.reviewData.resources[0].document_version
     Artefact = props.reviewData.resources[0].review_artefact_name
+    ArtefactId = props.reviewData.resources[0].review_artefact_id
     if (props.reviewData.resources[0].check_items.length > 0) {
-      checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
+      let notToDisplay = []
+      props.reviewData.resources[0].check_items.forEach(function (data, index) {
+        let compliance = data.compliance
+        if (data.values.length > 0) {
+          data.values.forEach(function (value, idx) {
+            if (compliance === value.name) {
+              // remove id from notToDisplay
+              let notToDisplayIndex = notToDisplay.indexOf(data.id)
+              if (notToDisplayIndex > -1) {
+                notToDisplay.splice(notToDisplayIndex, 1)
+              }
+            } else {
+              // add id to notToDisplay
+              if (value.requires_check_items.length > 0) {
+                value.requires_check_items.forEach(function (requireCheckItem, ix) {
+                  notToDisplay.push(requireCheckItem.id)
+                })
+              }
+            }
+          })
+        }
+      })
+      let checkItems = props.reviewData.resources[0].check_items.map(function (data, index) {
+        if (notToDisplay.includes(data.id)) {
+          data.display = false
+        } else {
+          data.display = true
+        }
+        return data
+      }) || []
+      checkItemList = _.filter(checkItems, function (checkItem) {
+          return checkItem.display
+      }).map(function (data, index) {
         if (data.type === null || data.type === 'Radio') {
           let valueList = ''
           if (data.values.length > 0) {
@@ -62,14 +96,94 @@ export default function ReviewAcceptance (props) {
           console.log('valueList', valueList, typeof valueList)
           return (<span className='m-list-search__result-item' key={index}>
             <div className='form-group m-form__group row'>
-              <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
-              <div className='col-8 float-left' >
-                <div className='m-radio-inline pull-left' style={{width: '100%'}}>
-                  {valueList}
-                  <label htmlFor='example-email-input' className='col-8'>
-                    <span className=''>{data.compliance_comment || ''}</span>
-                    <span />
-                  </label>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='m-radio-inline pull-left row' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    {valueList}
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
+        if (data.type === 'Check') {
+          let valueList = ''
+          if (data.values.length > 0) {
+            valueList = data.values.map(function (valueData, valueIndex) {
+              return (<span><label htmlFor='example-email-input' className='m-checkbox'>
+                <input type='checkbox' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} /> {valueData.name}
+                <span />
+              </label>&nbsp;&nbsp;&nbsp;</span>)
+            })
+          }
+          console.log('valueList', valueList, typeof valueList)
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='m-radio-inline pull-left row' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    {valueList}
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
+        if (data.type === 'Dropdown') {
+          let dropdownOptions = []
+          let defaultValue = null
+          if (data.values.length > 0) {
+            dropdownOptions = data.values.map(function (value, index) {
+              value.label = value.name
+              return value
+            })
+            defaultValue = _.find(dropdownOptions, function (obj) { return obj.name === data.compliance })
+          }
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='row pull-left' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    <Select
+                      // className='col-7 input-sm m-input'
+                      placeholder='Select Options'
+                      isClearable
+                      defaultValue={defaultValue}
+                      // value={props.userActionSettings.selectedRole}
+                      // onChange={handleCheckItemSelectOption(data)}
+                      // isSearchable={false}
+                      // isDisabled
+                      name={'dropdown'}
+                      options={dropdownOptions}
+                    />
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -234,7 +348,7 @@ export default function ReviewAcceptance (props) {
                 <div className='form-group m-form__group row'>
                   <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                   <div className='col-8'>
-                    <span lassName='m-input' >{Artefact}</span>
+                    <span lassName='m-input' ><a href={'/review_artefact/' + ArtefactId}>{Artefact}</a></span>
                   </div>
                 </div>
               </div>

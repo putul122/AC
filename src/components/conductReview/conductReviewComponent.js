@@ -164,6 +164,10 @@ export default function ConductReview (props) {
         data.values.forEach(function (value, idx) {
           if (compliance === value.name) {
             // remove id from notToDisplay
+            let notToDisplayIndex = notToDisplay.indexOf(data.id)
+            if (notToDisplayIndex > -1) {
+              notToDisplay.splice(notToDisplayIndex, 1)
+            }
           } else {
             // add id to notToDisplay
             if (value.requires_check_items.length > 0) {
@@ -201,15 +205,20 @@ export default function ConductReview (props) {
         console.log('valueList', valueList, typeof valueList)
         return (<span className='m-list-search__result-item' key={index}>
           <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
-            <div className='col-8 float-left' >
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+            <div className='col-9 float-left' >
               <div className='m-radio-inline pull-left' style={{width: '100%'}}>
                 <div className='row pull-left' style={{width: '100%'}}>
                   <div className='col-md-4'>
                     {valueList}
                   </div>
                   <div className='col-md-8'>
-                    <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
+                      <div className='col-10'>
+                        <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -230,14 +239,19 @@ export default function ConductReview (props) {
         console.log('valueList', valueList, typeof valueList)
         return (<span className='m-list-search__result-item' key={index}>
           <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
-            <div className='col-8 float-left' >
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+            <div className='col-9 float-left' >
               <div className='row pull-left' style={{width: '100%'}}>
                 <div className='col-md-4'>
                   {valueList}
                 </div>
                 <div className='col-md-8'>
-                  <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
+                    <div className='col-10'>
+                      <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -256,13 +270,13 @@ export default function ConductReview (props) {
         }
         return (<span className='m-list-search__result-item' key={index}>
           <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-4 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
-            <div className='col-8 float-left' >
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+            <div className='col-9 float-left' >
               <div className='row pull-left' style={{width: '100%'}}>
                 <div className='col-md-4'>
                   <Select
                     // className='col-7 input-sm m-input'
-                    placeholder='Select Roles'
+                    placeholder='Select Options'
                     isClearable
                     defaultValue={defaultValue}
                     // value={props.userActionSettings.selectedRole}
@@ -273,7 +287,12 @@ export default function ConductReview (props) {
                   />
                 </div>
                 <div className='col-md-8'>
-                  <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
+                    <div className='col-10'>
+                      <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -523,7 +542,7 @@ export default function ConductReview (props) {
               <div className='col-md-6'>
                 <div className='col-12'>
                   <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Complaint?</b></label>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Compliant?</b></label>
                     <div className='col-8'>
                       <div className='m-radio-inline'>
                         <label htmlFor='example-email-input' className=''>

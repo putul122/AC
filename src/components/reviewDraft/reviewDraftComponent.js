@@ -275,8 +275,9 @@ export default function ReviewDraft (props) {
     props.setDraftEditData(draftEdit1)
   }
   let saveReview = function (event) {
+    console.log('save review')
     // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     if (props.selectedCategory === null || props.selectedApprover === null || props.selectedReviewer === null) {
       let validationClass = {...props.validationClass}
       if (props.selectedCategory === null) {
