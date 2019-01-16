@@ -630,7 +630,7 @@ export default function ReviewDraft (props) {
                     </div>
                   </div>
                   <div className={props.validationClass.categoryValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Category *</label>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Category<span className='text-danger'>*</span></label>
                     <div className='col-8'>
                       <Select
                         className='form-control'
@@ -647,7 +647,7 @@ export default function ReviewDraft (props) {
                     </div>
                   </div>
                   <div className={props.validationClass.reviewerValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer *</label>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer<span className='text-danger'>*</span></label>
                     <div className='col-8'>
                       <Select
                         className='form-control'
@@ -664,7 +664,7 @@ export default function ReviewDraft (props) {
                     </div>
                   </div>
                   <div className={props.validationClass.approverValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver *</label>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver<span className='text-danger'>*</span></label>
                     <div className='col-8'>
                       <Select
                         className='form-control'

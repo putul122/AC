@@ -12,8 +12,17 @@ const api = {
     return 'https://account-eco-dev.ecoconductor.com/users/' + userId
   },
   getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
+  // getComponent: function (componentId) {
+  //   return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
+  // },
   getComponent: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId
+  },
+  getComponentProperty: function (componentId) {
+      return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/component_properties'
+  },
+  getComponentRelationships: function (componentId) {
+      return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/component_relationships'
   },
   getComponentConstraints: function (componentId) {
     return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentId + '/constraints'
@@ -81,7 +90,11 @@ const api = {
   },
   deleteReviewTemplate: function (componentId) {
     return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
-  }
+  },
+  notificationURL: 'https://notification-eco-dev.ecoconductor.com/notification',
+  iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
+  iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',
+  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
 }
 
 export default api

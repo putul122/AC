@@ -194,27 +194,27 @@ export default function ReviewAcceptance (props) {
       checkItemList = ''
     }
   }
-  let saveReview = function (event) {
-    // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let updatePayload = []
-    if (props.isAccepeted) {
-      if (props.isAccepeted === 'No') {
-        if (props.notAcceptedReason.trim() !== '') {
-          let obj = {}
-          obj.op = 'replace'
-          obj.path = '/reason'
-          obj.value = props.notAcceptedReason
-          updatePayload.push(obj)
-        }
-      }
-    }
-    console.log('update payload', updatePayload)
-    let payload = {}
-    payload.reviewId = contextId
-    payload.data = updatePayload
-    props.updateReviews(payload)
-  }
+  // let saveReview = function (event) {
+  //   // eslint-disable-next-line
+  //   mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  //   let updatePayload = []
+  //   if (props.isAccepeted) {
+  //     if (props.isAccepeted === 'No') {
+  //       if (props.notAcceptedReason.trim() !== '') {
+  //         let obj = {}
+  //         obj.op = 'replace'
+  //         obj.path = '/reason'
+  //         obj.value = props.notAcceptedReason
+  //         updatePayload.push(obj)
+  //       }
+  //     }
+  //   }
+  //   console.log('update payload', updatePayload)
+  //   let payload = {}
+  //   payload.reviewId = contextId
+  //   payload.data = updatePayload
+  //   props.updateReviews(payload)
+  // }
   let submitReview = function (event) {
     let updatePayload = []
     let obj = {}
@@ -450,7 +450,7 @@ export default function ReviewAcceptance (props) {
             <div className='col-6 float-right'>
               <div className='pull-right'>
                 <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
-                <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
+                {/* <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp; */}
                 <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button>
               </div>
             </div>

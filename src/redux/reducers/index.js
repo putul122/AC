@@ -21,6 +21,8 @@ import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerRed
 import checkItemModalReducer from './checkItemModalReducer/checkItemModalReducerReducer'
 import reviewArtefactReducer from './reviewArtefactReducer/reviewArtefactReducerReducer'
 import signUpReducer from './signUpReducer/signUpReducerReducer'
+import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
+
 export default combineReducers({
     basicReducer,
     dashboardReducer,
@@ -43,5 +45,6 @@ export default combineReducers({
     newDiscussionReducer,
     reviewArtefactReducer,
     signUpReducer,
-    checkItemModalReducer
+    checkItemModalReducer,
+    componentModalViewReducer
 })

@@ -650,7 +650,7 @@ return (
                 <div className='col-md-12 m-form m-form--state m-form--fit'>
                   {/* {messageBlock} */}
                   <div className={props.addReviewSettings.nameValidationClass}>
-                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name *</label>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name<span className='text-danger'>*</span></label>
                     <div className='col-8'>
                       <input className='form-control m-input' type='email' placeholder='Enter Review Name' onChange={handleReviewName} value={props.addReviewSettings.reviewName} ref={input => (reviewName = input)} id='example-userName-input' />
                     </div>
