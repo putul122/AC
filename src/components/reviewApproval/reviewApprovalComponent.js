@@ -15,7 +15,7 @@ export default function ReviewApproval (props) {
   let Artefact = ''
   let DocumentReference = ''
   let DocumentVersion = ''
-  let ArtefactId
+  let reviewArtefactId
   let checkItemList = ''
   let Compliant = ''
   let contextId = props.match.params.id
@@ -33,6 +33,17 @@ export default function ReviewApproval (props) {
       'standardData': ''
     }
     props.setModalSetting(modalSettings)
+  }
+  let openComponentModal = function () {
+    if (reviewArtefactId !== null && reviewArtefactId !== '') {
+      let payload = {}
+      payload.isModalOpen = true
+      payload.componentId = reviewArtefactId
+      payload.callAPI = true
+      props.setModalSettings(payload)
+    } else {
+      alert('Artefact Id not set')
+    }
   }
   let onRadioChange = function (value) {
     let isApproved = value
@@ -147,7 +158,7 @@ export default function ReviewApproval (props) {
     Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
     Compliant = props.reviewData.resources[0].compliance_status
-    ArtefactId = props.reviewData.resources[0].review_artefact_id
+    reviewArtefactId = props.reviewData.resources[0].review_artefact_id
     DocumentReference = props.reviewData.resources[0].document_reference
     DocumentVersion = props.reviewData.resources[0].document_version
     if (props.reviewData.resources[0].check_items.length > 0) {
@@ -224,7 +235,11 @@ export default function ReviewApproval (props) {
                                 <div className='form-group m-form__group row'>
                                   {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
                                   <div className='col-4'><b>Review Artefact</b></div>
-                                  <div className='col-8'><a href={'/review_artefact/' + ArtefactId}>{Artefact}</a></div>
+                                  <div className='col-8'>
+                                    {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
+                                    {!Artefact && (<span>Not Connected</span>)}
+                                    {/* <a href={'/review_artefact/' + reviewArtefactId}>{Artefact}</a> */}
+                                  </div>
                                 </div>
                               </span>
                               <span className='m-list-search__result-item'>

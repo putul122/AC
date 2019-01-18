@@ -51,6 +51,7 @@ export default function ApplicationActivity (props) {
                     props.setComponentId(referenceId)
                     let payload = {}
                     payload.isModalOpen = true
+                    payload.componentId = referenceId
                     payload.callAPI = true
                     props.setModalSettings(payload)
                     props.setQuickslideFlag(false)

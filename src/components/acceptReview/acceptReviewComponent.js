@@ -29,6 +29,17 @@ export default function ReviewAcceptance (props) {
     }
     props.setModalSetting(modalSettings)
   }
+  let openComponentModal = function () {
+    if (ArtefactId !== null && ArtefactId !== '') {
+      let payload = {}
+      payload.isModalOpen = true
+      payload.componentId = ArtefactId
+      payload.callAPI = true
+      props.setModalSettings(payload)
+    } else {
+      alert('Artefact Id not set')
+    }
+  }
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
@@ -348,7 +359,11 @@ export default function ReviewAcceptance (props) {
                 <div className='form-group m-form__group row'>
                   <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                   <div className='col-8'>
-                    <span lassName='m-input' ><a href={'/review_artefact/' + ArtefactId}>{Artefact}</a></span>
+                    <span lassName='m-input' >
+                      {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
+                      {!Artefact && (<span>Not Connected</span>)}
+                      {/* <a href={'/review_artefact/' + ArtefactId}>{Artefact}</a> */}
+                    </span>
                   </div>
                 </div>
               </div>

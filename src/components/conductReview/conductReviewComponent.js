@@ -29,6 +29,17 @@ export default function ConductReview (props) {
     }
     props.setModalSetting(modalSettings)
   }
+  let openComponentModal = function () {
+    if (Artefectid !== null && Artefectid !== '') {
+      let payload = {}
+      payload.isModalOpen = true
+      payload.componentId = Artefectid
+      payload.callAPI = true
+      props.setModalSettings(payload)
+    } else {
+      alert('Artefact Id not set')
+    }
+  }
   let onRadioChange = function (value) {
     props.setComplaint(value)
   }
@@ -510,7 +521,9 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
                     <div className='col-8'>
-                      <a href={'/review_artefact/' + Artefectid}>{Artefact}</a>
+                      {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
+                      {!Artefact && (<span>Not Connected</span>)}
+                      {/* <a href={'/review_artefact/' + Artefectid}>{Artefact}</a> */}
                     </div>
                   </div>
                 </div>

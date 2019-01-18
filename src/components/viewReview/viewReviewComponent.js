@@ -17,7 +17,7 @@ export default function ViewReview (props) {
   // let reviewId
   let ReviewCategory = ''
   let ReviewArtefact = ''
-  let ReviewArtefactId = ''
+  let reviewArtefactId = ''
   let contextId = props.match.params.id
   let checkItemList = ''
   let complianceStatus = ''
@@ -37,6 +37,17 @@ export default function ViewReview (props) {
     }
     props.setModalSetting(modalSettings)
   }
+  let openComponentModal = function () {
+    if (reviewArtefactId !== null && reviewArtefactId !== '') {
+      let payload = {}
+      payload.isModalOpen = true
+      payload.componentId = reviewArtefactId
+      payload.callAPI = true
+      props.setModalSettings(payload)
+    } else {
+      alert('Artefact Id not set')
+    }
+  }
   // console.log(props.agreementsSummary, props.agreements, props.currentPage)
   if (props.reviewbyId && props.reviewbyId !== '') {
     // reviewId = props.reviewbyId.resources[0].id
@@ -47,7 +58,7 @@ export default function ViewReview (props) {
     Reviewer = props.reviewbyId.resources[0].reviewer
     ReviewCategory = props.reviewbyId.resources[0].review_category
     ReviewArtefact = props.reviewbyId.resources[0].review_artefact_name
-    ReviewArtefactId = props.reviewbyId.resources[0].review_artefact_id
+    reviewArtefactId = props.reviewbyId.resources[0].review_artefact_id
     complianceStatus = props.reviewbyId.resources[0].compliance_status
     if (props.reviewbyId.resources[0].check_items.length > 0) {
       let notToDisplay = []
@@ -274,7 +285,11 @@ export default function ViewReview (props) {
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
                                     Review Artefact
                                     </span>
-                                    <span className='m-widget13__text'><a href={'/review_artefact/' + ReviewArtefactId}>{ReviewArtefact}</a></span>
+                                    <span className='m-widget13__text'>
+                                      {ReviewArtefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{ReviewArtefact}</a>)}
+                                      {!ReviewArtefact && (<span>Not Connected</span>)}
+                                      {/* <a href='javascript:void(0);' onClick={openComponentModal} >{ReviewArtefact}</a> */}
+                                    </span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>

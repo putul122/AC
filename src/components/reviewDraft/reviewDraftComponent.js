@@ -38,11 +38,23 @@ export default function ReviewDraft (props) {
     }
     props.setModalSetting(modalSettings)
   }
+  let openComponentModal = function () {
+    if (reviewArtefactId !== null && reviewArtefactId !== '') {
+      console.log('inside if', reviewArtefactId, typeof reviewArtefactId)
+      let payload = {}
+      payload.isModalOpen = true
+      payload.componentId = reviewArtefactId
+      payload.callAPI = true
+      props.setModalSettings(payload)
+    } else {
+      alert('Artefact Id not set')
+    }
+  }
   if (props.reviewData && props.reviewData !== '' & props.reviewData.error_code === null) {
     reviewStatus = props.reviewData.resources[0].status
     reviewReason = props.reviewData.resources[0].reason
     reviewArtefactId = props.reviewData.resources[0].review_artefact_id
-    reviewArtefactName = props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'
+    reviewArtefactName = props.reviewData.resources[0].review_artefact_name
     // if (reviewArtefactId == null) {
     //   return
     //   reviewArtefactName = <a>props.reviewData.resources[0].review_artefact_name || 'Connect to Artefact'</a>
@@ -685,12 +697,10 @@ export default function ReviewDraft (props) {
                     <div className='col-8'>
                       <div className='row m--margin-top-10'>
                         {/* <div className='col-md-9'> */}
-                        {(reviewArtefactId !== null) && (<div className='col-md-10'>
-                          <a href={'/review_artefact/' + reviewArtefactId}>{reviewArtefactName}</a>
-                        </div>)}
-                        {(reviewArtefactId == null) && (<div className='col-md-10'>
-                          <span>{reviewArtefactName}</span>
-                        </div>)}
+                        <div className='col-md-10'>
+                          {reviewArtefactName && (<a href='javascript:void(0);' onClick={openComponentModal} >{reviewArtefactName}</a>)}
+                          {!reviewArtefactName && (<span>Connect to Artefact</span>)}
+                        </div>
                         {/* </div> */}
                         <div className='col-md-2 float-right'>
                           {reviewArtefactId === null && (<button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-right'>Connect</button>)}

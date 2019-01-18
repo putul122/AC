@@ -186,6 +186,7 @@ export default function Users (props) {
               <td>{data.first_name + ' ' + data.last_name}</td>
               <td>{data.email}</td>
               <td>{data.roles.toString()}</td>
+              <td>{data.is_active ? 'Yes' : 'No'}</td>
               <td>
                 <button onClick={(event) => { event.preventDefault(); openUpdateModal(data) }} className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;
                 <button onClick={(event) => { event.preventDefault(); openDeleteModal(data) }} className='btn btn-outline-danger btn-sm'>Delete</button>
@@ -430,6 +431,7 @@ export default function Users (props) {
                                 <th className=''><h5>Name</h5></th>
                                 <th className=''><h5>Email</h5></th>
                                 <th className=''><h5>Role(s)</h5></th>
+                                <th className=''><h5>Active</h5></th>
                                 <th className=''><h5>Action</h5></th>
                               </tr>
                             </thead>

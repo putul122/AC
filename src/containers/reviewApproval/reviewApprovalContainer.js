@@ -6,7 +6,7 @@ import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/reviewApprovalReducer/reviewApprovalReducerReducer'
 import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 import { actionCreators as checkItemModalActionCreators } from '../../redux/reducers/checkItemModalReducer/checkItemModalReducerReducer'
-
+import { actionCreators as componentModalViewActionCreators } from '../../redux/reducers/componentModalViewReducer/componentModalViewReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -33,7 +33,8 @@ export const propsMapping: Callbacks = {
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setModalSetting: checkItemModalActionCreators.setModalSetting,
-  setCheckItemData: checkItemModalActionCreators.setCheckItemData
+  setCheckItemData: checkItemModalActionCreators.setCheckItemData,
+  setModalSettings: componentModalViewActionCreators.setModalSettings
 }
 
 // If you want to use the function mapping
