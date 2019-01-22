@@ -4,6 +4,7 @@ import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
+import api from '../../constants'
 
 export default function ReviewApproval (props) {
   console.log(props)
@@ -15,6 +16,7 @@ export default function ReviewApproval (props) {
   let Artefact = ''
   let DocumentReference = ''
   let DocumentVersion = ''
+  let documentHyperLink = 'javascript:void(0);'
   let reviewArtefactId
   let checkItemList = ''
   let Compliant = ''
@@ -161,6 +163,9 @@ export default function ReviewApproval (props) {
     reviewArtefactId = props.reviewData.resources[0].review_artefact_id
     DocumentReference = props.reviewData.resources[0].document_reference
     DocumentVersion = props.reviewData.resources[0].document_version
+    if (DocumentReference !== '' && DocumentReference !== null) {
+      documentHyperLink = api.documentReferenceLink + DocumentReference
+    }
     if (props.reviewData.resources[0].check_items.length > 0) {
       checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
         return (<span className='m-list-search__result-item' key={index}>
@@ -246,7 +251,7 @@ export default function ReviewApproval (props) {
                                 <div className='form-group m-form__group row'>
                                   {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
                                   <div className='col-4'><b>Review Document No</b></div>
-                                  <div className='col-8'>{DocumentReference}</div>
+                                  <div className='col-8'>{DocumentReference && (<a href={documentHyperLink} >{DocumentReference}</a>)}</div>
                                 </div>
                               </span>
                               <span className='m-list-search__result-item'>

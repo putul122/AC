@@ -1,18 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-// import styles from './acceptReviewComponent.scss'
 import Select from 'react-select'
 import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
+import api from '../../constants'
 
 export default function ReviewAcceptance (props) {
   let reviewName = ''
   let reviewComplaint = ''
   let documentReference = ''
   let documentVersion = ''
+  let documentHyperLink = 'javascript:void(0);'
   let Artefact = ''
   let ArtefactId = ''
   let Category = ''
@@ -60,6 +61,9 @@ export default function ReviewAcceptance (props) {
     documentVersion = props.reviewData.resources[0].document_version
     Artefact = props.reviewData.resources[0].review_artefact_name
     ArtefactId = props.reviewData.resources[0].review_artefact_id
+    if (documentReference !== '' && documentReference !== null) {
+      documentHyperLink = api.documentReferenceLink + documentReference
+    }
     if (props.reviewData.resources[0].check_items.length > 0) {
       let notToDisplay = []
       props.reviewData.resources[0].check_items.forEach(function (data, index) {
@@ -385,7 +389,7 @@ export default function ReviewAcceptance (props) {
                 <div className='form-group m-form__group row'>
                   <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
                   <div className='col-8'>
-                    <span className='m-input' >{documentReference}</span>
+                    <span className='m-input' >{documentReference && (<a href={documentHyperLink} >{documentReference}</a>)}</span>
                   </div>
                 </div>
               </div>

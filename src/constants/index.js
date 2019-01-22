@@ -91,6 +91,7 @@ const api = {
   deleteReviewTemplate: function (componentId) {
     return 'https://model-eco-dev.ecoconductor.com/components/' + componentId
   },
+  documentReferenceLink: 'http://www.webfarm.telkom.co.za/bookshelf_II/systems/ae/show.asp?doc=',
   notificationURL: 'https://notification-eco-dev.ecoconductor.com/notification',
   iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
   iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',

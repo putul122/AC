@@ -5,6 +5,7 @@ import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import Select from 'react-select'
+import api from '../../constants'
 
 export default function ConductReview (props) {
   console.log('props conduct', props)
@@ -13,6 +14,7 @@ export default function ConductReview (props) {
   let ReviewReason = ''
   let documentReference = ''
   let documentVersion = ''
+  let documentHyperLink = 'javascript:void(0);'
   let Artefact = ''
   let Artefectid = ''
   let Category = ''
@@ -162,6 +164,9 @@ export default function ConductReview (props) {
     ReviewReason = props.reviewData.resources[0].reason
     documentReference = props.reviewData.resources[0].document_reference
     documentVersion = props.reviewData.resources[0].document_version
+    if (documentReference !== '' && documentReference !== null) {
+      documentHyperLink = api.documentReferenceLink + documentReference
+    }
     // let complianceStatus = props.reviewData.resources[0].compliance_status || ''
     // props.setComplaint(complianceStatus)
     Artefact = props.reviewData.resources[0].review_artefact_name
@@ -545,7 +550,7 @@ export default function ConductReview (props) {
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
                     <div className='col-8'>
-                      <span className='m-input' >{documentReference}</span>
+                      <span className='m-input' >{documentReference && (<a href={documentHyperLink} >{documentReference}</a>)}</span>
                     </div>
                   </div>
                 </div>

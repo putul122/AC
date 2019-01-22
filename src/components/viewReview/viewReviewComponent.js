@@ -6,6 +6,7 @@ import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import Select from 'react-select'
 import _ from 'lodash'
+import api from '../../constants'
 
 export default function ViewReview (props) {
   console.log('*****', props.reviewbyId)
@@ -14,6 +15,9 @@ export default function ViewReview (props) {
   let reviewstage
   let Reviewer = ''
   let Approver = ''
+  let documentReference = ''
+  let documentVersion = ''
+  let documentHyperLink = 'javascript:void(0);'
   // let reviewId
   let ReviewCategory = ''
   let ReviewArtefact = ''
@@ -60,6 +64,11 @@ export default function ViewReview (props) {
     ReviewArtefact = props.reviewbyId.resources[0].review_artefact_name
     reviewArtefactId = props.reviewbyId.resources[0].review_artefact_id
     complianceStatus = props.reviewbyId.resources[0].compliance_status
+    documentReference = props.reviewbyId.resources[0].document_reference
+    documentVersion = props.reviewbyId.resources[0].document_version
+    if (documentReference !== '' && documentReference !== null) {
+      documentHyperLink = api.documentReferenceLink + documentReference
+    }
     if (props.reviewbyId.resources[0].check_items.length > 0) {
       let notToDisplay = []
       props.reviewbyId.resources[0].check_items.forEach(function (data, index) {
@@ -283,7 +292,7 @@ export default function ViewReview (props) {
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
-                                    Review Artefact
+                                    Review Artefact:
                                     </span>
                                     <span className='m-widget13__text'>
                                       {ReviewArtefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{ReviewArtefact}</a>)}
@@ -292,14 +301,26 @@ export default function ViewReview (props) {
                                     </span>
                                   </div>
                                   <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
+                                    Review Document No:
+                                    </span>
+                                    <span className='m-widget13__text'>{documentReference && (<a href={documentHyperLink} >{documentReference}</a>)}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
+                                    <span className='m-widget13__desc m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
+                                    Review Document Version:
+                                    </span>
+                                    <span className='m-widget13__text'>{documentVersion}</span>
+                                  </div>
+                                  <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
-                                      Review Stage
+                                      Review Stage:
                                     </span>
                                     <span className='m-widget13__text  m--font-brand'>{reviewstage}</span>
                                   </div>
                                   <div className='m-widget13__item'>
                                     <span className='m-widget13__desc m-widget13__text-bolder m-widget13__text-bolder' style={{'width': '25%', 'color': '#000000'}}>
-                                      Compliance Status
+                                      Compliance Status:
                                     </span>
                                     <span className='m-widget13__text  m--font-brand'>{complianceStatus}</span>
                                   </div>
