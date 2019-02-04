@@ -639,8 +639,12 @@ if (props.modalSettings.standardData !== '') {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
-                      <button onClick={editCheckItemCancel} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;&nbsp;
-                      <button onClick={saveEditCheckitem} className='btn btn-outline-info btn-sm'>Save</button>
+                      {/* <button onClick={editCheckItemCancel} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;&nbsp;
+                      <button onClick={saveEditCheckitem} className='btn btn-outline-info btn-sm'>Save</button> */}
+                      <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                        <button type='button' onClick={editCheckItemCancel} className='m-btn btn btn-secondary'>Cancel</button>
+                        <button type='button' onClick={saveEditCheckitem} className='m-btn btn btn-secondary'>Save</button>
+                      </div>
                     </div>
                   </div>
                 </div>)}
@@ -652,8 +656,17 @@ if (props.modalSettings.standardData !== '') {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
-                      <button onClick={CheckItemEdit} className='btn btn-outline-info btn-sm'>Edit CheckItem</button>&nbsp;&nbsp;
-                      <button onClick={deletecheckItem} className='btn btn-outline-info btn-sm'>Delete CheckItem</button>
+                      <a href='/checkitems' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-list-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
+                      {/* <button onClick={CheckItemEdit} className='btn btn-outline-info btn-sm'>Edit CheckItem</button>&nbsp;&nbsp;
+                      <button onClick={deletecheckItem} className='btn btn-outline-info btn-sm'>Delete CheckItem</button> */}
+                      <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit CheckItem' onClick={CheckItemEdit} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-edit-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
+                      <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete CheckItem' onClick={deletecheckItem} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-delete-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
                     </div>
                   </div>
                   {/* <div className='col-4 float-right'>
@@ -1020,8 +1033,12 @@ if (props.modalSettings.standardData !== '') {
                         <p>Are you sure?</p>
                       </div>
                       <div className='modal-footer'>
-                        <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                        <button type='button' onClick={deleteCheckItem} className={'btn btn-sm btn-outline-info'}>Delete</button>
+                        {/* <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                        <button type='button' onClick={deleteCheckItem} className={'btn btn-sm btn-outline-info'}>Delete</button> */}
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={closeDeleteModal} className='m-btn btn btn-secondary'>Cancel</button>
+                          <button type='button' onClick={deleteCheckItem} className='m-btn btn btn-secondary'>Save</button>
+                        </div>
                       </div>
                     </div>
                   </div>

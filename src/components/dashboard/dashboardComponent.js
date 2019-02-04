@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import './dashboardComponent.scss'
-import {defaults, Pie, Line} from 'react-chartjs-2'
+import {defaults, Doughnut, Line} from 'react-chartjs-2'
 import _ from 'lodash'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
@@ -180,7 +180,7 @@ export default function Dashboard (props) {
                 </div>
                 <div className='m-portlet__body' style={{'height': '150px'}}>
                   <div className='m-widget17'>
-                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                       <div className='m-widget17__chart'>
                         <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                           <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -223,7 +223,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Pie id='applicationChart' width={180} data={pieChartData} />
+                          <Doughnut id='applicationChart' width={180} data={pieChartData} />
                         </span>
                       </div>
                     </div>
@@ -273,7 +273,7 @@ export default function Dashboard (props) {
                 </div> */}
                 <div className='m-portlet__body' style={{'height': '150px'}}>
                   <div className='m-widget17'>
-                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                    <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                       <div className='m-widget17__chart'>
                         <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                           <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>

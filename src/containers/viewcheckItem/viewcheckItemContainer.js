@@ -113,6 +113,19 @@ export default compose(
       this.props.fetchComponentTypeComponentsforstandards && this.props.fetchComponentTypeComponentsforstandards(standardId)
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.checkitembyId && nextProps.checkitembyId !== this.props.checkitembyId && this.props.checkitembyId === '') {
         // eslint-disable-next-line

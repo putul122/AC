@@ -241,7 +241,10 @@ export default function ViewReview (props) {
           <div className='col-xs-4 col-sm-6 col-md-8' ><h2>Review Details</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
-              <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
+              {/* <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button> */}
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-multimedia-3 fa-2x' />
+              </a>
             </span>
           </div>
         </div>

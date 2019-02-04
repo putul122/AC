@@ -178,7 +178,12 @@ return (
         <h2>Check Items</h2>
       </div>
       <div className='col-md-3'>
-        <button type='button' className='btn btn-outline-info btn-sm'><a href='/addcheckitem'>Add Check Item</a></button>&nbsp;
+        {/* <button type='button' className='btn btn-outline-info btn-sm'><a href='/addcheckitem'>Add Check Item</a></button>&nbsp; */}
+        <span className='pull-right'>
+          <a href='/addcheckitem' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Check Item' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-plus fa-2x' />
+          </a>&nbsp;&nbsp;
+        </span>
       </div>
     </div>
     <div id='entitlementList'>

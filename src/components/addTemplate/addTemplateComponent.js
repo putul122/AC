@@ -111,8 +111,12 @@ export default function AddTemplate (props) {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
-                      <a href='/templates' className='btn btn-outline-info btn-sm'>Cancel</a>&nbsp;
-                      <button onClick={saveTemplate} className='btn btn-outline-info btn-sm'>Save</button>
+                      {/* <a href='/templates' className='btn btn-outline-info btn-sm'>Cancel</a>&nbsp;
+                      <button onClick={saveTemplate} className='btn btn-outline-info btn-sm'>Save</button> */}
+                      <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                        <button type='button' onClick={() => { window.location.href = window.location.origin + '/templates' }} className='m-btn btn btn-secondary'>Cancel</button>
+                        <button type='button' onClick={saveTemplate} className='m-btn btn btn-secondary'>Save</button>
+                      </div>
                     </div>
                   </div>
                 </div>

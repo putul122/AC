@@ -277,8 +277,14 @@ return (
       </div>
       <div className='col-xs-8 col-sm-6 col-md-4'>
         <span className='pull-right' >
-          <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>&nbsp;
-          <button type='button' onClick={openAddReview} className='btn btn-outline-info btn-sm'>Add</button>&nbsp;
+          {/* <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>&nbsp;
+          <button type='button' onClick={openAddReview} className='btn btn-outline-info btn-sm'>Add</button>&nbsp; */}
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Review' onClick={openAddReview} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-plus fa-2x' />
+          </a>&nbsp;&nbsp;
+          <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+            <i className='fa flaticon-multimedia-3 fa-2x' />
+          </a>
         </span>
       </div>
     </div>
@@ -296,7 +302,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -339,7 +345,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -382,7 +388,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -425,7 +431,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -468,7 +474,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -511,7 +517,7 @@ return (
           </div>
           <div className='m-portlet__body' style={{'height': '150px'}}>
             <div className='m-widget17'>
-              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+              <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
                   <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                     <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>
@@ -681,8 +687,12 @@ return (
                 </div>
               </div>
               <div className='modal-footer'>
-                <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={addReview} className='btn btn-outline-info btn-sm' >Add</button>
+                {/* <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                <button onClick={addReview} className='btn btn-outline-info btn-sm' >Add</button> */}
+                <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                  <button type='button' onClick={closeModal} className='m-btn btn btn-secondary'>Cancel</button>
+                  <button type='button' onClick={addReview} className='m-btn btn btn-secondary'>Add</button>
+                </div>
               </div>
             </div>
           </div>

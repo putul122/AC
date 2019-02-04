@@ -182,7 +182,10 @@ export default function ReviewApproval (props) {
           <div className='col-xs-4 col-sm-6 col-md-8' ><h2> Approve Review</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
-              <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button>
+              {/* <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button> */}
+              <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-multimedia-3 fa-2x' />
+              </a>
             </span>
           </div>
         </div>
@@ -325,9 +328,13 @@ export default function ReviewApproval (props) {
               <div className='col-6' />
               <div className='col-6 float-right'>
                 <div className='pull-right'>
-                  <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
-                  {/* <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp; */}
-                  <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button>
+                  {/* <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
+                  <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
+                  <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button> */}
+                  <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                    <button type='button' onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='m-btn btn btn-secondary'>Close</button>
+                    <button type='button' onClick={submitReview} className='m-btn btn btn-secondary'>Submit</button>
+                  </div>
                 </div>
               </div>
             </div>

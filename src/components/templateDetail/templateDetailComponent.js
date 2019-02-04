@@ -200,8 +200,12 @@ export default function TemplateDetail (props) {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
-                      <button onClick={cancelTemplateEdit} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;&nbsp;
-                      <button onClick={saveTemplate} className='btn btn-outline-info btn-sm'>Save</button>
+                      {/* <button onClick={cancelTemplateEdit} className='btn btn-outline-info btn-sm'>Cancel</button>&nbsp;&nbsp;
+                      <button onClick={saveTemplate} className='btn btn-outline-info btn-sm'>Save</button> */}
+                      <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                        <button type='button' onClick={cancelTemplateEdit} className='m-btn btn btn-secondary'>Cancel</button>
+                        <button type='button' onClick={saveTemplate} className='m-btn btn btn-secondary'>Save</button>
+                      </div>
                     </div>
                   </div>
                 </div>)}
@@ -213,9 +217,15 @@ export default function TemplateDetail (props) {
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
-                      <a href='/templates' className='btn btn-outline-info btn-sm'>Close</a>&nbsp;&nbsp;
-                      <button onClick={editTemplate} className='btn btn-outline-info btn-sm'>Edit Template</button>&nbsp;&nbsp;
-                      <button onClick={openDeleteModal} className='btn btn-outline-info btn-sm'>Delete Template</button>
+                      <a href='/templates' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Back' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-list-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
+                      <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Edit Template' onClick={editTemplate} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-edit-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
+                      <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Delete Template' onClick={openDeleteModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                        <i className='fa flaticon-delete-1 fa-2x' />
+                      </a>&nbsp;&nbsp;
                     </div>
                   </div>
                 </div>)}
@@ -345,8 +355,12 @@ export default function TemplateDetail (props) {
                     <p>Are you sure?</p>
                   </div>
                   <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                    <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deleteTemplate}>Delete</button>
+                    {/* <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                    <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deleteTemplate}>Delete</button> */}
+                    <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                      <button type='button' onClick={closeDeleteModal} className='m-btn btn btn-secondary'>Cancel</button>
+                      <button type='button' onClick={deleteTemplate} className='m-btn btn btn-secondary'>Delete</button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -162,7 +162,12 @@ export default function Templates (props) {
             <h3>Templates</h3>
           </div>
           <div className='col-md-2'>
-            <a href='/add_template' className='btn btn-outline-info btn-sm'>Add Template</a>&nbsp;
+            {/* <a href='/add_template' className='btn btn-outline-info btn-sm'>Add Template</a>&nbsp; */}
+            <span className='pull-right'>
+              <a href='/add_template' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Add Template' className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                <i className='fa flaticon-plus fa-2x' />
+              </a>&nbsp;&nbsp;
+            </span>
           </div>
         </div>
         <div className='row' id='agreementSummary'>
@@ -179,7 +184,7 @@ export default function Templates (props) {
               </div>
               <div className='m-portlet__body' style={{'height': '150px'}}>
                 <div className='m-widget17'>
-                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides m--bg-danger'>
+                  <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                     <div className='m-widget17__chart'>
                       <div className='chartjs-size-monitor' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}><div className='chartjs-size-monitor-expand' style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', visibility: 'hidden', zIndex: -1}}>
                         <div style={{position: 'absolute', width: 1000000, height: 1000000, left: 0, top: 0}} /></div>

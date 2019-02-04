@@ -83,10 +83,8 @@ export default compose(
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForReview)
     },
     componentDidMount: function () {
-      // eslint-disable-next-line
-      // mApp && mApp.block('#agreementSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // // eslint-disable-next-line
-      // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+       // eslint-disable-next-line
+       $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {

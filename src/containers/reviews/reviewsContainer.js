@@ -79,10 +79,21 @@ export default compose(
       this.props.fetchReviewsSummary && this.props.fetchReviewsSummary()
     },
     componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip() 
      // eslint-disable-next-line
      mApp && mApp.block('#softwareSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
      // eslint-disable-next-line
      mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    },
+    componentDidUpdate: function () {
+      // eslint-disable-next-line
+      var tooltips = $('.tooltip').not('.in')
+      if (tooltips) {
+        tooltips.remove()
+      }
+      // eslint-disable-next-line
+      $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('component will receive props', nextProps)
