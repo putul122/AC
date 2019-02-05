@@ -356,7 +356,7 @@ export default function Users (props) {
                   </div>
                 </div>
               </div>
-              <div className='m-portlet__body' style={{'height': '150px'}}>
+              <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
                 <div className='m-widget17'>
                   <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                     <div className='m-widget17__chart'>

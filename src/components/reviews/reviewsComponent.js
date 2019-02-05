@@ -300,7 +300,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
@@ -319,7 +319,7 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinDraft}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '40px'}}>Reviews in Draft</h3>
+                      <h3>Reviews in Draft</h3>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -343,7 +343,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
@@ -362,7 +362,7 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '40px'}}>Reviews in Approval</h3>
+                      <h3 style={{'marginRight': '10px'}}>Reviews in Approval</h3>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -386,7 +386,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
@@ -405,7 +405,7 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinProgress}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Progress</h3>
+                      <h3 style={{'marginRight': '10px'}}>Reviews in Progress</h3>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinProgress}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -429,7 +429,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
@@ -448,7 +448,7 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '40px'}}>Reviews in Acceptance</h3>
+                      <h3>Reviews in Acceptance</h3>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -472,7 +472,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
@@ -515,7 +515,7 @@ return (
               </div>
             </div>
           </div>
-          <div className='m-portlet__body' style={{'height': '150px'}}>
+          <div className='m-portlet__body' style={{'height': '150px', paddingLeft: '0px', paddingRight: '0px'}}>
             <div className='m-widget17'>
               <div className='m-widget17__visual m-widget17__visual--chart m-portlet-fit--top m-portlet-fit--sides' style={{'backgroundColor': '#0083C2'}}>
                 <div className='m-widget17__chart'>
