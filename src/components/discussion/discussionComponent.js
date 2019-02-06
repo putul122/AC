@@ -5,15 +5,16 @@ import { MentionsInput, Mention } from 'react-mentions'
 import debounce from 'lodash/debounce'
 import defaultStyle from './defaultStyle.js'
 import defaultMentionStyle from './defaultMentionStyle.js'
+import api from '../../constants'
 // import axios from 'axios'
 // import api from '../../constants'
 import styles from './discussionComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
+const customStylescrud = { overlay: {zIndex: '1000'}, content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 
 export default function Discussion (props) {
-  console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props.formattedModels, props)
+  // console.log('Discussion Components', props)
   let viewMessageBox = ''
   let discussionList = ''
   let discussionReplyList = ''
@@ -27,6 +28,8 @@ export default function Discussion (props) {
   let getMessages = function (data) {
     props.setMessageData('')
     if (props.discussionId !== data.id) {
+      // eslint-disable-next-line
+      mApp.block('#m_quick_sidebar_tabs_messenger', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
         id: data.id
       }
@@ -360,13 +363,8 @@ export default function Discussion (props) {
         let childElement = ''
         // if (props.discussionId === data.id) {
           childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
-            let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
-            // For old Static Message Format
-            let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-            .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-            .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-            .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-            // End
+            let userIconlink = cdata.author.icon ? api.iconURL + cdata.author.icon : api.iconURL18
+            let messageContent = cdata.name
             let mentionArray = cdata.name.match(/\[(.*?)\]/g)
             if (mentionArray) {
               mentionArray.forEach(function (data, index) {
@@ -456,7 +454,7 @@ export default function Discussion (props) {
       discussionList = props.discussions.resources.map(function (data, index) {
         return (
           <div className='m-accordion__item'>
-            <a className='m-accordion__item-head collapsed' onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
+            <a className='m-accordion__item-head ' onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
               {/* <span className='m-accordion__item-icon'><i className='fa flaticon-user-ok' /></span> */}
               <span className='m-accordion__item-title'>{data.name}</span>
               <span className='m-accordion__item-mode' />
@@ -484,13 +482,8 @@ export default function Discussion (props) {
           showClass = ''
         }
         childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
-          let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
-          // For old Static Message Format
-          let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-          .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-          // End
+          let userIconlink = cdata.author.icon ? api.iconURL + cdata.author.icon : api.iconURL18
+          let messageContent = cdata.name
           let mentionArray = cdata.name.match(/\[(.*?)\]/g)
           console.log('mentionArray', mentionArray)
           if (mentionArray) {
@@ -505,21 +498,16 @@ export default function Discussion (props) {
               // let reg = new RegExp(str, 'g')
               let match = '@[' + data + ']'
               if (parts[1] === 'Mention') {
-                console.log('Mention', parts[0])
                 messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
               } else if (parts[1] === 'Reference') {
-                console.log('Reference', parts[0])
                 messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
-                console.log(messageContent)
                 messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
-                console.log(messageContent)
               } else if (parts[1] === 'Tag') {
-                console.log('Tag')
                 messageContent = messageContent.replace(match, '#' + parts[0] + '')
               }
             })
           }
-          return (<li><img src={userIconlink} alt={cdata.author.name} />{cdata.author.name} {ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
+          return (<li><img src={userIconlink} alt={cdata.author.name} />{cdata.author.name + ': '} {ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
         })
       }
       return (
@@ -529,7 +517,7 @@ export default function Discussion (props) {
             <span className='m-accordion__item-title'>{data.name}</span>
             <span className='m-accordion__item-mode' />
           </a>
-          <div className={'m-accordion__item-body collapse' + showClass} id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
+          <div className={'m-accordion__item-body collapse ' + showClass} id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
             <div className='m-accordion__item-content' >
               <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
                 <br />
@@ -590,10 +578,10 @@ export default function Discussion (props) {
               <div className='row'>
                 <div className='col-6' />
                 <div className='col-6 float-right'>
-                  {/* <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button> */}
                   <a href='javascript:void(0);' data-skin='light' data-toggle='m-tooltip' data-placement='top' data-original-title='Initiate Discussion' onClick={openDiscussionModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air pull-right'>
                     <i className='fa flaticon-multimedia-3 fa-2x' />
                   </a>
+                  {/* <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button> */}
                 </div>
               </div>
               <br />
@@ -601,158 +589,11 @@ export default function Discussion (props) {
                 {discussionList}
               </div>
             </div>
-            {/* <div className='tab-pane' id='m_quick_sidebar_tabs_logs' role='tabpanel'>
-              <div className='m-list-timeline m-scrollable m-scroller ps' style={{height: '452px', overflow: 'hidden'}}>
-                <div className='m-list-timeline__group'>
-                  <div className='m-list-timeline__heading'>
-                      System Logs
-                    </div>
-                  <div className='m-list-timeline__items'>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>12 new users registered <span className='m-badge m-badge--warning m-badge--wide'>important</span></a>
-                      <span className='m-list-timeline__time'>Just now</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>System shutdown</a>
-                      <span className='m-list-timeline__time'>11 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-danger' />
-                      <a href='' className='m-list-timeline__text'>New invoice received</a>
-                      <span className='m-list-timeline__time'>20 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-warning' />
-                      <a href='' className='m-list-timeline__text'>Database overloaded 89% <span className='m-badge m-badge--success m-badge--wide'>resolved</span></a>
-                      <span className='m-list-timeline__time'>1 hr</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>System error</a>
-                      <span className='m-list-timeline__time'>2 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>Production server down <span className='m-badge m-badge--danger m-badge--wide'>pending</span></a>
-                      <span className='m-list-timeline__time'>3 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>Production server up</a>
-                      <span className='m-list-timeline__time'>5 hrs</span>
-                    </div>
-                  </div>
-                </div>
-                <div className='m-list-timeline__group'>
-                  <div className='m-list-timeline__heading'>
-                      Applications Logs
-                    </div>
-                  <div className='m-list-timeline__items'>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>New order received <span className='m-badge m-badge--info m-badge--wide'>urgent</span></a>
-                      <span className='m-list-timeline__time'>7 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>12 new users registered</a>
-                      <span className='m-list-timeline__time'>Just now</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>System shutdown</a>
-                      <span className='m-list-timeline__time'>11 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-danger' />
-                      <a href='' className='m-list-timeline__text'>New invoices received</a>
-                      <span className='m-list-timeline__time'>20 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-warning' />
-                      <a href='' className='m-list-timeline__text'>Database overloaded 89%</a>
-                      <span className='m-list-timeline__time'>1 hr</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>System error <span className='m-badge m-badge--info m-badge--wide'>pending</span></a>
-                      <span className='m-list-timeline__time'>2 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>Production server down</a>
-                      <span className='m-list-timeline__time'>3 hrs</span>
-                    </div>
-                  </div>
-                </div>
-                <div className='m-list-timeline__group'>
-                  <div className='m-list-timeline__heading'>
-                      Server Logs
-                    </div>
-                  <div className='m-list-timeline__items'>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>Production server up</a>
-                      <span className='m-list-timeline__time'>5 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>New order received</a>
-                      <span className='m-list-timeline__time'>7 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>12 new users registered</a>
-                      <span className='m-list-timeline__time'>Just now</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>System shutdown</a>
-                      <span className='m-list-timeline__time'>11 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-danger' />
-                      <a href='' className='m-list-timeline__text'>New invoice received</a>
-                      <span className='m-list-timeline__time'>20 mins</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-warning' />
-                      <a href='' className='m-list-timeline__text'>Database overloaded 89%</a>
-                      <span className='m-list-timeline__time'>1 hr</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>System error</a>
-                      <span className='m-list-timeline__time'>2 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>Production server down</a>
-                      <span className='m-list-timeline__time'>3 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-success' />
-                      <a href='' className='m-list-timeline__text'>Production server up</a>
-                      <span className='m-list-timeline__time'>5 hrs</span>
-                    </div>
-                    <div className='m-list-timeline__item'>
-                      <span className='m-list-timeline__badge m-list-timeline__badge--state-info' />
-                      <a href='' className='m-list-timeline__text'>New order received</a>
-                      <span className='m-list-timeline__time'>1117 hrs</span>
-                    </div>
-                  </div>
-                </div>
-                <div className='ps__rail-x' style={{left: '0px', bottom: '0px'}}><div className='ps__thumb-x' style={{left: '0px', width: '0px'}} /></div>
-                <div className='ps__rail-y' style={{top: '0px', right: '4px'}}><div className='ps__thumb-y' style={{top: '0px', height: '0px'}} /></div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
       <ul className='m-nav-sticky' style={{'marginTop': '30px'}}>
-        <li className='m-nav-sticky__item' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Slide to open'>
+        <li className='m-nav-sticky__item' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Slide to Open'>
           <a href='javsscript:void(0);' onClick={openSlide}><i className='la la-angle-double-left' /></a>
         </li>
       </ul>

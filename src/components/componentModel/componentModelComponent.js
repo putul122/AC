@@ -2,6 +2,7 @@ import React from 'react'
 import * as d3 from 'd3'
 import PropTypes from 'prop-types'
 import './componentModelComponent.scss'
+import api from '../../constants'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 let width = 900
 let height = 700
@@ -16,9 +17,9 @@ function wrap (text, width) {
             word,
             line = [],
             lineNumber = 0,
-            lineHeight = 1.1, // ems
+            lineHeight = 1, // ems
             x = text.attr('x'),
-            y = words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
+            y = text.attr('y'), // words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
             dy = 0, // parseFloat(text.attr("dy")),
             tspan = text.text(null)
                         .append('tspan')
@@ -59,18 +60,18 @@ function clearVisualization () {
 
 function forceInitialize (graphData) {
     d3.select('#visualLayout').remove()
+    let zoom = d3.zoom().on('zoom', zoomed)
     visualLayout = d3.select('#modalScreen')
       .append('svg:svg')
       .attr('id', 'visualLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
-      .call(d3.zoom().on('zoom', zoomed))
+      .call(zoom)
       .attr('display', 'block')
       .append('g')
       .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
     function zoomed () {
-        console.log('zooming action')
         visualLayout.attr('transform', d3.event.transform)
     }
 
@@ -197,7 +198,12 @@ function force (graphData) {
       .attr('fill', '#FFFFFF')
       // .attr('word-wrap', 'break-word')
       // .style('fill', function (d, i) { return colors(i) })
-
+    nodeEnter.append('image')
+      .attr('xlink:href', function (d) { return d.icon })
+      .attr('x', '-18')
+      .attr('y', '-18')
+    //   .attr('width', '24px')
+    //   .attr('height', '24px')
     nodeEnter.append('title')
       // .attr('word-wrap', 'break-word')
       .text(function (d) { return d.title })
@@ -210,7 +216,7 @@ function force (graphData) {
         .attr('font-size', function (node, i) { return node.fontSize })
         .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
-        .call(wrap, 20)
+        .call(wrap, 120)
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
     //   .on("drag", dragged)
@@ -353,6 +359,8 @@ class ComponentModelComponent extends React.Component {
                 let nodeData = nextProps.relationships
                 let leftCordinates = []
                 let rightCordinates = []
+                let rightColumn = 0
+                let leftColumn = 0
                 let topCordinates = []
                 let downCordinates = []
                 var linkArray = []
@@ -361,8 +369,9 @@ class ComponentModelComponent extends React.Component {
                 let graphData = {}
                 // Setting first node
                 node.id = 0
-                node.name = nextProps.startNode.name
-                node.Title = nextProps.startNode.title
+                node.name = nextProps.startNode.name.trim() || ''
+                node.Title = nextProps.startNode.title.trim() || ''
+                node.icon = nextProps.startNode.icon ? api.iconURL + nextProps.startNode.icon : ''
                 node.width = 140
                 node.height = 70
                 node.x = 400
@@ -370,7 +379,7 @@ class ComponentModelComponent extends React.Component {
                 node.Attributes = ['']
                 node.strokeWidth = 4
                 node.textAnchor = 'middle'
-                node.fontSize = 15
+                node.fontSize = 12
                 node.fontWeight = 900
                 node.fontFamily = 'sans-serif'
                 node.dy = '0.25em'
@@ -392,6 +401,11 @@ class ComponentModelComponent extends React.Component {
                         node.fontWeight = 500
                         node.fontFamily = 'sans-serif'
                         node.dy = '0.25em'
+                        if (data.target_component.icon === null) {
+                            node.icon = api.iconURL + data.target_component.component_type.icon
+                        } else {
+                            node.icon = api.iconURL + data.target_component.icon
+                        }
                         if (data.relationship_type === 'Parent') {
                             let topLength = topCordinates.length
                             if (topLength < 1) {
@@ -441,18 +455,19 @@ class ComponentModelComponent extends React.Component {
                             let leftLength = leftCordinates.length
                             if (leftLength < 1) {
                                 let cor = {
-                                    x: 10,
+                                    x: 10 - (leftColumn * 150),
                                     y: 300
                                     }
                                 leftCordinates.push(cor)
                                 node.x = cor.x
                                 node.y = cor.y
                             } else {
+                                leftColumn = Math.floor(leftLength / 5)
                                 let prevCor = leftCordinates[leftLength - 1]
                                 if (typeof prevCor !== 'undefined') {
                                     let cor = {
-                                        x: 10,
-                                        y: prevCor.y + 100
+                                        x: 10 - (leftColumn * 150),
+                                        y: (prevCor.y + 100 < 800) ? prevCor.y + 100 : 300
                                         }
                                     leftCordinates.push(cor)
                                     node.x = cor.x
@@ -464,18 +479,19 @@ class ComponentModelComponent extends React.Component {
                             let rightLength = rightCordinates.length
                             if (rightLength < 1) {
                                 let cor = {
-                                    x: 800,
+                                    x: 800 + (rightColumn * 150),
                                     y: 300
                                     }
                                 rightCordinates.push(cor)
                                 node.x = cor.x
                                 node.y = cor.y
                             } else {
+                                rightColumn = Math.floor(rightLength / 5)
                                 let prevCor = rightCordinates[rightLength - 1]
                                 if (typeof prevCor !== 'undefined') {
                                     let cor = {
-                                        x: 800,
-                                        y: prevCor.y + 100
+                                        x: 800 + (rightColumn * 120),
+                                        y: (prevCor.y + 100 < 800) ? prevCor.y + 100 : 300
                                     }
                                     rightCordinates.push(cor)
                                     node.x = cor.x

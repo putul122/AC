@@ -53,14 +53,12 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('this will components', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
     },
     componentDidMount: function () {
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('this will receicve props components', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
             this.props.history.push('/')
@@ -99,13 +97,13 @@ export default compose(
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
       }
-      if (nextProps.modalSettings && nextProps.modalSettings.componentId && nextProps.modalSettings.callAPI) {
+      if (nextProps.componentId && nextProps.modalSettings.callAPI) {
         console.log('call api')
         // eslint-disable-next-line
         mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(nextProps.modalSettings.componentId)
-        this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(nextProps.modalSettings.componentId)
-        this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(nextProps.modalSettings.componentId)
+        this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(nextProps.componentId)
+        this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(nextProps.componentId)
+        this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(nextProps.componentId)
         let modalSettings = JSON.parse(JSON.stringify(nextProps.modalSettings))
         modalSettings.callAPI = false
         console.log('modla se4tting', modalSettings)

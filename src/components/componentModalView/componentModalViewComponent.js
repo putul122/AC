@@ -12,7 +12,8 @@ var divStyle = {
     // height: '700px',
     'overflowY': 'scroll',
     'overflowX': 'scroll',
-    'border': '1px solid #000000'
+    'border': '1px solid #000000',
+    'zIndex': 10000000
 }
 
 export default function ComponentModalView (props) {
@@ -30,6 +31,7 @@ export default function ComponentModalView (props) {
     let componentTypeComponentRelationships = props.componentTypeComponentRelationships
     let modelRelationshipData = ''
     let startNode = {}
+    let componentName = ''
     let parentComponentRelationshipList = ''
     let outgoingComponentRelationshipList = ''
     let incomingComponentRelationshipList = ''
@@ -58,6 +60,8 @@ export default function ComponentModalView (props) {
       if (props.componentTypeComponentData.error_code === null) {
         startNode.name = props.componentTypeComponentData.resources[0].name
         startNode.title = props.componentTypeComponentData.resources[0].name
+        startNode.icon = props.componentTypeComponentData.resources[0].component_type.icon
+        componentName = props.componentTypeComponentData.resources[0].name
       }
     }
     // Display Component Properties
@@ -124,7 +128,7 @@ export default function ComponentModalView (props) {
             // let relationshipActionSettings = {...props.relationshipActionSettings}
             // relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
             // relationshipActionSettings.relationshipId = element.target_component.id
-            return (<span className='row' style={{'padding': '5px'}}>
+            return (<span className='row' key={'parent' + i} style={{'padding': '5px'}}>
               <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
               {/* <div className='dropdown pull-right col-md-2'>
                 <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -164,7 +168,7 @@ export default function ComponentModalView (props) {
             // let relationshipActionSettings = {...props.relationshipActionSettings}
             // relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
             // relationshipActionSettings.relationshipId = element.target_component.id
-            return (<span className='row' style={{'padding': '5px'}}>
+            return (<span className='row' key={'child' + i} style={{'padding': '5px'}}>
               <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
               {/* <div className='dropdown pull-right col-md-2'>
                 <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -217,7 +221,7 @@ export default function ComponentModalView (props) {
                     // relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
                     // relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                     let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                      return (<span className='row' style={{'padding': '5px'}}>
+                      return (<span className='row' key={'outgoing' + i} style={{'padding': '5px'}}>
                         <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
                         {/* <div className='dropdown pull-right col-md-2'>
                           <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -276,7 +280,7 @@ export default function ComponentModalView (props) {
                     // relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
                     // relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].connection.id
                     let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                      return (<span className='row' style={{'padding': '5px'}}>
+                      return (<span className='row' key={'incoming' + i} style={{'padding': '5px'}}>
                         <div className='col-md-10'><a href='javascript:void(0);'>{element.target_component.name}</a></div>
                         {/* <div className='dropdown pull-right col-md-2'>
                           <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
@@ -326,7 +330,7 @@ export default function ComponentModalView (props) {
       <ReactModal isOpen={props.modalSettings.isModalOpen}
             // onRequestClose={closeModal}
         shouldCloseOnOverlayClick={false}
-        className=''
+        // className='modal-dialog modal-lg'
         style={customStylescrud}
             >
         {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
@@ -334,7 +338,7 @@ export default function ComponentModalView (props) {
           <div className=''>
             <div className='modal-content'>
               <div className='modal-header'>
-                <h4 className='modal-title' id='exampleModalLabel'>{'View Component'}</h4>
+                <h4 className='modal-title' id='exampleModalLabel'>{componentName}</h4>
                 <button type='button' onClick={closeModal} className='btn btn-sm btn-outline-info' data-dismiss='modal' aria-label='Close'>Close</button>
               </div>
               <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>

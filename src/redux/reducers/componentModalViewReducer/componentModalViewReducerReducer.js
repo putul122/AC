@@ -34,8 +34,7 @@ export const initialState = {
   showTabs: {'showProperty': ' active show', 'showRelationship': ''},
   modalSettings: {
     isModalOpen: false,
-    callAPI: false,
-    componentId: ''
+    callAPI: false
   }
 }
 
