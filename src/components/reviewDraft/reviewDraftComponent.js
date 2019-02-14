@@ -7,6 +7,7 @@ import Select from 'react-select'
 import _ from 'lodash'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import CreatableSelect from 'react-select/lib/Creatable'
+import styles from './reviewDraftComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
@@ -755,7 +756,7 @@ export default function ReviewDraft (props) {
           </div>
         </div>
         <br />
-        <div className='' style={{'marginTop': '20px'}}>
+        <div className={styles.borderline} style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist' style={{'marginBottom': '0px'}}>
             <li className='nav-item'>
               <a className='nav-link active' onClick={() => { props.setActiveTab('reviewsdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Reviews Details</a>
