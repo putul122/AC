@@ -142,6 +142,25 @@ export default function ReviewApproval (props) {
           payload.reviewId = contextId
           payload.data = updatePayload
           props.updateReviews(payload)
+          // to create Discussion
+          if (props.rejectedReason.trim() !== '') {
+            let discussionPayload = {}
+            discussionPayload.name = 'Rejected'
+            discussionPayload.context = {}
+            discussionPayload.context.artefact_type = {}
+            discussionPayload.context.artefact_type.key = 'Component'
+            discussionPayload.context.id = contextId
+            discussionPayload.discussion_type = {}
+            discussionPayload.discussion_type.key = 'User'
+            discussionPayload.messages = []
+            let message = {}
+            message.name = props.notAcceptedReason
+            message.mentions = []
+            message.references = []
+            message.tags = []
+            discussionPayload.messages.push(message)
+            props.createDiscussion(discussionPayload)
+          }
         } else {
           let validationClass = {...props.validationClass}
           validationClass.rejectReason = 'form-group m-form__group row has-danger'

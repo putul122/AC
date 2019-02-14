@@ -22,6 +22,8 @@ import checkItemModalReducer from './checkItemModalReducer/checkItemModalReducer
 import reviewArtefactReducer from './reviewArtefactReducer/reviewArtefactReducerReducer'
 import signUpReducer from './signUpReducer/signUpReducerReducer'
 import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
+import attachmentsReducer from './attachmentsReducer/attachmentsReducerReducer'
+import viewAttachmentsReducer from './viewAttachmentsReducer/viewAttachmentsReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -46,5 +48,7 @@ export default combineReducers({
     reviewArtefactReducer,
     signUpReducer,
     checkItemModalReducer,
-    componentModalViewReducer
+    componentModalViewReducer,
+    attachmentsReducer,
+    viewAttachmentsReducer
 })

@@ -30,6 +30,7 @@ const SET_CHECKITEMS_SETTINGS = 'ReviewDraftReducer/SET_CHECKITEMS_SETTINGS'
 const SET_PROCESS_CHECKITEMS = 'ReviewDraftReducer/SET_PROCESS_CHECKITEMS'
 const SET_SELECTED_TAGS = 'ReviewDraftReducer/SET_SELECTED_TAGS'
 const SET_PROCESS_TAGS = 'ReviewDraftReducer/SET_PROCESS_TAGS'
+const SET_ACTIVE_TAB = 'ReviewDraftReducer/SET_ACTIVE_TAB'
 
 export const actions = {
   // FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -55,7 +56,8 @@ export const actions = {
   SET_CHECKITEMS_SETTINGS,
   SET_PROCESS_CHECKITEMS,
   SET_SELECTED_TAGS,
-  SET_PROCESS_TAGS
+  SET_PROCESS_TAGS,
+  SET_ACTIVE_TAB
 }
 
 export const actionCreators = {
@@ -74,7 +76,8 @@ export const actionCreators = {
   setCheckitemsSettings: createAction(SET_CHECKITEMS_SETTINGS),
   setProcessCheckItems: createAction(SET_PROCESS_CHECKITEMS),
   setSelectedTags: createAction(SET_SELECTED_TAGS),
-  setProcessTags: createAction(SET_PROCESS_TAGS)
+  setProcessTags: createAction(SET_PROCESS_TAGS),
+  setActiveTab: createAction(SET_ACTIVE_TAB)
 }
 
 export const initialState = {
@@ -95,6 +98,7 @@ export const initialState = {
   selectedReviewer: null,
   selectedTags: null,
   updatePayload: [],
+  activeTab: '',
   reviewProperties: {
     category: [],
     stages: []
@@ -240,6 +244,10 @@ export default handleActions(
     [SET_PROCESS_TAGS]: (state, action) => ({
       ...state,
       processTags: action.payload
+    }),
+    [SET_ACTIVE_TAB]: (state, action) => ({
+      ...state,
+      activeTab: action.payload
     })
   },
   initialState

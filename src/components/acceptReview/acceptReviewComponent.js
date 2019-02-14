@@ -293,29 +293,29 @@ export default function ReviewAcceptance (props) {
           payload.reviewId = contextId
           payload.data = updatePayload
           props.updateReviews(payload)
+          if (props.notAcceptedReason.trim() !== '') {
+            let discussionPayload = {}
+            discussionPayload.name = 'Not Accepted'
+            discussionPayload.context = {}
+            discussionPayload.context.artefact_type = {}
+            discussionPayload.context.artefact_type.key = 'Component'
+            discussionPayload.context.id = contextId
+            discussionPayload.discussion_type = {}
+            discussionPayload.discussion_type.key = 'User'
+            discussionPayload.messages = []
+            let message = {}
+            message.name = props.notAcceptedReason
+            message.mentions = []
+            message.references = []
+            message.tags = []
+            discussionPayload.messages.push(message)
+            console.log('discussion message', discussionPayload)
+            props.createDiscussion(discussionPayload)
+          }
         } else {
           let validationClass = {...props.validationClass}
           validationClass.notAcceptedReason = 'form-group m-form__group row has-danger'
           props.setValidationClass(validationClass)
-        }
-        if (props.notAcceptedReason.trim() !== '') {
-          let discussionPayload = {}
-          discussionPayload.name = 'Not Accepted'
-          discussionPayload.context = {}
-          discussionPayload.context.artefact_type = {}
-          discussionPayload.context.artefact_type.key = 'Component'
-          discussionPayload.context.id = contextId
-          discussionPayload.discussion_type = {}
-          discussionPayload.discussion_type.key = 'User'
-          discussionPayload.messages = []
-          let message = {}
-          message.name = props.notAcceptedReason
-          message.mentions = []
-          message.references = []
-          message.tags = []
-          discussionPayload.messages.push(message)
-          console.log('discussion message', discussionPayload)
-          props.createDiscussion(discussionPayload)
         }
       }
     } else {

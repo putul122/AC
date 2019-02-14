@@ -36,7 +36,8 @@ export function mapStateToProps (state, props) {
     checkItemsSettings: state.reviewDraftReducer.checkItemsSettings,
     processCheckItems: state.reviewDraftReducer.processCheckItems,
     selectedTags: state.reviewDraftReducer.selectedTags,
-    processTags: state.reviewDraftReducer.processTags
+    processTags: state.reviewDraftReducer.processTags,
+    activeTab: state.reviewDraftReducer.activeTab
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -72,7 +73,8 @@ export const propsMapping: Callbacks = {
   setCheckitemsSettings: actionCreators.setCheckitemsSettings,
   setProcessCheckItems: actionCreators.setProcessCheckItems,
   setSelectedTags: actionCreators.setSelectedTags,
-  setProcessTags: actionCreators.setProcessTags
+  setProcessTags: actionCreators.setProcessTags,
+  setActiveTab: actionCreators.setActiveTab
 }
 
 // If you want to use the function mapping

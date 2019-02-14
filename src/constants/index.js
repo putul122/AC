@@ -96,7 +96,20 @@ const api = {
   iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
   iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',
   iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18',
-  getTags: 'https://ac-eco-dev.ecoconductor.com/api/Review/GetTags'
+  getTags: 'https://ac-eco-dev.ecoconductor.com/api/Review/GetTags',
+  getAttachments: 'https://resources-eco-dev.ecoconductor.com/attachments',
+  deleteAttachment: function (attachmentId) {
+    return 'https://resources-eco-dev.ecoconductor.com/attachments/' + attachmentId
+  },
+  getAttachment: function (attachmentId) {
+    return 'https://resources-eco-dev.ecoconductor.com/attachments/' + attachmentId
+  },
+  createAttachments: function (payload) {
+    return 'https://resources-eco-dev.ecoconductor.com/attachments?context_id=' + payload.contextId + '&context_type_key=' + payload.contextType + '&name=' + payload.name
+  },
+  updateAttachment: function (payload) {
+    return 'https://resources-eco-dev.ecoconductor.com/attachments?attachment_id=' + payload.attachmentId + '&context_id=' + payload.contextId + '&context_type_key=' + payload.contextType + '&name=' + payload.name
+  }
 }
 
 export default api

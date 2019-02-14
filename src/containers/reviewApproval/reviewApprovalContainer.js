@@ -34,7 +34,8 @@ export const propsMapping: Callbacks = {
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setModalSetting: checkItemModalActionCreators.setModalSetting,
   setCheckItemData: checkItemModalActionCreators.setCheckItemData,
-  setModalSettings: componentModalViewActionCreators.setModalSettings
+  setModalSettings: componentModalViewActionCreators.setModalSettings,
+  createDiscussion: sagaActions.discussionActions.createDiscussion
 }
 
 // If you want to use the function mapping

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import Attachments from '../../containers/attachments/attachmentsContainer'
 import Select from 'react-select'
 import _ from 'lodash'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
@@ -10,7 +11,7 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function ReviewDraft (props) {
-  console.log('review draft', props)
+  console.log('review draft', props.activeTab)
   let reviewStatus = ''
   let reviewReason = ''
   let reviewArtefactName = null
@@ -626,14 +627,14 @@ export default function ReviewDraft (props) {
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           console.log('update payload', updatePayload)
-          // set stage to approval
-          let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-            return obj.name === 'Cancelled'
+          // set stage to Completed
+          let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Completed'
           }), 'id')
           let obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = cancelledId
+          obj.value = completedId
           updatePayload.push(obj)
           // set status to Cancelled
           obj = {}
@@ -754,201 +755,230 @@ export default function ReviewDraft (props) {
           </div>
         </div>
         <br />
-        <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          <div className='m-portlet__body'>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-6 col-12'>
-                <div className='m-form m-form--state m-form--fit'>
-                  {/* {messageBlock} */}
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
-                    <div className='col-8'>
-                      <input className='form-control m-input' type='text' placeholder='Enter Review Name' value={props.draftEdit.name} onChange={handleNameChange} id='example-userName-input' />
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label>
-                    <div className='col-8'>
-                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                      <textarea className='form-control m-input m-input--air' onChange={handleDescriptionChange} value={props.draftEdit.description} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
-                    </div>
-                  </div>
-                  <div className={props.validationClass.categoryValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Category<span className='text-danger'>*</span></label>
-                    <div className='col-8'>
-                      <Select
-                        className='form-control'
-                        placeholder='Select Category'
-                        isClearable
-                        // defaultValue={props.selectedCategory}
-                        value={props.selectedCategory}
-                        onChange={handleCategorySelect}
-                        isSearchable={false}
-                        name={'categorySelected'}
-                        options={categoryOptions}
-                      />
-                      {/* <input className='form-control m-input' type='text' onChange={handleCategoryChange} placeholder='Enter Category' value={props.draftEdit.category} /> */}
-                    </div>
-                  </div>
-                  <div className={props.validationClass.reviewerValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer<span className='text-danger'>*</span></label>
-                    <div className='col-8'>
-                      <Select
-                        className='form-control'
-                        placeholder='Select Reviewer'
-                        isClearable
-                        // defaultValue={dvalue}
-                        value={props.selectedReviewer}
-                        onChange={handleReviewerSelect}
-                        isSearchable={false}
-                        name={'reviewerSelected'}
-                        options={usersOptions}
-                      />
-                      {/* <input className='form-control m-input' onChange={handleReviewerChange} type='text' placeholder='Enter Reviewer' value={props.draftEdit.reviewer} /> */}
-                    </div>
-                  </div>
-                  <div className={props.validationClass.approverValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver<span className='text-danger'>*</span></label>
-                    <div className='col-8'>
-                      <Select
-                        className='form-control'
-                        style={{padding: '0 !important'}}
-                        placeholder='Select Approver'
-                        isClearable
-                        // defaultValue={dvalue}
-                        value={props.selectedApprover}
-                        onChange={handleApproverSelect}
-                        isSearchable={false}
-                        name={'approverSelected'}
-                        options={usersOptions}
-                      />
-                      {/* <input className='form-control m-input' onChange={handleApproverChange} type='text' placeholder='Enter Approver' value={props.draftEdit.approver} /> */}
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
-                    <div className='col-8'>
-                      <div className='row m--margin-top-10'>
-                        {/* <div className='col-md-9'> */}
-                        <div className='col-md-10'>
-                          {reviewArtefactName && (<a href='javascript:void(0);' onClick={openComponentModal} >{reviewArtefactName}</a>)}
-                          {!reviewArtefactName && (<span>Connect to Artefact</span>)}
-                        </div>
-                        {/* </div> */}
-                        <div className='col-md-2 float-right'>
-                          {reviewArtefactId === null && (<button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-right'>Connect</button>)}
-                          {reviewArtefactId !== null && (<button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>)}
-                        </div>
-                        {/* <div className='col-md-5 float-right'>
-                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
-                        </div> */}
-                      </div>
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document No</label>
-                    <div className='col-8'>
-                      <input className='form-control m-input' type='text' placeholder='Enter Review Document No' value={props.draftEdit.document_reference} onChange={handleReferenceChange} id='example-userName-input' />
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document Version</label>
-                    <div className='col-8'>
-                      <input className='form-control m-input' type='text' placeholder='Enter Review Document Version' value={props.draftEdit.document_version} onChange={handleVersionChange} id='example-userName-input' />
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>&nbsp;</label>
-                    <div className='col-8'>
-                      <br />
-                      <div className='row'>
-                        <div className='col-md-5'>
-                          &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='checkbox checkbox--danger' style={{'marginLeft': '-10px'}}>
-                            <input type='checkbox' checked={props.draftEdit.isCancel} onChange={handleCancel} /> Cancel Review
-                          <span />
-                          </label>
-                        </div>
-                        {/* <div className='col-md-7'>
-                          <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
-                          <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
-                        </div> */}
-                      </div>
-                    </div>
-                  </div>
-                  {props.draftEdit.isCancel && (<div className={cancelValidationClass}>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Cancel Reason</label>
-                    <div className='col-8'>
-                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                      <textarea className='form-control m-input m-input--air' value={props.draftEdit.cancelReason} onChange={handleCancelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
-                    </div>
-                  </div>)}
-                  <div className='m-demo'>
-                    <div className='m-demo__preview'>
-                      {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
-                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
-                        <div className='col-8 m--margin-top-10'>{reviewStatus}</div>
-                      </div>)}
-                      {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
-                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
-                        <div className='col-8 m--margin-top-10'>{reviewReason}</div>
-                      </div>)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Tags</label>
-                    <div className='col-8'>
-                      <CreatableSelect
-                        className='input-sm m-input'
-                        placeholder='Enter Tags'
-                        isClearable
-                        isMulti
-                        onChange={handleEditTag}
-                        value={props.selectedTags}
-                        options={tagOptions}
-                      />
-                    </div>
-                  </div>
-                  <div className='form-group m-form__group row'>
-                    <div className='col-6' />
-                    <div className='col-6 float-right' >
-                      <button type='button' onClick={openSelectCheckitem} className='btn btn-outline-info btn-sm pull-right'>Select Check Item</button>
-                    </div>
-                  </div>
-                  {/* <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Check Item</label>
-                    <div className='col-6'>
-                      <Select
-                        // className='col-7 input-sm m-input'
-                        placeholder='Select Check Item'
-                        isClearable
-                        // defaultValue={dvalue}
-                        value={props.selectedCheckItem}
-                        onChange={handleCheckItemSelect}
-                        isSearchable={false}
-                        name={'templateSelected'}
-                        options={checkItemsOptions}
-                      />
-                    </div>
-                    <div className='col-2'>
-                      <button type='button' onClick={addcheckItem} className='btn btn-outline-info btn-sm'>Add</button>
-                    </div>
-                  </div> */}
-                </div>
-                <div className='m-section m-section--last'>
-                  <div className='m-section__content'>
-                    <div className='m-demo'>
-                      <div className='m-demo__preview'>
-                        <div className='m-list-search'>
-                          <div className='m-list-search__results'>
-                            <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                        Selected Check Items
-                                    </span>
-                            {checkItemList}
+        <div className='' style={{'marginTop': '20px'}}>
+          <ul className='nav nav-tabs nav-fill' role='tablist' style={{'marginBottom': '0px'}}>
+            <li className='nav-item'>
+              <a className='nav-link active' onClick={() => { props.setActiveTab('reviewsdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Reviews Details</a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link' onClick={() => { props.setActiveTab('reviewsattachments') }} data-toggle='tab' href='#m_tabs_2_1'>Reviews Attachments</a>
+            </li>
+          </ul>
+          <div className='tab-content'>
+            <div className='tab-pane active' id='m_tabs_2_4' role='tabpanel'>
+              <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
+                <div className='m-portlet__body'>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-md-6 col-12'>
+                      <div className='m-form m-form--state m-form--fit'>
+                        {/* {messageBlock} */}
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
+                          <div className='col-8'>
+                            <input className='form-control m-input' type='text' placeholder='Enter Review Name' value={props.draftEdit.name} onChange={handleNameChange} id='example-userName-input' />
                           </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label>
+                          <div className='col-8'>
+                            {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                            <textarea className='form-control m-input m-input--air' onChange={handleDescriptionChange} value={props.draftEdit.description} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                          </div>
+                        </div>
+                        <div className={props.validationClass.categoryValidationClass}>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Category<span className='text-danger'>*</span></label>
+                          <div className='col-8'>
+                            <Select
+                              className='form-control'
+                              placeholder='Select Category'
+                              isClearable
+                              // defaultValue={props.selectedCategory}
+                              value={props.selectedCategory}
+                              onChange={handleCategorySelect}
+                              isSearchable={false}
+                              name={'categorySelected'}
+                              options={categoryOptions}
+                            />
+                            {/* <input className='form-control m-input' type='text' onChange={handleCategoryChange} placeholder='Enter Category' value={props.draftEdit.category} /> */}
+                          </div>
+                        </div>
+                        <div className={props.validationClass.reviewerValidationClass}>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Reviewer<span className='text-danger'>*</span></label>
+                          <div className='col-8'>
+                            <Select
+                              className='form-control'
+                              placeholder='Select Reviewer'
+                              isClearable
+                              // defaultValue={dvalue}
+                              value={props.selectedReviewer}
+                              onChange={handleReviewerSelect}
+                              isSearchable={false}
+                              name={'reviewerSelected'}
+                              options={usersOptions}
+                            />
+                            {/* <input className='form-control m-input' onChange={handleReviewerChange} type='text' placeholder='Enter Reviewer' value={props.draftEdit.reviewer} /> */}
+                          </div>
+                        </div>
+                        <div className={props.validationClass.approverValidationClass}>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Approver<span className='text-danger'>*</span></label>
+                          <div className='col-8'>
+                            <Select
+                              className='form-control'
+                              style={{padding: '0 !important'}}
+                              placeholder='Select Approver'
+                              isClearable
+                              // defaultValue={dvalue}
+                              value={props.selectedApprover}
+                              onChange={handleApproverSelect}
+                              isSearchable={false}
+                              name={'approverSelected'}
+                              options={usersOptions}
+                            />
+                            {/* <input className='form-control m-input' onChange={handleApproverChange} type='text' placeholder='Enter Approver' value={props.draftEdit.approver} /> */}
+                          </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Artefact</label>
+                          <div className='col-8'>
+                            <div className='row m--margin-top-10'>
+                              {/* <div className='col-md-9'> */}
+                              <div className='col-md-10'>
+                                {reviewArtefactName && (<a href='javascript:void(0);' onClick={openComponentModal} >{reviewArtefactName}</a>)}
+                                {!reviewArtefactName && (<span>Connect to Artefact</span>)}
+                              </div>
+                              {/* </div> */}
+                              <div className='col-md-2 float-right'>
+                                {reviewArtefactId === null && (<button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-right'>Connect</button>)}
+                                {reviewArtefactId !== null && (<button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>)}
+                              </div>
+                              {/* <div className='col-md-5 float-right'>
+                                <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm pull-right'>Disconnect</button>
+                              </div> */}
+                            </div>
+                          </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document No</label>
+                          <div className='col-8'>
+                            <input className='form-control m-input' type='text' placeholder='Enter Review Document No' value={props.draftEdit.document_reference} onChange={handleReferenceChange} id='example-userName-input' />
+                          </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Review Document Version</label>
+                          <div className='col-8'>
+                            <input className='form-control m-input' type='text' placeholder='Enter Review Document Version' value={props.draftEdit.document_version} onChange={handleVersionChange} id='example-userName-input' />
+                          </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>&nbsp;</label>
+                          <div className='col-8'>
+                            <br />
+                            <div className='row'>
+                              <div className='col-md-5'>
+                                &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className='checkbox checkbox--danger' style={{'marginLeft': '-10px'}}>
+                                  <input type='checkbox' checked={props.draftEdit.isCancel} onChange={handleCancel} /> Cancel Review
+                                <span />
+                                </label>
+                              </div>
+                              {/* <div className='col-md-7'>
+                                <button onClick={openConnectModal} className='btn btn-outline-info btn-sm pull-left'>Connect</button>
+                                <button onClick={disconnectArtefact} className='btn btn-outline-info btn-sm '>Disconnect</button>
+                              </div> */}
+                            </div>
+                          </div>
+                        </div>
+                        {props.draftEdit.isCancel && (<div className={cancelValidationClass}>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Cancel Reason</label>
+                          <div className='col-8'>
+                            {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                            <textarea className='form-control m-input m-input--air' value={props.draftEdit.cancelReason} onChange={handleCancelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                          </div>
+                        </div>)}
+                        <div className='m-demo'>
+                          <div className='m-demo__preview'>
+                            {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                              <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
+                              <div className='col-8 m--margin-top-10'>{reviewStatus}</div>
+                            </div>)}
+                            {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                              <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
+                              <div className='col-8 m--margin-top-10'>{reviewReason}</div>
+                            </div>)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Tags</label>
+                          <div className='col-8'>
+                            <CreatableSelect
+                              className='input-sm m-input'
+                              placeholder='Enter Tags'
+                              isClearable
+                              isMulti
+                              onChange={handleEditTag}
+                              value={props.selectedTags}
+                              options={tagOptions}
+                            />
+                          </div>
+                        </div>
+                        <div className='form-group m-form__group row'>
+                          <div className='col-6' />
+                          <div className='col-6 float-right' >
+                            <button type='button' onClick={openSelectCheckitem} className='btn btn-outline-info btn-sm pull-right'>Select Check Item</button>
+                          </div>
+                        </div>
+                        {/* <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Check Item</label>
+                          <div className='col-6'>
+                            <Select
+                              // className='col-7 input-sm m-input'
+                              placeholder='Select Check Item'
+                              isClearable
+                              // defaultValue={dvalue}
+                              value={props.selectedCheckItem}
+                              onChange={handleCheckItemSelect}
+                              isSearchable={false}
+                              name={'templateSelected'}
+                              options={checkItemsOptions}
+                            />
+                          </div>
+                          <div className='col-2'>
+                            <button type='button' onClick={addcheckItem} className='btn btn-outline-info btn-sm'>Add</button>
+                          </div>
+                        </div> */}
+                      </div>
+                      <div className='m-section m-section--last'>
+                        <div className='m-section__content'>
+                          <div className='m-demo'>
+                            <div className='m-demo__preview'>
+                              <div className='m-list-search'>
+                                <div className='m-list-search__results'>
+                                  <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                              Selected Check Items
+                                          </span>
+                                  {checkItemList}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-6' />
+                    <div className='col-6 float-right'>
+                      <div className='pull-right'>
+                        {/* <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
+                        <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
+                        <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button> */}
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='m-btn btn btn-secondary'>Close</button>
+                          <button type='button' onClick={saveReview} className='m-btn btn btn-secondary'>Save</button>
+                          <button type='button' onClick={submitReview} className='m-btn btn btn-secondary'>Submit</button>
                         </div>
                       </div>
                     </div>
@@ -956,20 +986,8 @@ export default function ReviewDraft (props) {
                 </div>
               </div>
             </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-6' />
-              <div className='col-6 float-right'>
-                <div className='pull-right'>
-                  {/* <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
-                  <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
-                  <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button> */}
-                  <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
-                    <button type='button' onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='m-btn btn btn-secondary'>Close</button>
-                    <button type='button' onClick={saveReview} className='m-btn btn btn-secondary'>Save</button>
-                    <button type='button' onClick={submitReview} className='m-btn btn btn-secondary'>Submit</button>
-                  </div>
-                </div>
-              </div>
+            <div className='tab-pane' id='m_tabs_2_1' role='tabpanel'>
+              <Attachments type='Component' {...props} />
             </div>
           </div>
         </div>
@@ -1112,6 +1130,8 @@ export default function ReviewDraft (props) {
     selectedApprover: PropTypes.any,
     tags: PropTypes.any,
     checkItemsSettings: PropTypes.any,
-    selectedTags: PropTypes.any
+    selectedTags: PropTypes.any,
     // setFirstLoad: PropTypes.func
+    activeTab: PropTypes.any,
+    setActiveTab: PropTypes.func
  }
