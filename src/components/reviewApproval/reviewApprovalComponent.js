@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import moment from 'moment'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
@@ -83,20 +84,26 @@ export default function ReviewApproval (props) {
     }
     if (props.isApproved) {
       if (props.isApproved === 'Approved') {
-        let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'In Progress'
+        let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Completed'
         }), 'id')
-        // set Approved stage
+        // set Completed stage
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = inProgressId
+        obj.value = completedId
         updatePayload.push(obj)
-        // set Approved status
+        // set Completed status
         obj = {}
         obj.op = 'replace'
         obj.path = '/status'
-        obj.value = 'Approved'
+        obj.value = 'Completed'
+        updatePayload.push(obj)
+        // setting Completed date when approved
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/completed_date'
+        obj.value = moment().format()
         updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -107,22 +114,22 @@ export default function ReviewApproval (props) {
           props.updateReviews(payload)
       } else if (props.isApproved === 'Rejected') {
         if (props.rejectedReason.trim() !== '' && props.rejectedReason !== null) {
-          let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-            return obj.name === 'Draft'
+          let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'In Progress'
           }), 'id')
-          // set Not Approved stage
+          // set In Progress stage
           let obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = draftId
+          obj.value = inProgressId
           updatePayload.push(obj)
-          // set Not Approved status
+          // set Rejected status
           obj = {}
           obj.op = 'replace'
           obj.path = '/status'
           obj.value = 'Rejected'
           updatePayload.push(obj)
-          // set Not Approved reason
+          // set Rejected reason
           obj = {}
           obj.op = 'replace'
           obj.path = '/reason'

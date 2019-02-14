@@ -96,11 +96,8 @@ export default compose(
       this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(initialPayload)
       this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(initialPayload)
     },
-    componentDidMount: function () {
-        console.log('component did mount')
-    },
+    componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
-      console.log('run next props', nextProps)
       if (nextProps.artefactAccounts && nextProps.artefactAccounts !== this.props.artefactAccounts) {
         if (nextProps.artefactAccounts.result_code === 0) {
           let accountsData = nextProps.artefactAccounts.resources.map(function (account, index) {

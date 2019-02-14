@@ -17,13 +17,19 @@ export function mapStateToProps (state, props) {
     checkItems: state.addTemplateReducer.checkItems,
     addTemplateValue: state.addTemplateReducer.addTemplateValue,
     addTemplateResponse: state.addTemplateReducer.addTemplateResponse,
-    validationClass: state.addTemplateReducer.validationClass
+    validationClass: state.addTemplateReducer.validationClass,
+    addSettings: state.addTemplateReducer.addSettings,
+    existingTemplateNames: state.addTemplateReducer.existingTemplateNames,
+    checkValidity: state.addTemplateReducer.checkValidity,
+    checkItemsSettings: state.addTemplateReducer.checkItemsSettings,
+    processCheckItems: state.addTemplateReducer.processCheckItems,
+    tags: state.addTemplateReducer.tags
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchCheckItems: sagaActions.checkitemActions.fetchCheckItems,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   createTemplates: sagaActions.templateActions.createTemplates,
   setTemplateCategoryData: actionCreators.setTemplateCategoryData,
@@ -31,7 +37,13 @@ export const propsMapping: Callbacks = {
   setCheckItemsData: actionCreators.setCheckItemsData,
   setSelectedCategory: actionCreators.setSelectedCategory,
   setSelectedCheckItem: actionCreators.setSelectedCheckItem,
-  setValidationClass: actionCreators.setValidationClass
+  setValidationClass: actionCreators.setValidationClass,
+  setAddSettings: actionCreators.setAddSettings,
+  setCheckValidity: actionCreators.setCheckValidity,
+  setCheckitemsSettings: actionCreators.setCheckitemsSettings,
+  setProcessCheckItems: actionCreators.setProcessCheckItems,
+  verifyName: sagaActions.templateActions.verifyName,
+  fetchTags: sagaActions.reviewActions.fetchTags
 }
 
 // If you want to use the function mapping
@@ -63,18 +75,19 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-       // eslint-disable-next-line
-      // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
-      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-          return obj.key === 'Check Item Template'
-      }), 'component_type')
+      // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+      //     return obj.key === 'Check Item Template'
+      // }), 'component_type')
       let componentTypeIdForCategory = _.result(_.find(componentTypes, function (obj) {
         return obj.key === 'Review Template'
       }), 'component_type')
-      console.log('component_type iddddd', componentTypeId)
-      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
+      let payload = {}
+      this.props.fetchCheckItems && this.props.fetchCheckItems(payload)
+      this.props.fetchTags && this.props.fetchTags()
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForCategory)
     },
     componentDidMount: function () {
@@ -84,6 +97,7 @@ export default compose(
       // mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('nextProps', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -98,13 +112,10 @@ export default compose(
           }), 'component_type_property')
           if (nextProps.componentTypeProperties.resources.length > 0) {
             nextProps.componentTypeProperties.resources.forEach(function (data, index) {
-              console.log('data-------------', data)
               let valueSet = _.result(_.find(data.properties, function (obj) {
                 return obj.id === propertyId
               }), 'value_set')
-              console.log('valueset ----', valueSet)
               if (valueSet) {
-                console.log(valueSet.values, 'inside if')
                 nextProps.setTemplateCategoryData(valueSet.values)
               }
             })
@@ -129,6 +140,49 @@ export default compose(
         }
         // this.props.resetResponse()
         this.props.history.push('/templates')
+      }
+      if (nextProps.existingTemplateNames && nextProps.existingTemplateNames !== '' && nextProps.checkValidity) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let addSettings = {...this.props.addSettings}
+        if (nextProps.existingTemplateNames.error_code === null) {
+          let existingTemplateNames = nextProps.existingTemplateNames.resources
+          let enterTemplateName = nextProps.addSettings.templateName
+          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterTemplateName.trim() })
+          console.log('existingTemplateNames', existingTemplateNames)
+          console.log('enterTemplateName', enterTemplateName)
+          console.log('found', found)
+          addSettings.showValidation = true
+          if (found) {
+            addSettings.message = enterTemplateName + ' name already exist'
+            addSettings.color = {color: 'red'}
+            addSettings.toAdd = false
+          } else {
+            addSettings.message = 'Valid Name'
+            addSettings.color = {color: 'green'}
+            addSettings.toAdd = true
+          }
+          nextProps.setAddSettings(addSettings)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.existingTemplateNames.error_message, nextProps.existingTemplateNames.error_code)
+        }
+        nextProps.setCheckValidity(false)
+      }
+      if (nextProps.templateCheckItems && nextProps.templateCheckItems !== '' && nextProps.processCheckItems) {
+        console.log()
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.templateCheckItems.error_code === null) {
+          let checkItemsSettings = {...nextProps.checkItemsSettings}
+          checkItemsSettings.checkItems = nextProps.templateCheckItems.resources.map(function (data, index) {
+            data.isChecked = false
+            data.type = 'NEW'
+            return data
+          })
+          nextProps.setCheckitemsSettings(checkItemsSettings)
+          nextProps.setProcessCheckItems(false)
+        }
       }
     }
   })

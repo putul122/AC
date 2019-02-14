@@ -3,31 +3,105 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 // import styles from './addTemplateComponent.scss'
 // import moment from 'moment'
-// import debounce from 'lodash/debounce'
+import debounce from 'lodash/debounce'
 import Select from 'react-select'
+import CreatableSelect from 'react-select/lib/Creatable'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function TemplateDetail (props) {
   console.log(props)
+  let refTemplateName
   let templateName = ''
   let templateCategory = ''
   let checkItemList = ''
   let categoryOptions = []
-  let checkItemsOptions = []
+  // let checkItemsOptions = []
+  let tagOptions = []
+  let checkItemModalList = ''
+  let handleCheckbox = function (value, index) {
+    console.log('handle group checkbox', value, index, refTemplateName)
+    let checkItemsSettings = {...props.checkItemsSettings}
+    let checkItems = checkItemsSettings.checkItems
+    checkItems[index].isChecked = value
+    checkItemsSettings.checkItems = checkItems
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
+  let selectCheckItems = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    console.log(checkItemsSettings.checkItems)
+    let checkItems = props.checkItems
+    let selectedCheckItems = checkItemsSettings.checkItems
+    selectedCheckItems.forEach(function (data, index) {
+      if (data.isChecked) {
+        checkItems.push(data)
+      }
+    })
+    props.setCheckItemsData(checkItems)
+    closeCheckItemModal()
+  }
+  let closeCheckItemModal = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    let checkItems = checkItemsSettings.checkItems.map(function (data, index) {
+      data.isChecked = false
+      return data
+    })
+    checkItemsSettings.checkItems = checkItems
+    checkItemsSettings.isModalOpen = false
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
+  let openSelectCheckitem = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    checkItemsSettings.isModalOpen = true
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
+  let handleChange = function (newValue: any, actionMeta: any) {
+    // let appPackage = JSON.parse(localStorage.getItem('packages'))
+    // let componentTypes = appPackage.resources[0].component_types
+    // let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
+    //     return obj.key === 'Check Item Template'
+    // }), 'component_type')
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let checkItemPayload = {}
+    // checkItemPayload.id = componentTypeIdForComponents
+    let checkItemsSettings = {...props.checkItemsSettings}
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+      let search = ''
+      let newValueLength = newValue.length
+      if (newValueLength > 0) {
+        newValue.forEach(function (data, index) {
+          search = search + '#' + data.value
+          if (index !== newValueLength - 1) {
+            search = search + ' '
+          }
+        })
+      }
+      console.log('search', search)
+      checkItemPayload.search = search
+      props.fetchCheckItems && props.fetchCheckItems(checkItemPayload)
+      checkItemsSettings.selectedTags = newValue
+    }
+    if (actionMeta.action === 'clear') {
+      checkItemPayload = {}
+      props.fetchCheckItems && props.fetchCheckItems(checkItemPayload)
+      checkItemsSettings.selectedTags = null
+    }
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
   if (props.templateCategories && props.templateCategories !== '') {
     categoryOptions = props.templateCategories.map(function (data, index) {
       data.label = data.name
       return data
     })
   }
-  if (props.templateCheckItems && props.templateCheckItems !== '') {
-    checkItemsOptions = props.templateCheckItems.resources.map(function (data, index) {
-      data.label = data.name
-      data.type = 'NEW'
-      return data
-    })
-  }
+  // if (props.templateCheckItems && props.templateCheckItems !== '') {
+  //   checkItemsOptions = props.templateCheckItems.resources.map(function (data, index) {
+  //     data.label = data.name
+  //     data.type = 'NEW'
+  //     return data
+  //   })
+  // }
   if (props.templateData && props.templateData !== '' && props.templateData.error_code === null) {
     templateName = props.templateData.resources[0].name
     templateCategory = props.templateData.resources[0].review_category
@@ -48,26 +122,44 @@ export default function TemplateDetail (props) {
       </span>)
     })
   }
-  let handleTitleChange = function (event) {
-    let value = event.target.value
-    let updateTemplateValue = {...props.updateTemplateValue}
-    updateTemplateValue.name = value
-    props.setUpdateTemplateValue(updateTemplateValue)
-    if (value.trim() !== '') {
-      props.setValidationClass('form-group m-form__group row')
+  let handleTitleChange = debounce((e) => {
+    console.log(e, refTemplateName)
+    if (refTemplateName) {
+      console.log('if ', refTemplateName.value)
+      let value = refTemplateName.value
+      if (value.trim() !== '') {
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let componentTypes = appPackage.resources[0].component_types
+        let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+            return obj.key === 'Review Template'
+        }), 'component_type')
+        let payload = {}
+        payload.id = componentTypeId
+        payload.params = {}
+        payload.params.search = value
+        props.verifyName(payload)
+        let editTemplateSettings = {...props.editTemplateSettings, 'name': value, 'validationClass': 'form-group m-form__group row'}
+        // eslint-disable-next-line
+        mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        props.setEditTemplateSettings(editTemplateSettings)
+      } else {
+        let editTemplateSettings = {...props.editTemplateSettings, 'name': value, 'showValidation': false, 'message': ''}
+        props.setEditTemplateSettings(editTemplateSettings)
+      }
+    } else {
+      console.log('else')
+      let editTemplateSettings = {...props.editTemplateSettings, 'name': '', 'showValidation': false, 'message': '', 'validationClass': 'form-group m-form__group row'}
+      props.setEditTemplateSettings(editTemplateSettings)
     }
-  }
+  }, 500)
   let editTemplate = function (event) {
     props.setValidationClass('form-group m-form__group row')
-    let editTemplateSettings = {...props.editTemplateSettings, 'isEditFlag': true}
+    let editTemplateSettings = {...props.editTemplateSettings, 'isEditFlag': true, 'validationClass': 'form-group m-form__group row', 'showValidation': false}
     props.setEditTemplateSettings(editTemplateSettings)
   }
   let cancelTemplateEdit = function (event) {
-    let editTemplateSettings = {...props.editTemplateSettings, 'isEditFlag': false}
+    let editTemplateSettings = {...props.editTemplateSettings, 'isEditFlag': false, 'name': templateName}
     props.setEditTemplateSettings(editTemplateSettings)
-    let updateTemplateValue = {...props.updateTemplateValue}
-    updateTemplateValue.name = templateName
-    props.setUpdateTemplateValue(updateTemplateValue)
     if (props.templateData.resources[0].check_items.length > 0) {
       let checkItems = props.templateData.resources[0].check_items.map(function (data, index) {
         data.type = 'OLD'
@@ -101,25 +193,25 @@ export default function TemplateDetail (props) {
       props.setSelectedCategory(selectedCategory)
     }
   }
-  let handleCheckItemSelect = function (newValue: any, actionMeta: any) {
-    if (actionMeta.action === 'select-option') {
-      let selectedCheckItem = newValue
-      props.setSelectedCheckItem(selectedCheckItem)
-    }
-    if (actionMeta.action === 'clear') {
-      let selectedCheckItem = null
-      props.setSelectedCheckItem(selectedCheckItem)
-    }
-  }
-  let addCheckItem = function () {
-    let checkItems = props.checkItems
-    if (props.selectedCheckItem !== null) {
-      checkItems.push(props.selectedCheckItem)
-      props.setCheckItemsData(checkItems)
-    }
-    let selectedCheckItem = null
-    props.setSelectedCheckItem(selectedCheckItem)
-  }
+  // let handleCheckItemSelect = function (newValue: any, actionMeta: any) {
+  //   if (actionMeta.action === 'select-option') {
+  //     let selectedCheckItem = newValue
+  //     props.setSelectedCheckItem(selectedCheckItem)
+  //   }
+  //   if (actionMeta.action === 'clear') {
+  //     let selectedCheckItem = null
+  //     props.setSelectedCheckItem(selectedCheckItem)
+  //   }
+  // }
+  // let addCheckItem = function () {
+  //   let checkItems = props.checkItems
+  //   if (props.selectedCheckItem !== null) {
+  //     checkItems.push(props.selectedCheckItem)
+  //     props.setCheckItemsData(checkItems)
+  //   }
+  //   let selectedCheckItem = null
+  //   props.setSelectedCheckItem(selectedCheckItem)
+  // }
   let removeCheckItem = function (index) {
     console.log('remove item', index)
     let checkItems = JSON.parse(JSON.stringify(props.checkItems))
@@ -136,19 +228,19 @@ export default function TemplateDetail (props) {
     props.setCheckItemsData(checkItems)
   }
   let saveTemplate = function (event) {
-    if (props.updateTemplateValue.name.trim() !== '') {
+    if (props.editTemplateSettings.name.trim() !== '' && props.editTemplateSettings.toUpdate) {
       let payload = []
       let obj = {}
       // edit name payload
       obj.op = 'replace'
       obj.path = '/name'
-      obj.value = props.updateTemplateValue.name
+      obj.value = props.editTemplateSettings.name
       payload.push(obj)
       // edit description payload
       obj = {}
       obj.op = 'replace'
       obj.path = '/description'
-      obj.value = props.updateTemplateValue.description
+      obj.value = props.editTemplateSettings.description
       payload.push(obj)
       // edit category payload
       if (props.selectedCategory) {
@@ -183,8 +275,28 @@ export default function TemplateDetail (props) {
       props.updateTemplates(updatePayload)
       console.log('payload', updatePayload, props)
     } else {
-      props.setValidationClass('form-group m-form__group row has-danger')
+      let editTemplateSettings = {...props.editTemplateSettings, 'validationClass': 'form-group m-form__group row has-danger'}
+      props.setEditTemplateSettings(editTemplateSettings)
     }
+  }
+  if (props.checkItemsSettings.checkItems.length > 0) {
+    checkItemModalList = props.checkItemsSettings.checkItems.map(function (data, index) {
+      return (<span className='m-list-search__result-item' key={index}>
+        <span className='m-list-search__result-item-text'><input onChange={(event) => { handleCheckbox(event.target.checked, index) }} type='checkbox' style={{cursor: 'pointer'}} />{data.name}</span>
+      </span>)
+    })
+  } else {
+    checkItemModalList = []
+    checkItemModalList.push(<span>No Data to Display</span>)
+  }
+  if (props.tags && props.tags !== '') {
+    tagOptions = props.tags.resources.map(function (data, index) {
+      let option = {}
+      option.id = index
+      option.value = data
+      option.label = data
+      return option
+    })
   }
     return (
       <div>
@@ -194,8 +306,9 @@ export default function TemplateDetail (props) {
               <div className='m-portlet__head-title' style={{width: '100%'}}>
                 {props.editTemplateSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
                   <div className='col-8 m-form m-form--state m-form--fit'>
-                    <div className={props.validationClass}>
-                      <input type='text' className='form-control m-input' value={props.updateTemplateValue.name} onChange={handleTitleChange} placeholder='Trmplate Name' aria-describedby='basic-addon2' />
+                    <div className={props.editTemplateSettings.validationClass}>
+                      <input type='text' className='form-control m-input' defaultValue={props.editTemplateSettings.name} onKeyUp={handleTitleChange} ref={input => (refTemplateName = input)} placeholder='Template Name' aria-describedby='basic-addon2' />
+                      {props.editTemplateSettings.showValidation && (<div style={props.editTemplateSettings.color} className='form-control-feedback has-danger'>{props.editTemplateSettings.message}</div>)}
                     </div>
                   </div>
                   <div className='col-4 float-right'>
@@ -287,6 +400,12 @@ export default function TemplateDetail (props) {
                             {props.editTemplateSettings.isEditFlag && (<span>
                               <span className='m-list-search__result-item'>
                                 <div className='form-group m-form__group row'>
+                                  <div className='col-6' />
+                                  <div className='col-6 float-right' >
+                                    <button type='button' onClick={openSelectCheckitem} className='btn btn-outline-info btn-sm pull-right'>Select Check Item</button>
+                                  </div>
+                                </div>
+                                {/* <div className='form-group m-form__group row'>
                                   <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Check Item</label>
                                   <div className='col-6'>
                                     <Select
@@ -303,7 +422,7 @@ export default function TemplateDetail (props) {
                                   <div className='col-2'>
                                     <button type='button' onClick={addCheckItem} className='btn btn-outline-info btn-sm'>Add</button>
                                   </div>
-                                </div>
+                                </div> */}
                               </span>
                               <span className='m-list-search__result-item'>
                                 <div className='m-section m-section--last'>
@@ -366,6 +485,59 @@ export default function TemplateDetail (props) {
               </div>
             </div>
           </ReactModal>
+          <ReactModal isOpen={props.checkItemsSettings.isModalOpen}
+            onRequestClose={closeCheckItemModal}
+            className='modal-dialog'
+            style={{'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Select Check Item</h6>
+                    <button type='button' onClick={closeCheckItemModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-lg-12'>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-3 col-form-label'>Tags</label>
+                        <div className='col-9'>
+                          <CreatableSelect
+                            className='input-sm m-input'
+                            placeholder='Enter Tags'
+                            isClearable
+                            isMulti
+                            onChange={handleChange}
+                            value={props.checkItemsSettings.selectedTags}
+                            options={tagOptions}
+                          />
+                        </div>
+                      </div>
+                      <div className='m-section m-section--last'>
+                        <div className='m-section__content'>
+                          <div className='m-demo'>
+                            <div className='m-demo__preview'>
+                              <div className='m-list-search'>
+                                <div className='m-list-search__results'>
+                                  {checkItemModalList}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeCheckItemModal} className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                    <button type='button' onClick={selectCheckItems} className={'btn btn-sm btn-outline-info'}>Select</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
       </div>
       )
@@ -374,20 +546,23 @@ export default function TemplateDetail (props) {
       validationClass: PropTypes.any,
       editTemplateSettings: PropTypes.any,
       templateData: PropTypes.any,
+      // eslint-disable-next-line
       match: PropTypes.any,
       // deleteTemplate: PropTypes.func,
-      updateTemplates: PropTypes.func,
+      // updateTemplates: PropTypes.func,
       // setSelectedCheckItem: PropTypes.func,
       // setUpdateTemplateValue: PropTypes.func,
       setSelectedCategory: PropTypes.func,
       // setPayload: PropTypes.func,
       // setCheckItemsData: PropTypes.func,
-      templateCheckItems: PropTypes.any,
+      // templateCheckItems: PropTypes.any,
       templateCategories: PropTypes.any,
       checkItems: PropTypes.any,
-      selectedCheckItem: PropTypes.any,
+      // selectedCheckItem: PropTypes.any,
+      // eslint-disable-next-line
       payload: PropTypes.any,
       selectedCategory: PropTypes.any,
-      updateTemplateValue: PropTypes.any,
-      setValidationClass: PropTypes.func
+      // updateTemplateValue: PropTypes.any,
+      checkItemsSettings: PropTypes.any,
+      tags: PropTypes.any
  }

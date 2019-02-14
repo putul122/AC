@@ -95,7 +95,8 @@ const api = {
   notificationURL: 'https://notification-eco-dev.ecoconductor.com/notification',
   iconURL: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/',
   iconURL1: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1',
-  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+  iconURL18: 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18',
+  getTags: 'https://ac-eco-dev.ecoconductor.com/api/Review/GetTags'
 }
 
 export default api

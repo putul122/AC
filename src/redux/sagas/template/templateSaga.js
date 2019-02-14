@@ -22,6 +22,9 @@ export const UPDATE_TEMPLATES_FAILURE = 'saga/template/UPDATE_TEMPLATES_FAILURE'
 export const DELETE_TEMPLATE = 'saga/template/DELETE_TEMPLATE'
 export const DELETE_TEMPLATE_SUCCESS = 'saga/template/DELETE_TEMPLATE_SUCCESS'
 export const DELETE_TEMPLATE_FAILURE = 'saga/template/DELETE_TEMPLATE_FAILURE'
+export const VERIFY_NAME = 'saga/template/VERIFY_NAME'
+export const VERIFY_NAME_SUCCESS = 'saga/template/VERIFY_NAME_SUCCESS'
+export const VERIFY_NAME_FAILURE = 'saga/template/VERIFY_NAME_FAILURE'
 
 export const actionCreators = {
   fetchTemplates: createAction(FETCH_TEMPLATES),
@@ -41,7 +44,10 @@ export const actionCreators = {
   updateTemplatesFailure: createAction(UPDATE_TEMPLATES_FAILURE),
   deleteTemplate: createAction(DELETE_TEMPLATE),
   deleteTemplateSuccess: createAction(DELETE_TEMPLATE_SUCCESS),
-  deleteTemplateFailure: createAction(DELETE_TEMPLATE_FAILURE)
+  deleteTemplateFailure: createAction(DELETE_TEMPLATE_FAILURE),
+  verifyName: createAction(VERIFY_NAME),
+  verifyNameSuccess: createAction(VERIFY_NAME_SUCCESS),
+  verifyNameFailure: createAction(VERIFY_NAME_FAILURE)
 }
 
 export default function * watchTemplates () {
@@ -51,8 +57,23 @@ export default function * watchTemplates () {
       takeLatest(FETCH_TEMPLATE_BY_ID, getTemplateById),
       takeLatest(CREATE_TEMPLATES, createTemplates),
       takeLatest(UPDATE_TEMPLATES, updateTemplate),
-      takeLatest(DELETE_TEMPLATE, deleteTemplate)
+      takeLatest(DELETE_TEMPLATE, deleteTemplate),
+      takeLatest(VERIFY_NAME, getComponentTypeComponents)
     ]
+}
+
+export function * getComponentTypeComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload.id),
+      {params: action.payload.params}
+    )
+    yield put(actionCreators.verifyNameSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.verifyNameFailure(error))
+  }
 }
 
 export function * getTemplates (action) {

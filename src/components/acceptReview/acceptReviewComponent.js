@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
+// import moment from 'moment'
 import Select from 'react-select'
 import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
@@ -235,27 +235,27 @@ export default function ReviewAcceptance (props) {
     let obj = {}
     if (props.isAccepeted) {
       if (props.isAccepeted === 'Yes') {
-        let CompletedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Completed'
+        let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'In Progress'
         }), 'id')
         // setting Stage payload
         obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = CompletedId
+        obj.value = inProgressId
         updatePayload.push(obj)
         // setting Status payload
-        obj = {}
-        obj.op = 'replace'
-        obj.path = '/status'
-        obj.value = 'Completed'
-        updatePayload.push(obj)
+        // obj = {}
+        // obj.op = 'replace'
+        // obj.path = '/status'
+        // obj.value = 'Completed'
+        // updatePayload.push(obj)
         // setting Completed date when approved
-        obj = {}
-        obj.op = 'replace'
-        obj.path = '/completed_date'
-        obj.value = moment().format()
-        updatePayload.push(obj)
+        // obj = {}
+        // obj.op = 'replace'
+        // obj.path = '/completed_date'
+        // obj.value = moment().format()
+        // updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
@@ -265,14 +265,14 @@ export default function ReviewAcceptance (props) {
         props.updateReviews(payload)
       } else if (props.isAccepeted === 'No') {
         if (props.notAcceptedReason.trim() !== '' && props.notAcceptedReason !== null) {
-          let inProgressId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-            return obj.name === 'In Progress'
+          let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Draft'
           }), 'id')
           // setting Stage payload
           obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = inProgressId
+          obj.value = draftId
           updatePayload.push(obj)
           // setting Status payload
           obj = {}

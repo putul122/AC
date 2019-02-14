@@ -7,6 +7,7 @@ import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import CreatableSelect from 'react-select/lib/Creatable'
 ReactModal.setAppElement('#root')
 
 export default function Reviewslists (props) {
@@ -33,6 +34,7 @@ let listPage = []
 let paginationLimit = 6
 let totalReview
 let templateOptions = ''
+let tagOptions = []
 let appPackage = JSON.parse(localStorage.getItem('packages'))
 let componentTypes = appPackage.resources[0].component_types
 let componentId = _.result(_.find(componentTypes, function (obj) {
@@ -43,6 +45,33 @@ console.log(reviewName, reviewDescription)
 let openDiscussionModal = function (event) {
   event.preventDefault()
   props.setDiscussionModalOpenStatus(true)
+}
+let handleTag = function (newValue: any, actionMeta: any) {
+  // console.group('Value Changed first select')
+  // console.log(newValue)
+  // console.log(`action: ${actionMeta.action}`)
+  // console.groupEnd()
+  if (searchTextBox) {
+    console.log(searchTextBox)
+    searchTextBox.value = ''
+  }
+  let filterSettings = {...props.filterSettings}
+  filterSettings.callApi = true
+  if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+    filterSettings.selectedTags = newValue
+    props.setFilterSettings(filterSettings)
+  }
+  if (actionMeta.action === 'clear') {
+    filterSettings.selectedTags = null
+    props.setFilterSettings(filterSettings)
+  }
+}
+let categoryOptions = []
+if (props.reviewProperties.category && props.reviewProperties.category.length > 0) {
+  categoryOptions = props.reviewProperties.category.map(function (data, index) {
+    data.label = data.name
+    return data
+  })
 }
 if (props.componentTypeComponents && props.componentTypeComponents !== '') {
   if (props.componentTypeComponents.error_code === null) {
@@ -57,22 +86,62 @@ if (props.componentTypeComponents && props.componentTypeComponents !== '') {
     })
   } else {}
 }
-let handleReviewName = function (event) {
-  let value = event.target.value
-  if (value.trim() !== '') {
-    let addReviewSettings = {...props.addReviewSettings, 'reviewName': value, 'nameValidationClass': 'form-group m-form__group row'}
-    props.setAddReviewSettings(addReviewSettings)
+let handleColumnSort = function (order, name) {
+  let filterSettings = {...props.filterSettings}
+  filterSettings.columnSort = {}
+  filterSettings.columnSort.order = order
+  filterSettings.columnSort.name = name
+  props.setFilterSettings(filterSettings)
+}
+let handleReviewName = debounce((e) => {
+  console.log(e)
+  if (reviewName) {
+    let value = reviewName.value
+    if (value.trim() !== '') {
+      let componentTypes = appPackage.resources[0].component_types
+      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+          return obj.key === 'Review'
+      }), 'component_type')
+      let payload = {}
+      payload.id = componentTypeId
+      payload.params = {}
+      payload.params.search = value
+      props.verifyName(payload)
+      let addReviewSettings = {...props.addReviewSettings, 'reviewName': value, 'nameValidationClass': 'form-group m-form__group row'}
+      // eslint-disable-next-line
+      mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setAddReviewSettings(addReviewSettings)
+    } else {
+      let addReviewSettings = {...props.addReviewSettings, 'reviewName': value, 'showValidation': false, 'message': ''}
+      props.setAddReviewSettings(addReviewSettings)
+    }
   } else {
-    let addReviewSettings = {...props.addReviewSettings, 'reviewName': value}
+    let addReviewSettings = {...props.addReviewSettings, 'reviewName': '', 'showValidation': false, 'message': ''}
     props.setAddReviewSettings(addReviewSettings)
   }
-}
+}, 500)
+// function (event) {
+//   let value = event.target.value
+//   if (value.trim() !== '') {
+//     let componentTypes = appPackage.resources[0].component_types
+//     let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+//         return obj.key === 'Review'
+//     }), 'component_type')
+//     let payload = {}
+//     payload.id = componentTypeId
+//     payload.params = {}
+//     payload.params.search = value
+//     props.verifyName(payload)
+//     let addReviewSettings = {...props.addReviewSettings, 'reviewName': value, 'nameValidationClass': 'form-group m-form__group row'}
+//     props.setAddReviewSettings(addReviewSettings)
+//   } else {
+//     let addReviewSettings = {...props.addReviewSettings, 'reviewName': value}
+//     props.setAddReviewSettings(addReviewSettings)
+//   }
+// }
 let addReview = function () {
   let reviewName = props.addReviewSettings.reviewName
-  if (reviewName.trim() === '') {
-    let addReviewSettings = {...props.addReviewSettings, 'nameValidationClass': 'form-group m-form__group row has-danger'}
-    props.setAddReviewSettings(addReviewSettings)
-  } else {
+  if (reviewName.trim() !== '' && !props.addReviewSettings.showValidation) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let name = props.addReviewSettings.reviewName
@@ -85,10 +154,13 @@ let addReview = function () {
     }
     props.createReviews(payload)
     console.log('add payload', payload)
+  } else {
+    let addReviewSettings = {...props.addReviewSettings, 'nameValidationClass': 'form-group m-form__group row has-danger'}
+    props.setAddReviewSettings(addReviewSettings)
   }
 }
 let closeModal = function () {
-  let addReviewSettings = {...props.addReviewSettings, 'isModalOpen': false, 'nameValidationClass': 'form-group m-form__group row', 'reviewName': ''}
+  let addReviewSettings = {...props.addReviewSettings, 'isModalOpen': false, 'nameValidationClass': 'form-group m-form__group row', 'reviewName': '', 'showValidation': false, 'message': ''}
   props.setAddReviewSettings(addReviewSettings)
 }
 let openAddReview = function () {
@@ -111,8 +183,44 @@ let handleTemplateSelect = function (newValue: any, actionMeta: any) {
   }
 }
 if (props.reviews && props.reviews !== '') {
+  let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
+  if (props.filterSettings.columnSort.name !== '') {
+    if (props.filterSettings.columnSort.name === 'name') {
+      if (props.filterSettings.columnSort.order === 'up') {
+        sortedArray = _.orderBy(props.reviews.resources, ['name'], ['desc'])
+      } else if (props.filterSettings.columnSort.order === 'down') {
+        sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
+      }
+    } else if (props.filterSettings.columnSort.name === 'category') {
+      if (props.filterSettings.columnSort.order === 'up') {
+        sortedArray = _.orderBy(props.reviews.resources, ['review_category'], ['desc'])
+      } else if (props.filterSettings.columnSort.order === 'down') {
+        sortedArray = _.orderBy(props.reviews.resources, ['review_category'], ['asc'])
+      }
+    } else if (props.filterSettings.columnSort.name === 'stage') {
+      if (props.filterSettings.columnSort.order === 'up') {
+        sortedArray = _.orderBy(props.reviews.resources, ['stage'], ['desc'])
+      } else if (props.filterSettings.columnSort.order === 'down') {
+        sortedArray = _.orderBy(props.reviews.resources, ['stage'], ['asc'])
+      }
+    } else if (props.filterSettings.columnSort.name === 'reviewer') {
+      if (props.filterSettings.columnSort.order === 'up') {
+        sortedArray = _.orderBy(props.reviews.resources, ['reviewer'], ['desc'])
+      } else if (props.filterSettings.columnSort.order === 'down') {
+        sortedArray = _.orderBy(props.reviews.resources, ['reviewer'], ['asc'])
+      }
+    } else if (props.filterSettings.columnSort.name === 'approver') {
+      if (props.filterSettings.columnSort.order === 'up') {
+        sortedArray = _.orderBy(props.reviews.resources, ['approver'], ['desc'])
+      } else if (props.filterSettings.columnSort.order === 'down') {
+        sortedArray = _.orderBy(props.reviews.resources, ['approver'], ['asc'])
+      }
+    }
+  }
+  console.log('sortedArray', sortedArray)
+  console.log('sortedprops.filterSettings', props.filterSettings)
   // let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
-  reviewList = props.reviews.resources.map(function (data, index) {
+  reviewList = sortedArray.map(function (data, index) {
     let link = ''
     if (data.stage === 'In Progress') {
       link = '/conduct_review/'
@@ -175,6 +283,53 @@ let handleInputChange = debounce((e) => {
       'page_size': 10,
       'page': currentPage
     }
+    let filterSettings = {...props.filterSettings}
+    filterSettings.selectedTags = null
+    props.setFilterSettings(filterSettings)
+    let statges = props.reviewProperties.stages
+    let stageIndex = 0
+    if (filterSettings.myTask) {
+      payload.current_user = filterSettings.myTask
+    }
+    if (filterSettings.Draft) {
+      let draftId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Draft'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = draftId
+    }
+    if (filterSettings.Approval) {
+      let approvalId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Approval'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = approvalId
+    }
+    if (filterSettings.Acceptance) {
+      let acceptanceId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Acceptance'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = acceptanceId
+    }
+    if (filterSettings.InProgress) {
+      let inProgressId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'In Progress'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = inProgressId
+    }
+    if (filterSettings.Completed) {
+      let completedId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Completed'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = completedId
+    }
+    if (filterSettings.Cancelled) {
+      let cancelledId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Cancelled'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = cancelledId
+    }
+    if (filterSettings.selectedCategory) {
+      payload['category_ids[0]'] = filterSettings.selectedCategory.id
+    }
     props.fetchReviews(payload)
     // eslint-disable-next-line
     mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -194,6 +349,65 @@ let handlePage = function (page) {
     'search': searchTextBox.value ? searchTextBox.value : '',
     'page_size': 10,
     'page': page
+  }
+  let filterSettings = {...props.filterSettings}
+  let statges = props.reviewProperties.stages
+  let stageIndex = 0
+  if (filterSettings.myTask) {
+    payload.current_user = filterSettings.myTask
+  }
+  if (filterSettings.Draft) {
+    let draftId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'Draft'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = draftId
+  }
+  if (filterSettings.Approval) {
+    let approvalId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'Approval'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = approvalId
+  }
+  if (filterSettings.Acceptance) {
+    let acceptanceId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'Acceptance'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = acceptanceId
+  }
+  if (filterSettings.InProgress) {
+    let inProgressId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'In Progress'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = inProgressId
+  }
+  if (filterSettings.Completed) {
+    let completedId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'Completed'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = completedId
+  }
+  if (filterSettings.Cancelled) {
+    let cancelledId = _.result(_.find(statges, function (obj) {
+      return obj.name === 'Cancelled'
+    }), 'id')
+    payload['stage_ids[' + stageIndex++ + ']'] = cancelledId
+  }
+  if (filterSettings.selectedCategory) {
+    payload['category_ids[0]'] = filterSettings.selectedCategory.id
+  }
+  if (filterSettings.selectedTags) {
+    let search = ''
+    let tagLength = filterSettings.selectedTags.length
+    if (tagLength > 0) {
+      filterSettings.selectedTags.forEach(function (data, index) {
+        search = search + '#' + data.value
+        if (index !== tagLength - 1) {
+          search = search + ' '
+        }
+      })
+    }
+    console.log('search', search)
+    payload.search = search
   }
   props.fetchReviews(payload)
   // eslint-disable-next-line
@@ -217,6 +431,65 @@ let handlePrevious = function (event) {
       'page_size': 10,
       'page': currentPage - 1
     }
+    let filterSettings = {...props.filterSettings}
+    let statges = props.reviewProperties.stages
+    let stageIndex = 0
+    if (filterSettings.myTask) {
+      payload.current_user = filterSettings.myTask
+    }
+    if (filterSettings.Draft) {
+      let draftId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Draft'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = draftId
+    }
+    if (filterSettings.Approval) {
+      let approvalId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Approval'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = approvalId
+    }
+    if (filterSettings.Acceptance) {
+      let acceptanceId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Acceptance'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = acceptanceId
+    }
+    if (filterSettings.InProgress) {
+      let inProgressId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'In Progress'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = inProgressId
+    }
+    if (filterSettings.Completed) {
+      let completedId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Completed'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = completedId
+    }
+    if (filterSettings.Cancelled) {
+      let cancelledId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Cancelled'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = cancelledId
+    }
+    if (filterSettings.selectedCategory) {
+      payload['category_ids[0]'] = filterSettings.selectedCategory.id
+    }
+    if (filterSettings.selectedTags) {
+      let search = ''
+      let tagLength = filterSettings.selectedTags.length
+      if (tagLength > 0) {
+        filterSettings.selectedTags.forEach(function (data, index) {
+          search = search + '#' + data.value
+          if (index !== tagLength - 1) {
+            search = search + ' '
+          }
+        })
+      }
+      console.log('search', search)
+      payload.search = search
+    }
     props.fetchReviews(payload)
   // eslint-disable-next-line
   mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -238,6 +511,65 @@ let handleNext = function (event) {
       'search': searchTextBox.value ? searchTextBox.value : '',
       'page_size': 10,
       'page': currentPage + 1
+    }
+    let filterSettings = {...props.filterSettings}
+    let statges = props.reviewProperties.stages
+    let stageIndex = 0
+    if (filterSettings.myTask) {
+      payload.current_user = filterSettings.myTask
+    }
+    if (filterSettings.Draft) {
+      let draftId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Draft'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = draftId
+    }
+    if (filterSettings.Approval) {
+      let approvalId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Approval'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = approvalId
+    }
+    if (filterSettings.Acceptance) {
+      let acceptanceId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Acceptance'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = acceptanceId
+    }
+    if (filterSettings.InProgress) {
+      let inProgressId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'In Progress'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = inProgressId
+    }
+    if (filterSettings.Completed) {
+      let completedId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Completed'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = completedId
+    }
+    if (filterSettings.Cancelled) {
+      let cancelledId = _.result(_.find(statges, function (obj) {
+        return obj.name === 'Cancelled'
+      }), 'id')
+      payload['stage_ids[' + stageIndex++ + ']'] = cancelledId
+    }
+    if (filterSettings.selectedCategory) {
+      payload['category_ids[0]'] = filterSettings.selectedCategory.id
+    }
+    if (filterSettings.selectedTags) {
+      let search = ''
+      let tagLength = filterSettings.selectedTags.length
+      if (tagLength > 0) {
+        filterSettings.selectedTags.forEach(function (data, index) {
+          search = search + '#' + data.value
+          if (index !== tagLength - 1) {
+            search = search + ' '
+          }
+        })
+      }
+      console.log('search', search)
+      payload.search = search
     }
     props.fetchReviews(payload)
    // eslint-disable-next-line
@@ -268,7 +600,52 @@ let handledropdownChange = function (event) {
   console.log('handle change', event.target.value, typeof event.target.value)
   props.setPerPage(parseInt(event.target.value))
 }
-
+let handleCheckbox = function (event) {
+  let isChecked = event.target.checked
+  let filterSettings = {...props.filterSettings}
+  filterSettings.myTask = isChecked
+  filterSettings.callApi = true
+  props.setFilterSettings(filterSettings)
+}
+let handleStageCheckbox = function (value, stage) {
+  let filterSettings = {...props.filterSettings}
+  if (stage === 'Draft') {
+    filterSettings.Draft = value
+  } else if (stage === 'Approval') {
+    filterSettings.Approval = value
+  } else if (stage === 'Acceptance') {
+    filterSettings.Acceptance = value
+  } else if (stage === 'In Progress') {
+    filterSettings.InProgress = value
+  } else if (stage === 'Completed') {
+    filterSettings.Completed = value
+  } else if (stage === 'Cancelled') {
+    filterSettings.Cancelled = value
+  }
+  filterSettings.callApi = true
+  props.setFilterSettings(filterSettings)
+}
+let handleCategorySelect = function (newValue: any, actionMeta: any) {
+  let filterSettings = {...props.filterSettings}
+  filterSettings.callApi = true
+  if (actionMeta.action === 'select-option') {
+    filterSettings.selectedCategory = newValue
+    props.setFilterSettings(filterSettings)
+  }
+  if (actionMeta.action === 'clear') {
+    filterSettings.selectedCategory = null
+    props.setFilterSettings(filterSettings)
+  }
+}
+if (props.tags && props.tags !== '') {
+  tagOptions = props.tags.resources.map(function (data, index) {
+    let option = {}
+    option.id = index
+    option.value = data
+    option.label = data
+    return option
+  })
+}
 return (
   <div>
     <div className='row clearfix'>
@@ -320,6 +697,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews in Draft</h3>
+                      <input checked={props.filterSettings.draft} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Draft') }} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -359,10 +737,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
-                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '10px'}}>Reviews in Approval</h3>
+                      <h3>Reviews in Acceptance</h3>
+                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Acceptance') }} checked={props.filterSettings.Acceptance} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -406,6 +785,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3 style={{'marginRight': '10px'}}>Reviews in Progress</h3>
+                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'In Progress') }} checked={props.filterSettings.InProgress} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinProgress}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -445,10 +825,11 @@ return (
                   <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
-                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
+                      <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Acceptance</h3>
+                      <h3 style={{'marginRight': '10px'}}>Reviews in Approval</h3>
+                      <input checked={props.filterSettings.Approval} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Approval') }} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -492,6 +873,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews Completed</h3>
+                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Completed') }} checked={props.filterSettings.Completed} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCompleted}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -535,6 +917,7 @@ return (
                     </span>
                     <span className='m-widget17__subtitle'>
                       <h3>Reviews Cancelled</h3>
+                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Cancelled') }} checked={props.filterSettings.Cancelled} type='checkbox' />&nbsp;Filter
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCancelled}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -558,9 +941,9 @@ return (
                 <div className='m-portlet'>
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
-                      <div className='row' style={{'marginBottom': '20px'}}>
-                        <div className='col-sm-12 col-md-6'>
-                          <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
+                      <div className='row clearfix' style={{'marginBottom': '20px'}}>
+                        <div className='col-sm-6 col-md-2'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
                             <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
                               <option value={10}>10</option>
@@ -572,8 +955,47 @@ return (
                             {/* </label> */}
                           </div>
                         </div>
-                        <div className='col-sm-12 col-md-6'>
-                          <div className='dataTables_length pull-right' id='m_table_1_length' style={{'display': 'flex'}}>
+                        <div className='col-sm-6 col-md-1'>
+                          <div className='dataTables_length' style={{'display': 'flex', width: '100%'}}>
+                            <h5><input checked={props.filterSettings.myTask} type='checkbox' onChange={handleCheckbox} />&nbsp;My Task</h5>
+                          </div>
+                        </div>
+                        <div className='col-sm-12 col-md-3'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
+                            <h5 style={{'margin': '10px'}}>Tag</h5>
+                            <div className='m-input-icon'>
+                              <CreatableSelect
+                                className='input-sm m-input'
+                                placeholder='Enter Tags'
+                                isClearable
+                                isMulti
+                                onChange={handleTag}
+                                value={props.filterSettings.selectedTags}
+                                options={tagOptions}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-sm-12 col-md-3'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
+                            <h5 className=''>Review Category</h5>
+                            <div className='m-input-icon'>
+                              <Select
+                                className='input-sm m-input'
+                                placeholder='Select Category'
+                                isClearable
+                                defaultValue={props.filterSettings.selectedCategory}
+                                // value={props.filterSettings.selectedCategory}
+                                onChange={handleCategorySelect}
+                                isSearchable={false}
+                                name={'categorySelected'}
+                                options={categoryOptions}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-sm-12 col-md-3'>
+                          <div className='dataTables_length pull-right' style={{'display': 'flex'}}>
                             <div style={{'display': 'flex'}}>
                               <h5 style={{'margin': '10px'}}>Search</h5>
                               <div className='m-input-icon m-input-icon--left'>
@@ -593,11 +1015,36 @@ return (
                       <table className='m-portlet table table-striped- table-bordered table-hover table-checkable dataTable no-footer' id='m_table_1' aria-describedby='m_table_1_info' role='grid'>
                         <thead>
                           <tr role='row'>
-                            <th className=''><h5>Name</h5></th>
-                            <th className=''><h5>Review Category</h5></th>
-                            <th className=''><h5>Stage</h5></th>
-                            <th className=''><h5>Reviewer</h5></th>
-                            <th className=''><h5>Approver</h5></th>
+                            <th className=''>
+                              <h5 style={{'position': 'relative'}}>Name
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'up' && props.filterSettings.columnSort.name === 'name') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('up', 'name') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-up' style={{'float': 'right'}} /></a>)}
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'down' && props.filterSettings.columnSort.name === 'name') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('down', 'name') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-down' style={{'position': 'absolute', 'right': '0', 'cursor': 'pointer'}} /></a>)}
+                              </h5>
+                            </th>
+                            <th className=''>
+                              <h5 style={{'position': 'relative'}} >Review Category
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'up' && props.filterSettings.columnSort.name === 'category') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('up', 'category') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-up' style={{'float': 'right', 'cursor': 'pointer'}} /></a>)}
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'down' && props.filterSettings.columnSort.name === 'category') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('down', 'category') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-down' style={{'position': 'absolute', 'right': '0', 'cursor': 'pointer'}} /></a>)}
+                              </h5>
+                            </th>
+                            <th className=''>
+                              <h5 style={{'position': 'relative'}}>Stage
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'up' && props.filterSettings.columnSort.name === 'stage') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('up', 'stage') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-up' style={{'float': 'right', 'cursor': 'pointer'}} /></a>)}
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'down' && props.filterSettings.columnSort.name === 'stage') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('down', 'stage') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-down' style={{'position': 'absolute', 'right': '0', 'cursor': 'pointer'}} /></a>)}
+                              </h5>
+                            </th>
+                            <th className=''>
+                              <h5 style={{'position': 'relative'}}>Reviewer
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'up' && props.filterSettings.columnSort.name === 'reviewer') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('up', 'reviewer') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-up' style={{'float': 'right', 'cursor': 'pointer'}} /></a>)}
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'down' && props.filterSettings.columnSort.name === 'reviewer') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('down', 'reviewer') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-down' style={{'position': 'absolute', 'right': '0', 'cursor': 'pointer'}} /></a>)}
+                              </h5>
+                            </th>
+                            <th className=''>
+                              <h5 style={{'position': 'relative'}}>Approver
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'up' && props.filterSettings.columnSort.name === 'approver') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('up', 'approver') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-up' style={{'float': 'right', 'cursor': 'pointer'}} /></a>)}
+                                {props.filterSettings.columnSort && !(props.filterSettings.columnSort.order === 'down' && props.filterSettings.columnSort.name === 'approver') && (<a onClick={(event) => { event.preventDefault(); handleColumnSort('down', 'approver') }} href='javascript:void(0);' style={{color: 'gray'}} ><i className='fa fa-sort-down' style={{'position': 'absolute', 'right': '0', 'cursor': 'pointer'}} /></a>)}
+                              </h5>
+                            </th>
                           </tr>
                         </thead>
                         {/* <tbody> */}
@@ -656,9 +1103,10 @@ return (
                 <div className='col-md-12 m-form m-form--state m-form--fit'>
                   {/* {messageBlock} */}
                   <div className={props.addReviewSettings.nameValidationClass}>
-                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name<span className='text-danger'>*</span></label>
+                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Name<span style={{'fontSize': '20px'}} className='text-danger'>*</span></label>
                     <div className='col-8'>
-                      <input className='form-control m-input' type='email' placeholder='Enter Review Name' onChange={handleReviewName} value={props.addReviewSettings.reviewName} ref={input => (reviewName = input)} id='example-userName-input' />
+                      <input className='form-control m-input' type='text' placeholder='Enter Review Name' onKeyUp={handleReviewName} ref={input => (reviewName = input)} />
+                      {props.addReviewSettings.showValidation && (<div style={props.addReviewSettings.color} className='form-control-feedback has-danger'>{props.addReviewSettings.message}</div>)}
                     </div>
                   </div>
                   <div className='form-group m-form__group row'>
@@ -710,5 +1158,9 @@ return (
   currentPage: PropTypes.any,
   addReviewSettings: PropTypes.any,
   componentTypeComponents: PropTypes.any,
-  perPage: PropTypes.any
+  perPage: PropTypes.any,
+  reviewProperties: PropTypes.any,
+  filterSettings: PropTypes.any,
+  tags: PropTypes.any,
+  selectedTags: PropTypes.any
  }

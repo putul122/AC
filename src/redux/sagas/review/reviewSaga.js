@@ -20,11 +20,20 @@ export const UPDATE_REVIEWS = 'saga/review/UPDATE_REVIEWS'
 export const UPDATE_REVIEWS_SUCCESS = 'saga/review/UPDATE_REVIEWS_SUCCESS'
 export const UPDATE_REVIEWS_FAILURE = 'saga/review/UPDATE_REVIEWS_FAILURE'
 export const FETCH_REVIEW_ARTEFACTS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS'
-export const FETCH_REVIEW_ARTEFACTS_SUCCESS = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_SUCCESS'
-export const FETCH_REVIEW_ARTEFACTS_FAILURE = 'saga/Basic/FETCH_REVIEW_ARTEFACTS_FAILURE'
-export const CONNECT_DISCONNECT_ARTEFACT = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT'
-export const CONNECT_DISCONNECT_ARTEFACT_SUCCESS = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT_SUCCESS'
-export const CONNECT_DISCONNECT_ARTEFACT_FAILURE = 'saga/Basic/CONNECT_DISCONNECT_ARTEFACT_FAILURE'
+export const FETCH_REVIEW_ARTEFACTS_SUCCESS = 'saga/review/FETCH_REVIEW_ARTEFACTS_SUCCESS'
+export const FETCH_REVIEW_ARTEFACTS_FAILURE = 'saga/review/FETCH_REVIEW_ARTEFACTS_FAILURE'
+export const CONNECT_DISCONNECT_ARTEFACT = 'saga/review/CONNECT_DISCONNECT_ARTEFACT'
+export const CONNECT_DISCONNECT_ARTEFACT_SUCCESS = 'saga/review/CONNECT_DISCONNECT_ARTEFACT_SUCCESS'
+export const CONNECT_DISCONNECT_ARTEFACT_FAILURE = 'saga/review/CONNECT_DISCONNECT_ARTEFACT_FAILURE'
+export const VERIFY_NAME = 'saga/review/VERIFY_NAME'
+export const VERIFY_NAME_SUCCESS = 'saga/review/VERIFY_NAME_SUCCESS'
+export const VERIFY_NAME_FAILURE = 'saga/review/VERIFY_NAME_FAILURE'
+export const FETCH_TAGS = 'saga/review/FETCH_TAGS'
+export const FETCH_TAGS_SUCCESS = 'saga/review/FETCH_TAGS_SUCCESS'
+export const FETCH_TAGS_FAILURE = 'saga/review/FETCH_TAGS_FAILURE'
+export const FETCH_CHECKITEM_TEMPLATES = 'saga/review/FETCH_CHECKITEM_TEMPLATES'
+export const FETCH_CHECKITEM_TEMPLATES_SUCCESS = 'saga/review/FETCH_CHECKITEM_TEMPLATES_SUCCESS'
+export const FETCH_CHECKITEM_TEMPLATES_FAILURE = 'saga/review/FETCH_CHECKITEM_TEMPLATES_FAILURE'
 
 export const actionCreators = {
   fetchReviews: createAction(FETCH_REVIEWS),
@@ -47,7 +56,16 @@ export const actionCreators = {
   fetchReviewArtefactsFailure: createAction(FETCH_REVIEW_ARTEFACTS_FAILURE),
   connectDisconnectArtefact: createAction(CONNECT_DISCONNECT_ARTEFACT),
   connectDisconnectArtefactSuccess: createAction(CONNECT_DISCONNECT_ARTEFACT_SUCCESS),
-  connectDisconnectArtefactFailure: createAction(CONNECT_DISCONNECT_ARTEFACT_FAILURE)
+  connectDisconnectArtefactFailure: createAction(CONNECT_DISCONNECT_ARTEFACT_FAILURE),
+  verifyName: createAction(VERIFY_NAME),
+  verifyNameSuccess: createAction(VERIFY_NAME_SUCCESS),
+  verifyNameFailure: createAction(VERIFY_NAME_FAILURE),
+  fetchTags: createAction(FETCH_TAGS),
+  fetchTagsSuccess: createAction(FETCH_TAGS_SUCCESS),
+  fetchTagsFailure: createAction(FETCH_TAGS_FAILURE),
+  fetchCheckItemTemplates: createAction(FETCH_CHECKITEM_TEMPLATES),
+  fetchCheckItemTemplatesSuccess: createAction(FETCH_CHECKITEM_TEMPLATES_SUCCESS),
+  fetchCheckItemTemplatesFailure: createAction(FETCH_CHECKITEM_TEMPLATES_FAILURE)
 }
 
 export default function * watchReviews () {
@@ -58,8 +76,40 @@ export default function * watchReviews () {
       takeLatest(CREATE_REVIEWS, createReviews),
       takeLatest(UPDATE_REVIEWS, updateReview),
       takeLatest(FETCH_REVIEW_ARTEFACTS, getReviewArtefacts),
-      takeLatest(CONNECT_DISCONNECT_ARTEFACT, connectDisconnectArtefact)
+      takeLatest(CONNECT_DISCONNECT_ARTEFACT, connectDisconnectArtefact),
+      takeLatest(VERIFY_NAME, getComponentTypeComponents),
+      takeLatest(FETCH_TAGS, getTags),
+      takeLatest(FETCH_CHECKITEM_TEMPLATES, getCheckItemTemplates)
     ]
+}
+
+export function * getCheckItemTemplates (action) {
+  try {
+    console.log('action', action)
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const checkItemTemplates = yield call(
+      axios.get,
+      api.getCheckItems,
+      {params: action.payload.params}
+    )
+    yield put(actionCreators.fetchCheckItemTemplatesSuccess(checkItemTemplates.data))
+  } catch (error) {
+    yield put(actionCreators.fetchCheckItemTemplatesFailure(error))
+  }
+}
+
+export function * getComponentTypeComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload.id),
+      {params: action.payload.params}
+    )
+    yield put(actionCreators.verifyNameSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.verifyNameFailure(error))
+  }
 }
 
 export function * getReviews (action) {
@@ -154,5 +204,18 @@ export function * connectDisconnectArtefact (action) {
     yield put(actionCreators.connectDisconnectArtefactSuccess(review.data))
   } catch (error) {
     yield put(actionCreators.connectDisconnectArtefactFailure(error))
+  }
+}
+
+export function * getTags (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const tags = yield call(
+      axios.get,
+      api.getTags
+    )
+    yield put(actionCreators.fetchTagsSuccess(tags.data))
+  } catch (error) {
+    yield put(actionCreators.fetchTagsFailure(error))
   }
 }

@@ -5,6 +5,7 @@ import Discussion from '../../containers/discussion/discussionContainer'
 import Select from 'react-select'
 import _ from 'lodash'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
+import CreatableSelect from 'react-select/lib/Creatable'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
@@ -20,12 +21,97 @@ export default function ReviewDraft (props) {
   let relationsOptions = []
   let artefactsOptions = []
   let usersOptions = []
+  let tagOptions = []
   let checkItemList = ''
+  let checkItemModalList = ''
   let contextId = props.match.params.id
   let cancelValidationClass = props.validationClass.cancelValidationClass
+  let handleCheckbox = function (value, index) {
+    console.log('handle group checkbox', value, index)
+    let checkItemsSettings = {...props.checkItemsSettings}
+    let checkItems = checkItemsSettings.checkItems
+    checkItems[index].isChecked = value
+    checkItemsSettings.checkItems = checkItems
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
+  let selectCheckItems = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    console.log(checkItemsSettings.checkItems)
+    let checkItems = props.draftEdit.checkItems || []
+    let selectedCheckItems = checkItemsSettings.checkItems
+    selectedCheckItems.forEach(function (data, index) {
+      if (data.isChecked) {
+        checkItems.push(data)
+      }
+    })
+    let draftEdit = {...props.draftEdit}
+    draftEdit.checkItems = checkItems
+    props.setDraftEditData(draftEdit)
+    closeCheckItemModal()
+  }
+  let handleEditTag = function (newValue: any, actionMeta: any) {
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+      let selectedTags = newValue
+      props.setSelectedTags(selectedTags)
+    }
+    if (actionMeta.action === 'clear') {
+      let selectedTags = null
+      props.setSelectedTags(selectedTags)
+    }
+  }
+  let handleChange = function (newValue: any, actionMeta: any) {
+    // let appPackage = JSON.parse(localStorage.getItem('packages'))
+    // let componentTypes = appPackage.resources[0].component_types
+    // let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
+    //     return obj.key === 'Check Item Template'
+    // }), 'component_type')
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let checkItemPayload = {}
+    // checkItemPayload.id = componentTypeIdForComponents
+    let checkItemsSettings = {...props.checkItemsSettings}
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+      checkItemPayload.params = {}
+      let search = ''
+      let newValueLength = newValue.length
+      if (newValueLength > 0) {
+        newValue.forEach(function (data, index) {
+          search = search + '#' + data.value
+          if (index !== newValueLength - 1) {
+            search = search + ' '
+          }
+        })
+      }
+      console.log('search', search)
+      checkItemPayload.params.search = search
+      props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
+      checkItemsSettings.selectedCheckItems = newValue
+    }
+    if (actionMeta.action === 'clear') {
+      checkItemPayload.params = {}
+      props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
+      checkItemsSettings.selectedCheckItems = null
+    }
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
   let openDiscussionModal = function (event) {
     event.preventDefault()
     props.setDiscussionModalOpenStatus(true)
+  }
+  let closeCheckItemModal = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    let checkItems = checkItemsSettings.checkItems.map(function (data, index) {
+      data.isChecked = false
+      return data
+    })
+    checkItemsSettings.checkItems = checkItems
+    checkItemsSettings.isModalOpen = false
+    props.setCheckitemsSettings(checkItemsSettings)
+  }
+  let openSelectCheckitem = function () {
+    let checkItemsSettings = {...props.checkItemsSettings}
+    checkItemsSettings.isModalOpen = true
+    props.setCheckitemsSettings(checkItemsSettings)
   }
   let openModal = function (data) {
     props.setCheckItemData(data)
@@ -206,7 +292,7 @@ export default function ReviewDraft (props) {
     draftEdit.isCancel = event.target.checked
     props.setDraftEditData(draftEdit)
   }
-
+  // eslint-disable-next-line
   let handleCheckItemSelect = function (newValue: any, actionMeta: any) {
     console.group('Value Changed first select')
     console.log(newValue)
@@ -258,6 +344,7 @@ export default function ReviewDraft (props) {
     let connectArtefactSettings = {...props.connectArtefactSettings, 'isModalOpen': false, 'isConnected': true}
     props.setConnectArtefactSettings(connectArtefactSettings)
   }
+  // eslint-disable-next-line
   let addcheckItem = function () {
     let checkItems = props.draftEdit.checkItems || []
     console.log(props)
@@ -287,9 +374,8 @@ export default function ReviewDraft (props) {
     props.setDraftEditData(draftEdit1)
   }
   let saveReview = function (event) {
-    console.log('save review')
     // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     if (props.selectedCategory === null || props.selectedApprover === null || props.selectedReviewer === null) {
       let validationClass = {...props.validationClass}
       if (props.selectedCategory === null) {
@@ -363,6 +449,30 @@ export default function ReviewDraft (props) {
             obj = {}
             obj.op = 'replace'
             obj.path = '/approver_id'
+            obj.value = null
+            updatePayload.push(obj)
+          }
+        } else if (x === 'tag') {
+          if (props.selectedTags) {
+            let obj = {}
+            obj.op = 'replace'
+            obj.path = '/tag'
+            let value = ''
+            let tagLength = props.selectedTags.length
+            if (tagLength > 0) {
+              props.selectedTags.forEach(function (data, index) {
+                value = value + data.value
+                if (index !== tagLength - 1) {
+                  value = value + ' '
+                }
+              })
+            }
+            obj.value = value
+            updatePayload.push(obj)
+          } else {
+            let obj = {}
+            obj.op = 'replace'
+            obj.path = '/tag'
             obj.value = null
             updatePayload.push(obj)
           }
@@ -547,13 +657,13 @@ export default function ReviewDraft (props) {
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         // set stage to approval
-        let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Approval'
+        let acceptanceId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Acceptance'
         }), 'id')
         let obj = {}
         obj.op = 'replace'
         obj.path = '/stage'
-        obj.value = approvalId
+        obj.value = acceptanceId
         updatePayload.push(obj)
         console.log('update payload', updatePayload)
         let payload = {}
@@ -609,6 +719,25 @@ export default function ReviewDraft (props) {
     } else {
       checkItemList = ''
     }
+  }
+  if (props.checkItemsSettings.checkItems.length > 0) {
+    checkItemModalList = props.checkItemsSettings.checkItems.map(function (data, index) {
+      return (<span className='m-list-search__result-item' key={index}>
+        <span className='m-list-search__result-item-text'><input onChange={(event) => { handleCheckbox(event.target.checked, index) }} type='checkbox' style={{cursor: 'pointer'}} />{data.name}</span>
+      </span>)
+    })
+  } else {
+    checkItemModalList = []
+    checkItemModalList.push(<span>No Data to Display</span>)
+  }
+  if (props.tags && props.tags !== '') {
+    tagOptions = props.tags.resources.map(function (data, index) {
+      let option = {}
+      option.id = index
+      option.value = data
+      option.label = data
+      return option
+    })
   }
   console.log(props)
     return (
@@ -683,6 +812,7 @@ export default function ReviewDraft (props) {
                     <div className='col-8'>
                       <Select
                         className='form-control'
+                        style={{padding: '0 !important'}}
                         placeholder='Select Approver'
                         isClearable
                         // defaultValue={dvalue}
@@ -754,11 +884,11 @@ export default function ReviewDraft (props) {
                   </div>)}
                   <div className='m-demo'>
                     <div className='m-demo__preview'>
-                      {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                      {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-4 col-form-label'>Status</label>
                         <div className='col-8 m--margin-top-10'>{reviewStatus}</div>
                       </div>)}
-                      {(reviewStatus === 'Rejected' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
+                      {(reviewStatus === 'Not Accepted' || reviewStatus === 'Returned') && (<div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-4 col-form-label'>Reason</label>
                         <div className='col-8 m--margin-top-10'>{reviewReason}</div>
                       </div>)}
@@ -769,6 +899,26 @@ export default function ReviewDraft (props) {
               <div className='col-md-6'>
                 <div className='col-12'>
                   <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Tags</label>
+                    <div className='col-8'>
+                      <CreatableSelect
+                        className='input-sm m-input'
+                        placeholder='Enter Tags'
+                        isClearable
+                        isMulti
+                        onChange={handleEditTag}
+                        value={props.selectedTags}
+                        options={tagOptions}
+                      />
+                    </div>
+                  </div>
+                  <div className='form-group m-form__group row'>
+                    <div className='col-6' />
+                    <div className='col-6 float-right' >
+                      <button type='button' onClick={openSelectCheckitem} className='btn btn-outline-info btn-sm pull-right'>Select Check Item</button>
+                    </div>
+                  </div>
+                  {/* <div className='form-group m-form__group row'>
                     <label htmlFor='example-email-input' className='col-4 col-form-label'>Select Check Item</label>
                     <div className='col-6'>
                       <Select
@@ -786,7 +936,7 @@ export default function ReviewDraft (props) {
                     <div className='col-2'>
                       <button type='button' onClick={addcheckItem} className='btn btn-outline-info btn-sm'>Add</button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
@@ -824,6 +974,59 @@ export default function ReviewDraft (props) {
           </div>
         </div>
         <div>
+          <ReactModal isOpen={props.checkItemsSettings.isModalOpen}
+            onRequestClose={closeCheckItemModal}
+            className='modal-dialog'
+            style={{'content': {'top': '20%'}}}
+            >
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Select Check Item</h6>
+                    <button type='button' onClick={closeCheckItemModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <div className='col-lg-12'>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-3 col-form-label'>Tags</label>
+                        <div className='col-9'>
+                          <CreatableSelect
+                            className='input-sm m-input'
+                            placeholder='Enter Tags'
+                            isClearable
+                            isMulti
+                            onChange={handleChange}
+                            value={props.checkItemsSettings.selectedCheckItems}
+                            options={tagOptions}
+                          />
+                        </div>
+                      </div>
+                      <div className='m-section m-section--last'>
+                        <div className='m-section__content'>
+                          <div className='m-demo'>
+                            <div className='m-demo__preview'>
+                              <div className='m-list-search'>
+                                <div className='m-list-search__results'>
+                                  {checkItemModalList}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeCheckItemModal} className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                    <button type='button' onClick={selectCheckItems} className={'btn btn-sm btn-outline-info'}>Select</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
           <ReactModal isOpen={props.connectArtefactSettings.isModalOpen}
             onRequestClose={closeModal}
             className='modal-dialog modal-lg'
@@ -893,6 +1096,7 @@ export default function ReviewDraft (props) {
     reviewData: PropTypes.any,
     match: PropTypes.any,
     connectArtefactSettings: PropTypes.any,
+    // eslint-disable-next-line
     selectedCheckItem: PropTypes.any,
     // eslint-disable-next-line
     updatePayload: PropTypes.any,
@@ -905,7 +1109,9 @@ export default function ReviewDraft (props) {
     selectedCategory: PropTypes.any,
     users: PropTypes.any,
     selectedReviewer: PropTypes.any,
-    selectedApprover: PropTypes.any
-    // setSelectedCategory: PropTypes.func
+    selectedApprover: PropTypes.any,
+    tags: PropTypes.any,
+    checkItemsSettings: PropTypes.any,
+    selectedTags: PropTypes.any
     // setFirstLoad: PropTypes.func
  }

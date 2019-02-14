@@ -406,7 +406,7 @@ export default function Discussion (props) {
               </div>
               {!showReply && (<div className='row'>
                 <div className='col-md-8'>
-                  <MentionsInput value={value} allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleMessageReply1} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                  <MentionsInput value={value} allowSpaceInQuery ref={input => (viewMessageBox = input)} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleMessageReply1} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                     <Mention
                       type='Mention'
                       trigger='@'
@@ -485,14 +485,10 @@ export default function Discussion (props) {
           let userIconlink = cdata.author.icon ? api.iconURL + cdata.author.icon : api.iconURL18
           let messageContent = cdata.name
           let mentionArray = cdata.name.match(/\[(.*?)\]/g)
-          console.log('mentionArray', mentionArray)
           if (mentionArray) {
             mentionArray.forEach(function (data, index) {
               data = data.substring(1, data.length - 1)
-              console.log(data)
               let parts = data.toString().split(':')
-              console.log(parts)
-              console.log(messageContent)
               // eslint-disable-next-line
               // let str = `\\@\\[${data}\\]`
               // let reg = new RegExp(str, 'g')
@@ -523,7 +519,7 @@ export default function Discussion (props) {
                 <br />
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
-                    <MentionsInput allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleChange1} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                    <MentionsInput allowSpaceInQuery ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleChange1} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                       <Mention
                         type='Mention'
                         trigger='@'

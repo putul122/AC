@@ -31,7 +31,12 @@ export function mapStateToProps (state, props) {
     firstLoad: state.reviewDraftReducer.firstLoad,
     users: state.reviewDraftReducer.users,
     selectedApprover: state.reviewDraftReducer.selectedApprover,
-    selectedReviewer: state.reviewDraftReducer.selectedReviewer
+    selectedReviewer: state.reviewDraftReducer.selectedReviewer,
+    tags: state.reviewDraftReducer.tags,
+    checkItemsSettings: state.reviewDraftReducer.checkItemsSettings,
+    processCheckItems: state.reviewDraftReducer.processCheckItems,
+    selectedTags: state.reviewDraftReducer.selectedTags,
+    processTags: state.reviewDraftReducer.processTags
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -52,16 +57,22 @@ export const propsMapping: Callbacks = {
   fetchReviewById: sagaActions.reviewActions.fetchReviewById,
   fetchReviewArtefacts: sagaActions.reviewActions.fetchReviewArtefacts,
   updateReviews: sagaActions.reviewActions.updateReviews,
-  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  // fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
   fetchcomponentTypeRelations: sagaActions.basicActions.fetchcomponentTypeRelations,
   fetchcomponentTypeConstraints: sagaActions.basicActions.fetchcomponentTypeConstraints,
   connectDisconnectArtefact: sagaActions.reviewActions.connectDisconnectArtefact,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
+  fetchCheckItemTemplates: sagaActions.reviewActions.fetchCheckItemTemplates,
   fetchUsers: sagaActions.userActions.fetchUsers,
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setModalSetting: checkItemModalActionCreators.setModalSetting,
   setCheckItemData: checkItemModalActionCreators.setCheckItemData,
-  setModalSettings: componentModalViewActionCreators.setModalSettings
+  setModalSettings: componentModalViewActionCreators.setModalSettings,
+  fetchTags: sagaActions.reviewActions.fetchTags,
+  setCheckitemsSettings: actionCreators.setCheckitemsSettings,
+  setProcessCheckItems: actionCreators.setProcessCheckItems,
+  setSelectedTags: actionCreators.setSelectedTags,
+  setProcessTags: actionCreators.setProcessTags
 }
 
 // If you want to use the function mapping
@@ -96,6 +107,7 @@ export default compose(
       console.log('props', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       this.props.fetchUsers && this.props.fetchUsers()
+      this.props.fetchTags && this.props.fetchTags()
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let payload = {
@@ -108,7 +120,11 @@ export default compose(
       let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Check Item Template'
       }), 'component_type')
-      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeIdForComponents)
+      let checkItemPayload = {}
+      checkItemPayload.id = componentTypeIdForComponents
+      checkItemPayload.params = {}
+      console.log('this.props.fetchCheckItemTemplates', this.props.fetchCheckItemTemplates)
+      this.props.fetchCheckItemTemplates && this.props.fetchCheckItemTemplates(checkItemPayload)
       let componentTypeIdForReview = _.result(_.find(componentTypes, function (obj) {
           return obj.key === 'Review'
       }), 'component_type')
@@ -153,6 +169,7 @@ export default compose(
           draftEdit.approver = nextProps.reviewData.resources[0].approver || ''
           draftEdit.document_reference = nextProps.reviewData.resources[0].document_reference || ''
           draftEdit.document_version = nextProps.reviewData.resources[0].document_version || ''
+          draftEdit.tag = nextProps.reviewData.resources[0].tag || ''
           let checkItems = nextProps.reviewData.resources[0].check_items || []
           if (checkItems.length > 0) {
             checkItems = checkItems.map(function (data, index) {
@@ -182,24 +199,18 @@ export default compose(
           }), 'component_type_property')
           if (nextProps.componentTypeProperties.resources.length > 0) {
             nextProps.componentTypeProperties.resources.forEach(function (data, index) {
-              console.log('data-------------', data)
               let category = _.result(_.find(data.properties, function (obj) {
                 return obj.id === categoryPropertyId
               }), 'value_set')
-              console.log('valueset ----', category)
               if (category) {
-                console.log(category.values, 'inside if')
                 reviewProperties.category = category.values || []
                //  this.props.setCategoryData(valueSet.values)
               }
               let stages = _.result(_.find(data.properties, function (obj) {
                 return obj.id === stagePropertyId
               }), 'value_set')
-              console.log('valueset ----', stages)
               if (stages) {
-                console.log(stages.values, 'inside if stages')
                 reviewProperties.stages = stages.values || []
-               //  this.props.setCategoryData(valueSet.values)
               }
             })
           }
@@ -248,7 +259,7 @@ export default compose(
         let componentTypeId = nextProps.connectArtefactSettings.selectedRelations.target_component_type.id
         this.props.fetchReviewArtefacts && this.props.fetchReviewArtefacts(componentTypeId)
       }
-      if (nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.users && nextProps.users.resources.length > 0 && nextProps.firstLoad) {
+      if (nextProps.reviewCheckitems !== '' && nextProps.reviewData !== '' && nextProps.reviewProperties && nextProps.reviewProperties.category && nextProps.reviewProperties.category.length > 0 && nextProps.users && nextProps.users.resources.length > 0 && nextProps.firstLoad) {
         console.log('inside if -----------------------------------reviewProperties', nextProps, nextProps.reviewData)
         if (nextProps.reviewData && nextProps.reviewData !== null & nextProps.reviewData.error_code === null) {
           let defaultCategoryId = nextProps.reviewData.resources[0].review_category_id
@@ -286,10 +297,46 @@ export default compose(
           }
         }
       }
-      // if (nextProps.selectedCategory && nextProps.selectedCategory !== null) {
-      //   console.log('00000000000000000000', nextProps)
-      //   alert(JSON.parse(this.props.selectedCategory))
-      // }
+      if (nextProps.reviewCheckitems && nextProps.reviewCheckitems !== '' && nextProps.processCheckItems) {
+        if (nextProps.reviewCheckitems.error_code === null) {
+          // eslint-disable-next-line
+          mApp && mApp.unblockPage()
+          let checkItemsSettings = {...nextProps.checkItemsSettings}
+          checkItemsSettings.checkItems = nextProps.reviewCheckitems.resources.map(function (data, index) {
+            data.isChecked = false
+            data.type = 'NEW'
+            return data
+          })
+          nextProps.setCheckitemsSettings(checkItemsSettings)
+          nextProps.setProcessCheckItems(false)
+        }
+      }
+      if (nextProps.tags && nextProps.tags !== '' && nextProps.reviewData && nextProps.reviewData !== '' && nextProps.processTags) {
+        console.log('call', nextProps)
+        if (nextProps.tags.error_code === null) {
+          let tag = nextProps.reviewData.resources[0].tag || ''
+          let selectedTags = [] // console.log('tag', tag, nextProps.tags)
+          if (tag) {
+            let parts = tag.toString().split(' ')
+            if (parts.length > 0) {
+              parts.forEach(function (data, index) {
+                console.log('data -----0', data)
+                nextProps.tags.resources.forEach(function (element, idx) {
+                  if (element === data) {
+                    let option = {}
+                    option.id = idx
+                    option.value = element
+                    option.label = element
+                    selectedTags.push(option)
+                  }
+                })
+              })
+            }
+          }
+          nextProps.setSelectedTags(selectedTags)
+          nextProps.setProcessTags(false)
+        }
+      }
     }
   })
 )(ReviewDraft)

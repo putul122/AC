@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions'
 import {
-    FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
+    // FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
     FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS,
     FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS
 } from '../../sagas/basic/basicSaga'
@@ -9,7 +9,9 @@ import {
   FETCH_REVIEW_BY_ID_SUCCESS,
   FETCH_REVIEW_ARTEFACTS_SUCCESS,
   UPDATE_REVIEWS_SUCCESS,
-  CONNECT_DISCONNECT_ARTEFACT_SUCCESS
+  CONNECT_DISCONNECT_ARTEFACT_SUCCESS,
+  FETCH_TAGS_SUCCESS,
+  FETCH_CHECKITEM_TEMPLATES_SUCCESS
 } from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const SET_CONNECT_ARTEFACT_SETTINGS = 'ReviewDraftReducer/SET_CONNECT_ARTEFACT_SETTINGS'
@@ -24,9 +26,14 @@ const SET_SELECTED_CATEGORY = 'ReviewDraftReducer/SET_SELECTED_CATEGORY'
 const SET_SELECTED_APPROVER = 'ReviewDraftReducer/SET_SELECTED_APPROVER'
 const SET_SELECTED_REVIEWER = 'ReviewDraftReducer/SET_SELECTED_REVIEWER'
 const SET_FIRST_LOAD = 'ReviewDraftReducer/SET_FIRST_LOAD'
+const SET_CHECKITEMS_SETTINGS = 'ReviewDraftReducer/SET_CHECKITEMS_SETTINGS'
+const SET_PROCESS_CHECKITEMS = 'ReviewDraftReducer/SET_PROCESS_CHECKITEMS'
+const SET_SELECTED_TAGS = 'ReviewDraftReducer/SET_SELECTED_TAGS'
+const SET_PROCESS_TAGS = 'ReviewDraftReducer/SET_PROCESS_TAGS'
 
 export const actions = {
-  FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
+  // FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
+  FETCH_CHECKITEM_TEMPLATES_SUCCESS,
   FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS,
   SET_CONNECT_ARTEFACT_SETTINGS,
   RESET_RESPONSE,
@@ -43,7 +50,12 @@ export const actions = {
   SET_VALIDATION_CLASS,
   SET_SELECTED_CATEGORY,
   SET_FIRST_LOAD,
-  FETCH_USERS_SUCCESS
+  FETCH_USERS_SUCCESS,
+  FETCH_TAGS_SUCCESS,
+  SET_CHECKITEMS_SETTINGS,
+  SET_PROCESS_CHECKITEMS,
+  SET_SELECTED_TAGS,
+  SET_PROCESS_TAGS
 }
 
 export const actionCreators = {
@@ -58,7 +70,11 @@ export const actionCreators = {
   setSelectedCategory: createAction(SET_SELECTED_CATEGORY),
   setSelectedApprover: createAction(SET_SELECTED_APPROVER),
   setSelectedReviewer: createAction(SET_SELECTED_REVIEWER),
-  setFirstLoad: createAction(SET_FIRST_LOAD)
+  setFirstLoad: createAction(SET_FIRST_LOAD),
+  setCheckitemsSettings: createAction(SET_CHECKITEMS_SETTINGS),
+  setProcessCheckItems: createAction(SET_PROCESS_CHECKITEMS),
+  setSelectedTags: createAction(SET_SELECTED_TAGS),
+  setProcessTags: createAction(SET_PROCESS_TAGS)
 }
 
 export const initialState = {
@@ -77,6 +93,7 @@ export const initialState = {
   selectedCategory: null,
   selectedApprover: null,
   selectedReviewer: null,
+  selectedTags: null,
   updatePayload: [],
   reviewProperties: {
     category: [],
@@ -92,7 +109,8 @@ export const initialState = {
     cancelReason: '',
     document_reference: '',
     document_version: '',
-    checkItems: []
+    checkItems: [],
+    tag: ''
   },
   validationClass: {
     cancelValidationClass: 'form-group m-form__group row',
@@ -105,14 +123,24 @@ export const initialState = {
     isModalOpen: false,
     selectedRelations: null,
     selectedArtefact: null
-  }
+  },
+  checkItemsSettings: {
+    isModalOpen: false,
+    tags: '',
+    checkItems: [],
+    selectedCheckItems: []
+  },
+  processCheckItems: false,
+  processTags: false,
+  tags: ''
 }
 
 export default handleActions(
   {
-    [FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS]: (state, action) => ({
+    [FETCH_CHECKITEM_TEMPLATES_SUCCESS]: (state, action) => ({
       ...state,
-      reviewCheckitems: action.payload
+      reviewCheckitems: action.payload,
+      processCheckItems: true
     }),
     [FETCH_COMPONENT_TYPE_RELATIONS_SUCCESS]: (state, action) => ({
         ...state,
@@ -191,6 +219,27 @@ export default handleActions(
     [SET_SELECTED_REVIEWER]: (state, action) => ({
       ...state,
       selectedReviewer: action.payload
+    }),
+    [FETCH_TAGS_SUCCESS]: (state, action) => ({
+      ...state,
+      tags: action.payload,
+      processTags: true
+    }),
+    [SET_CHECKITEMS_SETTINGS]: (state, action) => ({
+      ...state,
+      checkItemsSettings: action.payload
+    }),
+    [SET_PROCESS_CHECKITEMS]: (state, action) => ({
+      ...state,
+      processCheckItems: action.payload
+    }),
+    [SET_SELECTED_TAGS]: (state, action) => ({
+      ...state,
+      selectedTags: action.payload
+    }),
+    [SET_PROCESS_TAGS]: (state, action) => ({
+      ...state,
+      processTags: action.payload
     })
   },
   initialState

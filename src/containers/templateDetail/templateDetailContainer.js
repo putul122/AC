@@ -21,13 +21,18 @@ export function mapStateToProps (state, props) {
     updateTemplateResponse: state.templateDetailReducer.updateTemplateResponse,
     deleteTemplateResponse: state.templateDetailReducer.deleteTemplateResponse,
     payload: state.templateDetailReducer.payload,
-    validationClass: state.templateDetailReducer.validationClass
+    validationClass: state.templateDetailReducer.validationClass,
+    checkItemsSettings: state.templateDetailReducer.checkItemsSettings,
+    processCheckItems: state.templateDetailReducer.processCheckItems,
+    tags: state.templateDetailReducer.tags,
+    existingTemplateNames: state.templateDetailReducer.existingTemplateNames,
+    checkValidity: state.templateDetailReducer.checkValidity
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
-  fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents,
+  fetchCheckItems: sagaActions.checkitemActions.fetchCheckItems,
   fetchComponentTypeProperties: sagaActions.basicActions.fetchComponentTypeProperties,
   fetchTemplateById: sagaActions.templateActions.fetchTemplateById,
   deleteTemplate: sagaActions.templateActions.deleteTemplate,
@@ -40,7 +45,12 @@ export const propsMapping: Callbacks = {
   setSelectedCategory: actionCreators.setSelectedCategory,
   setSelectedCheckItem: actionCreators.setSelectedCheckItem,
   setPayload: actionCreators.setPayload,
-  setValidationClass: actionCreators.setValidationClass
+  setValidationClass: actionCreators.setValidationClass,
+  setCheckValidity: actionCreators.setCheckValidity,
+  setCheckitemsSettings: actionCreators.setCheckitemsSettings,
+  setProcessCheckItems: actionCreators.setProcessCheckItems,
+  verifyName: sagaActions.templateActions.verifyName,
+  fetchTags: sagaActions.reviewActions.fetchTags
 }
 
 // If you want to use the function mapping
@@ -77,14 +87,14 @@ export default compose(
       // // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
-      let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-          return obj.key === 'Check Item Template'
-      }), 'component_type')
+      // let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+      //     return obj.key === 'Check Item Template'
+      // }), 'component_type')
       let componentTypeIdForCategory = _.result(_.find(componentTypes, function (obj) {
         return obj.key === 'Review Template'
       }), 'component_type')
-      console.log('component_type iddddd', componentTypeId)
-      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(componentTypeId)
+      this.props.fetchCheckItems && this.props.fetchCheckItems({})
+      this.props.fetchTags && this.props.fetchTags()
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(componentTypeIdForCategory)
       let payload = {}
       payload.review_template_id = this.props.match.params.id
@@ -137,11 +147,15 @@ export default compose(
       }
 
       if (nextProps.templateData && nextProps.templateData !== '' && nextProps.templateData.error_code === null && nextProps.templateData !== this.props.templateData) {
-        let updateTemplateValue = this.props.updateTemplateValue
-        updateTemplateValue.name = nextProps.templateData.resources[0].name || ''
-        updateTemplateValue.description = nextProps.templateData.resources[0].description || ''
-        updateTemplateValue.originalCheckItems = nextProps.templateData.resources[0].check_items || []
-        this.props.setUpdateTemplateValue(updateTemplateValue)
+        let editTemplateSettings = {...nextProps.editTemplateSettings, 'isEditFlag': false}
+        editTemplateSettings.name = nextProps.templateData.resources[0].name || ''
+        editTemplateSettings.description = nextProps.templateData.resources[0].description || ''
+        nextProps.setEditTemplateSettings(editTemplateSettings)
+        // let updateTemplateValue = this.props.updateTemplateValue
+        // updateTemplateValue.name = nextProps.templateData.resources[0].name || ''
+        // updateTemplateValue.description = nextProps.templateData.resources[0].description || ''
+        // updateTemplateValue.originalCheckItems = nextProps.templateData.resources[0].check_items || []
+        nextProps.setUpdateTemplateValue(editTemplateSettings)
         if (nextProps.templateData.resources[0].check_items.length > 0) {
           let checkItems = nextProps.templateData.resources[0].check_items.map(function (data, index) {
             data.type = 'OLD'
@@ -182,6 +196,49 @@ export default compose(
           toastr.error(nextProps.updateTemplateResponse.error_message, nextProps.updateTemplateResponse.error_code)
         }
         this.props.resetResponse()
+      }
+      if (nextProps.existingTemplateNames && nextProps.existingTemplateNames !== '' && nextProps.checkValidity) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let editTemplateSettings = {...this.props.editTemplateSettings}
+        if (nextProps.existingTemplateNames.error_code === null) {
+          let existingTemplateNames = nextProps.existingTemplateNames.resources
+          let enterTemplateName = nextProps.editTemplateSettings.name
+          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return ((obj.name.toLowerCase() === enterTemplateName) && (obj.id !== parseInt(nextProps.match.params.id))) })
+          console.log('existingTemplateNames', existingTemplateNames)
+          console.log('enterTemplateName', enterTemplateName)
+          console.log('found', found)
+          editTemplateSettings.showValidation = true
+          if (found) {
+            editTemplateSettings.message = enterTemplateName + ' name already exist'
+            editTemplateSettings.color = {color: 'red'}
+            editTemplateSettings.toUpdate = false
+          } else {
+            editTemplateSettings.message = 'Valid Name'
+            editTemplateSettings.color = {color: 'green'}
+            editTemplateSettings.toUpdate = true
+          }
+          nextProps.setEditTemplateSettings(editTemplateSettings)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.existingTemplateNames.error_message, nextProps.existingTemplateNames.error_code)
+        }
+        nextProps.setCheckValidity(false)
+      }
+      if (nextProps.templateCheckItems && nextProps.templateCheckItems !== '' && nextProps.processCheckItems) {
+        console.log()
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.templateCheckItems.error_code === null) {
+          let checkItemsSettings = {...nextProps.checkItemsSettings}
+          checkItemsSettings.checkItems = nextProps.templateCheckItems.resources.map(function (data, index) {
+            data.isChecked = false
+            data.type = 'NEW'
+            return data
+          })
+          nextProps.setCheckitemsSettings(checkItemsSettings)
+          nextProps.setProcessCheckItems(false)
+        }
       }
     }
   })

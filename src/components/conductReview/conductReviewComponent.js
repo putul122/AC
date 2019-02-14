@@ -424,14 +424,14 @@ export default function ConductReview (props) {
         props.updateReviews(payload)
       }
     } else if (props.checkboxSelected.cancel) {
-      let cancelledId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Cancelled'
+      let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+        return obj.name === 'Completed'
       }), 'id')
-      // set Cancel stage
+      // set Completed stage
       let obj = {}
       obj.op = 'replace'
       obj.path = '/stage'
-      obj.value = cancelledId
+      obj.value = completedId
       updatePayload.push(obj)
       // set Cancel status
       obj = {}
@@ -454,14 +454,14 @@ export default function ConductReview (props) {
         props.updateReviews(payload)
       }
     } else {
-      let acceptanceId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Acceptance'
+      let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+        return obj.name === 'Approval'
       }), 'id')
       // set Approved stage
       let obj = {}
       obj.op = 'replace'
       obj.path = '/stage'
-      obj.value = acceptanceId
+      obj.value = approvalId
       updatePayload.push(obj)
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
