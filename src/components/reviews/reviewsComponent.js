@@ -141,7 +141,7 @@ let handleReviewName = debounce((e) => {
 // }
 let addReview = function () {
   let reviewName = props.addReviewSettings.reviewName
-  if (reviewName.trim() !== '' && !props.addReviewSettings.showValidation) {
+  if (reviewName.trim() !== '' && props.addReviewSettings.toAdd) {
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let name = props.addReviewSettings.reviewName

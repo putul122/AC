@@ -183,9 +183,11 @@ export default compose(
           if (found) {
             addReviewSettings.message = enterReviewName + ' name already exist'
             addReviewSettings.color = {color: 'red'}
+            addReviewSettings.toAdd = false
           } else {
             addReviewSettings.message = 'Valid Name'
             addReviewSettings.color = {color: 'green'}
+            addReviewSettings.toAdd = true
           }
           nextProps.setAddReviewSettings(addReviewSettings)
         } else {

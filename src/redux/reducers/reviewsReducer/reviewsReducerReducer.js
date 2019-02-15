@@ -59,6 +59,7 @@ export const initialState = {
     showValidation: false,
     message: '',
     color: {},
+    toAdd: false,
     nameValidationClass: 'form-group m-form__group row'
   },
   filterSettings: {
