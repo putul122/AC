@@ -37,7 +37,10 @@ export function mapStateToProps (state, props) {
     processCheckItems: state.reviewDraftReducer.processCheckItems,
     selectedTags: state.reviewDraftReducer.selectedTags,
     processTags: state.reviewDraftReducer.processTags,
-    activeTab: state.reviewDraftReducer.activeTab
+    activeTab: state.reviewDraftReducer.activeTab,
+    existingReviewNames: state.reviewDraftReducer.existingReviewNames,
+    checkValidity: state.reviewDraftReducer.checkValidity,
+    updateNameSettings: state.reviewDraftReducer.updateNameSettings
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -74,7 +77,10 @@ export const propsMapping: Callbacks = {
   setProcessCheckItems: actionCreators.setProcessCheckItems,
   setSelectedTags: actionCreators.setSelectedTags,
   setProcessTags: actionCreators.setProcessTags,
-  setActiveTab: actionCreators.setActiveTab
+  setActiveTab: actionCreators.setActiveTab,
+  setCheckValidity: actionCreators.setCheckValidity,
+  setUpdateNameSettings: actionCreators.setUpdateNameSettings,
+  verifyName: sagaActions.reviewActions.verifyName
 }
 
 // If you want to use the function mapping
@@ -338,6 +344,34 @@ export default compose(
           nextProps.setSelectedTags(selectedTags)
           nextProps.setProcessTags(false)
         }
+      }
+      if (nextProps.existingReviewNames && nextProps.existingReviewNames !== '' && nextProps.checkValidity) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let updateNameSettings = {...this.props.updateNameSettings}
+        if (nextProps.existingReviewNames.error_code === null) {
+          let existingReviewNames = nextProps.existingReviewNames.resources
+          let enterReviewName = nextProps.draftEdit.name
+          let found = _.find(nextProps.existingReviewNames.resources, function (obj) { return ((obj.name.toLowerCase() === enterReviewName) && (obj.id !== parseInt(nextProps.match.params.id))) })
+          console.log('existingReviewNames', existingReviewNames)
+          console.log('enterReviewName', enterReviewName)
+          console.log('found', found)
+          updateNameSettings.showValidation = true
+          if (found) {
+            updateNameSettings.message = enterReviewName + ' name already exist'
+            updateNameSettings.color = {color: 'red'}
+            updateNameSettings.toUpdate = false
+          } else {
+            updateNameSettings.message = 'Valid Name'
+            updateNameSettings.color = {color: 'green'}
+            updateNameSettings.toUpdate = true
+          }
+          nextProps.setUpdateNameSettings(updateNameSettings)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.existingReviewNames.error_message, nextProps.existingReviewNames.error_code)
+        }
+        nextProps.setCheckValidity(false)
       }
     }
   })

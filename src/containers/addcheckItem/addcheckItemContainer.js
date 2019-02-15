@@ -29,8 +29,13 @@ export function mapStateToProps (state, props) {
     modalIsOpen: state.basicReducer.modalIsOpen,
     createCheckItemResponse: state.addcheckItemReducer.createCheckItemResponse,
     addStandard: state.addcheckItemReducer.addStandard,
-    selectedType: state.addcheckItemReducer.selectedType
-   }
+    selectedType: state.addcheckItemReducer.selectedType,
+    tags: state.addcheckItemReducer.tags,
+    existingCheckItemNames: state.addcheckItemReducer.existingCheckItemNames,
+    checkValidity: state.addcheckItemReducer.checkValidity,
+    addSettings: state.addcheckItemReducer.addSettings,
+    selectedTags: state.addcheckItemReducer.selectedTags
+  }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
@@ -54,9 +59,12 @@ export const propsMapping: Callbacks = {
   setAddCheckitemValue: actionCreators.setAddCheckitemValue,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setNewStandardValue: actionCreators.setNewStandardValue,
-  setSelectedType: actionCreators.setSelectedType
-
-  // fetchComponentTypeComponents: sagaActions.basicActions.fetchComponentTypeComponents
+  setSelectedType: actionCreators.setSelectedType,
+  verifyName: sagaActions.checkitemActions.verifyName,
+  fetchTags: sagaActions.reviewActions.fetchTags,
+  setAddSettings: actionCreators.setAddSettings,
+  setCheckValidity: actionCreators.setCheckValidity,
+  setSelectedTags: actionCreators.setSelectedTags
 }
 
 // If you want to use the function mapping
@@ -107,6 +115,7 @@ export default compose(
       //   return obj.key === 'Check Item Value Template'
       // }), 'component_type')
       // this.props.fetchComponentTypeComponentsforcheckitemvalues && this.props.fetchComponentTypeComponentsforcheckitemvalues(checkItemValueId)
+      this.props.fetchTags && this.props.fetchTags()
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
     componentWillReceiveProps: function (nextProps) {
@@ -139,7 +148,6 @@ export default compose(
           toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
         }
       }
-
       if (nextProps.createCheckItemResponse && nextProps.createCheckItemResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
@@ -153,7 +161,34 @@ export default compose(
         // this.props.resetResponse()
         this.props.history.push('/checkitems')
       }
+      if (nextProps.existingCheckItemNames && nextProps.existingCheckItemNames !== '' && nextProps.checkValidity) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let addSettings = {...this.props.addSettings}
+        if (nextProps.existingCheckItemNames.error_code === null) {
+          let existingCheckItemNames = nextProps.existingCheckItemNames.resources
+          let enterCheckItemName = nextProps.addCheckitemValue.name
+          let found = _.find(nextProps.existingCheckItemNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterCheckItemName.trim() })
+          console.log('existingCheckItemNames', existingCheckItemNames)
+          console.log('enterCheckItemName', enterCheckItemName)
+          console.log('found', found)
+          addSettings.showValidation = true
+          if (found) {
+            addSettings.message = enterCheckItemName + ' name already exist'
+            addSettings.color = {color: 'red'}
+            addSettings.toAdd = false
+          } else {
+            addSettings.message = 'Valid Name'
+            addSettings.color = {color: 'green'}
+            addSettings.toAdd = true
+          }
+          nextProps.setAddSettings(addSettings)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.existingCheckItemNames.error_message, nextProps.existingCheckItemNames.error_code)
+        }
+        nextProps.setCheckValidity(false)
+      }
     }
-
   })
 )(AddCheckItem)

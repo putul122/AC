@@ -1,12 +1,14 @@
 import { createAction, handleActions } from 'redux-actions'
 import {
-    CREATE_CHECKITEM_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
-    FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-    FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
-    ADD_STANDARD_SUCCESS
+  CREATE_CHECKITEM_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
+  FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+  ADD_STANDARD_SUCCESS,
+  VERIFY_NAME_SUCCESS
 } from '../../sagas/checkItem/checkItemSaga'
+import { FETCH_TAGS_SUCCESS } from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const RESET_RESPONSE = 'addcheckItemReducer/RESET_RESPONSE'
 const SET_REVIEW_CATEGORY_DATA = 'addcheckItemReducer/SET_REVIEW_CATEGORY_DATA'
@@ -21,6 +23,9 @@ const SET_CHECKITEMS_DATA = 'addcheckItemReducer/SET_CHECKITEMS_DATA'
 const SET_ADD_CHECKITEM_VALUE = 'addcheckItemReducer/SET_ADD_CHECKITEM_VALUE'
 const SET_NEW_STANDARD_VALUE = 'addcheckItemReducer/SET_NEW_STANDARD_VALUE'
 const SET_SELECTED_TYPE = 'addcheckItemReducer/SET_SELECTED_TYPE'
+const SET_ADD_SETTINGS = 'addcheckItemReducer/SET_ADD_SETTINGS'
+const SET_CHECK_VALIDITY = 'addcheckItemReducer/SET_CHECK_VALIDITY'
+const SET_SELECTED_TAGS = 'addcheckItemReducer/SET_SELECTED_TAGS'
 
 export const actions = {
   CREATE_CHECKITEM_SUCCESS,
@@ -41,7 +46,11 @@ export const actions = {
   SET_ADD_CHECKITEM_VALUE,
   ADD_STANDARD_SUCCESS,
   SET_NEW_STANDARD_VALUE,
-  SET_SELECTED_TYPE
+  SET_SELECTED_TYPE,
+  VERIFY_NAME_SUCCESS,
+  SET_ADD_SETTINGS,
+  SET_CHECK_VALIDITY,
+  SET_SELECTED_TAGS
 }
 
 export const actionCreators = {
@@ -57,7 +66,10 @@ export const actionCreators = {
   setCheckitemsData: createAction(SET_CHECKITEMS_DATA),
   setAddCheckitemValue: createAction(SET_ADD_CHECKITEM_VALUE),
   setNewStandardValue: createAction(SET_NEW_STANDARD_VALUE),
-  setSelectedType: createAction(SET_SELECTED_TYPE)
+  setSelectedType: createAction(SET_SELECTED_TYPE),
+  setAddSettings: createAction(SET_ADD_SETTINGS),
+  setCheckValidity: createAction(SET_CHECK_VALIDITY),
+  setSelectedTags: createAction(SET_SELECTED_TAGS)
 }
 
 export const initialState = {
@@ -85,8 +97,20 @@ export const initialState = {
     'name': '',
     'description': '',
     'reference': ''
-  }
-
+  },
+  addSettings: {
+    name: '',
+    description: '',
+    validationClass: 'form-group row',
+    showValidation: false,
+    message: '',
+    color: {},
+    toAdd: false
+  },
+  tags: '',
+  existingCheckItemNames: '',
+  checkValidity: false,
+  selectedTags: null
 }
 
 export default handleActions(
@@ -166,6 +190,27 @@ export default handleActions(
     [SET_SELECTED_TYPE]: (state, action) => ({
       ...state,
       selectedType: action.payload
+    }),
+    [SET_ADD_SETTINGS]: (state, action) => ({
+      ...state,
+      addSettings: action.payload
+    }),
+    [VERIFY_NAME_SUCCESS]: (state, action) => ({
+      ...state,
+      existingCheckItemNames: action.payload,
+      checkValidity: true
+    }),
+    [SET_CHECK_VALIDITY]: (state, action) => ({
+      ...state,
+      checkValidity: action.payload
+    }),
+    [FETCH_TAGS_SUCCESS]: (state, action) => ({
+      ...state,
+      tags: action.payload
+    }),
+    [SET_SELECTED_TAGS]: (state, action) => ({
+      ...state,
+      selectedTags: action.payload
     })
   },
   initialState

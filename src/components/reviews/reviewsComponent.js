@@ -46,13 +46,29 @@ let openDiscussionModal = function (event) {
   event.preventDefault()
   props.setDiscussionModalOpenStatus(true)
 }
+let clearAllFilter = function () {
+  let filterSettings = {...props.filterSettings}
+  filterSettings.myTask = false
+  filterSettings.Draft = false
+  filterSettings.Approval = false
+  filterSettings.Acceptance = false
+  filterSettings.InProgress = false
+  filterSettings.Completed = false
+  filterSettings.Cancelled = false
+  filterSettings.selectedTags = null
+  filterSettings.selectedCategory = null
+  filterSettings.search = ''
+  props.setFilterSettings(filterSettings)
+  if (searchTextBox) {
+    searchTextBox.value = ''
+  }
+}
 let handleTag = function (newValue: any, actionMeta: any) {
   // console.group('Value Changed first select')
   // console.log(newValue)
   // console.log(`action: ${actionMeta.action}`)
   // console.groupEnd()
   if (searchTextBox) {
-    console.log(searchTextBox)
     searchTextBox.value = ''
   }
   let filterSettings = {...props.filterSettings}
@@ -696,8 +712,8 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinDraft}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Draft</h3>
-                      <input checked={props.filterSettings.draft} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Draft') }} type='checkbox' />&nbsp;Filter
+                      <h4>Reviews in Draft</h4>
+                      <div style={{width: '50%'}}><input checked={props.filterSettings.Draft} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Draft') }} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -740,8 +756,8 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews in Acceptance</h3>
-                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Acceptance') }} checked={props.filterSettings.Acceptance} type='checkbox' />&nbsp;Filter
+                      <h4>Reviews in Acceptance</h4>
+                      <div style={{width: '50%'}}><input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Acceptance') }} checked={props.filterSettings.Acceptance} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -784,13 +800,10 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinProgress}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '10px'}}>Reviews in Progress</h3>
-                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'In Progress') }} checked={props.filterSettings.InProgress} type='checkbox' />&nbsp;Filter
+                      <h4 style={{'marginRight': '10px'}}>Reviews in Progress</h4>
+                      <div style={{width: '50%'}}><input onChange={(event) => { handleStageCheckbox(event.target.checked, 'In Progress') }} checked={props.filterSettings.InProgress} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinProgress}</h5> */}
                     </span>
-                    {/* <span className='m-widget17__desc'>
-                      <h1>{reviewsinProgress}</h1>
-                    </span> */}
                   </div>
                 </div>
               </div>
@@ -828,8 +841,8 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3 style={{'marginRight': '10px'}}>Reviews in Approval</h3>
-                      <input checked={props.filterSettings.Approval} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Approval') }} type='checkbox' />&nbsp;Filter
+                      <h4>Reviews in Approval</h4>
+                      <div style={{width: '50%'}}><input checked={props.filterSettings.Approval} onChange={(event) => { handleStageCheckbox(event.target.checked, 'Approval') }} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsinDraft}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -872,8 +885,8 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCompleted}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews Completed</h3>
-                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Completed') }} checked={props.filterSettings.Completed} type='checkbox' />&nbsp;Filter
+                      <h4>Reviews Completed</h4>
+                      <div style={{width: '50%'}}><input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Completed') }} checked={props.filterSettings.Completed} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCompleted}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -916,8 +929,8 @@ return (
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCancelled}</h4>
                     </span>
                     <span className='m-widget17__subtitle'>
-                      <h3>Reviews Cancelled</h3>
-                      <input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Cancelled') }} checked={props.filterSettings.Cancelled} type='checkbox' />&nbsp;Filter
+                      <h4>Reviews Cancelled</h4>
+                      <div style={{width: '50%'}}><input onChange={(event) => { handleStageCheckbox(event.target.checked, 'Cancelled') }} checked={props.filterSettings.Cancelled} type='checkbox' />&nbsp;Filter</div>
                       {/* <h5 style={{'float': 'right', 'paddingRight': '25px', 'marginTop': '-35px'}}>{reviewsCancelled}</h5> */}
                     </span>
                     {/* <span className='m-widget17__desc'>
@@ -931,6 +944,11 @@ return (
         </div>
       </div>
     </div>
+    {/* <div className='row'>
+      <span className='float-right'>
+        <button type='button' className='m-btn btn btn-secondary pull-right'>Clear Field</button>
+      </span>
+    </div> */}
     <div id='softwareList'>
       {/* The table structure begins */}
       <div className='row' style={{'marginTop': '20px'}}>
@@ -942,6 +960,85 @@ return (
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row clearfix' style={{'marginBottom': '20px'}}>
+                        {/* <div className='col-md-12 row'>
+                          <div className='col-md-6 row'>
+                            <div className='col-md-3'>
+                              <div className='dataTables_length' style={{'display': 'flex'}}>
+                                <h5 style={{'margin': '8px'}}>Show</h5>
+                                <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                                  <option value={10}>10</option>
+                                  <option value={25}>25</option>
+                                  <option value={50}>50</option>
+                                  <option value={100}>100</option>
+                                </select>
+                                <h5 style={{'margin': '8px'}}>Entries</h5>
+                              </div>
+                            </div>
+                            <div className='col-md-2'>
+                              <div className='dataTables_length' style={{'display': 'flex', width: '100%'}}>
+                                <h5 style={{'margin': '8px'}}><input checked={props.filterSettings.myTask} type='checkbox' onChange={handleCheckbox} />&nbsp;My Task</h5>
+                              </div>
+                            </div>
+                            <div className='col-md-7'>
+                              <div className='dataTables_length' style={{'display': 'flex'}}>
+                                <h5 style={{'margin': '10px'}}>Tag</h5>
+                                <div className='m-input-icon'>
+                                  <CreatableSelect
+                                    className='input-sm m-input'
+                                    placeholder='Enter Tags'
+                                    isClearable
+                                    isMulti
+                                    onChange={handleTag}
+                                    value={props.filterSettings.selectedTags}
+                                    options={tagOptions}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className='col-md-6 row'>
+                            <div className='col-md-6'>
+                              <div className='dataTables_length' style={{'display': 'flex'}}>
+                                <div className='col-md-6'><h5 style={{'margin': '10px'}}>Review Category</h5></div>
+                                <div className='col-md-6'>
+                                  <div className='m-input-icon'>
+                                    <Select
+                                      className='input-sm m-input'
+                                      placeholder='Select Category'
+                                      isClearable
+                                      defaultValue={props.filterSettings.selectedCategory}
+                                      // value={props.filterSettings.selectedCategory}
+                                      onChange={handleCategorySelect}
+                                      isSearchable={false}
+                                      name={'categorySelected'}
+                                      options={categoryOptions}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className='col-md-5'>
+                              <div className='dataTables_length' style={{'display': 'flex'}}>
+                                <div style={{'display': 'flex'}}>
+                                  <h5 style={{'margin': '10px'}}>Search</h5>
+                                  <div className='m-input-icon m-input-icon--left'>
+                                    <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
+                                    <span className='m-input-icon__icon m-input-icon__icon--left'>
+                                      <span>
+                                        <i className='la la-search' />
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className='col-md-1'>
+                              <div className='dataTables_length ' style={{'display': 'flex'}}>
+                                <button type='button' className='m-btn btn btn-secondary'>Clear text</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div> */}
                         <div className='col-sm-6 col-md-2'>
                           <div className='dataTables_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
@@ -952,12 +1049,11 @@ return (
                               <option value={100}>100</option>
                             </select>
                             <h5 style={{'margin': '8px'}}>Entries</h5>
-                            {/* </label> */}
                           </div>
                         </div>
                         <div className='col-sm-6 col-md-1'>
                           <div className='dataTables_length' style={{'display': 'flex', width: '100%'}}>
-                            <h5><input checked={props.filterSettings.myTask} type='checkbox' onChange={handleCheckbox} />&nbsp;My Task</h5>
+                            <h5 style={{'margin': '8px'}}><input checked={props.filterSettings.myTask} type='checkbox' onChange={handleCheckbox} />&nbsp;My Task</h5>
                           </div>
                         </div>
                         <div className='col-sm-12 col-md-3'>
@@ -978,14 +1074,14 @@ return (
                         </div>
                         <div className='col-sm-12 col-md-3'>
                           <div className='dataTables_length' style={{'display': 'flex'}}>
-                            <h5 className=''>Review Category</h5>
+                            <h5 style={{'margin': '10px'}}>Review Category</h5>
                             <div className='m-input-icon'>
                               <Select
                                 className='input-sm m-input'
                                 placeholder='Select Category'
                                 isClearable
-                                defaultValue={props.filterSettings.selectedCategory}
-                                // value={props.filterSettings.selectedCategory}
+                                // defaultValue={props.filterSettings.selectedCategory}
+                                value={props.filterSettings.selectedCategory}
                                 onChange={handleCategorySelect}
                                 isSearchable={false}
                                 name={'categorySelected'}
@@ -994,8 +1090,8 @@ return (
                             </div>
                           </div>
                         </div>
-                        <div className='col-sm-12 col-md-3'>
-                          <div className='dataTables_length pull-right' style={{'display': 'flex'}}>
+                        <div className='col-sm-8 col-md-2'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
                             <div style={{'display': 'flex'}}>
                               <h5 style={{'margin': '10px'}}>Search</h5>
                               <div className='m-input-icon m-input-icon--left'>
@@ -1007,6 +1103,11 @@ return (
                                 </span>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                        <div className='col-sm-1 col-md-1'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
+                            <button type='button' onClick={clearAllFilter} className='sm-btn btn btn-secondary'>Clear All</button>
                           </div>
                         </div>
                       </div>

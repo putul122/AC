@@ -22,7 +22,8 @@ export function mapStateToProps (state, props) {
     validationClass: state.conductReviewReducer.validationClass,
     complaint: state.conductReviewReducer.complaint,
     checkItems: state.conductReviewReducer.checkItems,
-    checkItemFlag: state.conductReviewReducer.checkItemFlag
+    checkItemFlag: state.conductReviewReducer.checkItemFlag,
+    activeTab: state.reviewDraftReducer.activeTab
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -45,7 +46,8 @@ export const propsMapping: Callbacks = {
   setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   setModalSetting: checkItemModalActionCreators.setModalSetting,
   setCheckItemData: checkItemModalActionCreators.setCheckItemData,
-  setModalSettings: componentModalViewActionCreators.setModalSettings
+  setModalSettings: componentModalViewActionCreators.setModalSettings,
+  setActiveTab: actionCreators.setActiveTab
 }
 
 // If you want to use the function mapping

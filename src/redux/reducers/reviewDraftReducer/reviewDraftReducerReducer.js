@@ -11,7 +11,8 @@ import {
   UPDATE_REVIEWS_SUCCESS,
   CONNECT_DISCONNECT_ARTEFACT_SUCCESS,
   FETCH_TAGS_SUCCESS,
-  FETCH_CHECKITEM_TEMPLATES_SUCCESS
+  FETCH_CHECKITEM_TEMPLATES_SUCCESS,
+  VERIFY_NAME_SUCCESS
 } from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const SET_CONNECT_ARTEFACT_SETTINGS = 'ReviewDraftReducer/SET_CONNECT_ARTEFACT_SETTINGS'
@@ -31,6 +32,8 @@ const SET_PROCESS_CHECKITEMS = 'ReviewDraftReducer/SET_PROCESS_CHECKITEMS'
 const SET_SELECTED_TAGS = 'ReviewDraftReducer/SET_SELECTED_TAGS'
 const SET_PROCESS_TAGS = 'ReviewDraftReducer/SET_PROCESS_TAGS'
 const SET_ACTIVE_TAB = 'ReviewDraftReducer/SET_ACTIVE_TAB'
+const SET_CHECK_VALIDITY = 'ReviewDraftReducer/SET_CHECK_VALIDITY'
+const SET_UPDATE_NAME_SETTINGS = 'ReviewDraftReducer/SET_UPDATE_NAME_SETTINGS'
 
 export const actions = {
   // FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
@@ -57,7 +60,10 @@ export const actions = {
   SET_PROCESS_CHECKITEMS,
   SET_SELECTED_TAGS,
   SET_PROCESS_TAGS,
-  SET_ACTIVE_TAB
+  SET_ACTIVE_TAB,
+  VERIFY_NAME_SUCCESS,
+  SET_CHECK_VALIDITY,
+  SET_UPDATE_NAME_SETTINGS
 }
 
 export const actionCreators = {
@@ -77,7 +83,9 @@ export const actionCreators = {
   setProcessCheckItems: createAction(SET_PROCESS_CHECKITEMS),
   setSelectedTags: createAction(SET_SELECTED_TAGS),
   setProcessTags: createAction(SET_PROCESS_TAGS),
-  setActiveTab: createAction(SET_ACTIVE_TAB)
+  setActiveTab: createAction(SET_ACTIVE_TAB),
+  setCheckValidity: createAction(SET_CHECK_VALIDITY),
+  setUpdateNameSettings: createAction(SET_UPDATE_NAME_SETTINGS)
 }
 
 export const initialState = {
@@ -117,6 +125,7 @@ export const initialState = {
     tag: ''
   },
   validationClass: {
+    nameValidationClass: 'form-group m-form__group row',
     cancelValidationClass: 'form-group m-form__group row',
     categoryValidationClass: 'form-group m-form__group row',
     approverValidationClass: 'form-group m-form__group row',
@@ -136,7 +145,15 @@ export const initialState = {
   },
   processCheckItems: false,
   processTags: false,
-  tags: ''
+  tags: '',
+  existingReviewNames: '',
+  checkValidity: false,
+  updateNameSettings: {
+    showValidation: false,
+    message: '',
+    color: {},
+    toUpdate: true
+  }
 }
 
 export default handleActions(
@@ -248,6 +265,19 @@ export default handleActions(
     [SET_ACTIVE_TAB]: (state, action) => ({
       ...state,
       activeTab: action.payload
+    }),
+    [VERIFY_NAME_SUCCESS]: (state, action) => ({
+      ...state,
+      existingReviewNames: action.payload,
+      checkValidity: true
+    }),
+    [SET_CHECK_VALIDITY]: (state, action) => ({
+      ...state,
+      checkValidity: action.payload
+    }),
+    [SET_UPDATE_NAME_SETTINGS]: (state, action) => ({
+      ...state,
+      updateNameSettings: action.payload
     })
   },
   initialState

@@ -2,7 +2,9 @@ import React from 'react'
 import Select from 'react-select'
 import PropTypes from 'prop-types'
 import styles from './addcheckItemComponent.scss'
-// import _ from 'lodash'
+import _ from 'lodash'
+import debounce from 'lodash/debounce'
+import CreatableSelect from 'react-select/lib/Creatable'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 const customStyles = {
@@ -24,12 +26,14 @@ export default function addcheckItem (props) {
   let standardsOptions = []
   let principlesOptions = []
   let typeOptions = []
+  let checkItemName
   let standardList = ''
   let principleList = ''
   let valueList = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
+  let tagOptions = []
   let handleTypeChange = function (newValue: any, actionMeta: any) {
     if (actionMeta.action === 'select-option') {
       let selectedType = newValue
@@ -38,6 +42,17 @@ export default function addcheckItem (props) {
     if (actionMeta.action === 'clear') {
       let selectedType = null
       props.setSelectedType(selectedType)
+    }
+  }
+  let handleEditTag = function (newValue: any, actionMeta: any) {
+    console.log('props', props)
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+      let selectedTags = newValue
+      props.setSelectedTags(selectedTags)
+    }
+    if (actionMeta.action === 'clear') {
+      let selectedTags = null
+      props.setSelectedTags(selectedTags)
     }
   }
   let handleCheckItemSelect = function (index) {
@@ -166,12 +181,47 @@ export default function addcheckItem (props) {
   let closeModal = function () {
     props.setModalOpenStatus(false)
   }
-  let handleNameChange = function (event) {
-    let value = event.target.value
+  let handleNameChange = debounce((e) => {
+    console.log(e, checkItemName)
     let addCheckitemValue = {...props.addCheckitemValue}
-    addCheckitemValue.name = value
-    props.setAddCheckitemValue(addCheckitemValue)
-  }
+    if (checkItemName) {
+      console.log('if ', checkItemName.value)
+      let value = checkItemName.value
+      addCheckitemValue.name = value
+      props.setAddCheckitemValue(addCheckitemValue)
+      if (value.trim() !== '') {
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let componentTypes = appPackage.resources[0].component_types
+        let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+            return obj.key === 'Check Item'
+        }), 'component_type')
+        let payload = {}
+        payload.id = componentTypeId
+        payload.params = {}
+        payload.params.search = value
+        props.verifyName(payload)
+        let addSettings = {...props.addSettings, 'validationClass': 'form-group row'}
+        // eslint-disable-next-line
+        mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        props.setAddSettings(addSettings)
+      } else {
+        let addSettings = {...props.addSettings, 'showValidation': false, 'message': ''}
+        props.setAddSettings(addSettings)
+      }
+    } else {
+      addCheckitemValue.name = ''
+      props.setAddCheckitemValue(addCheckitemValue)
+      console.log('else')
+      let addSettings = {...props.addSettings, 'showValidation': false, 'message': '', 'validationClass': 'form-group row'}
+      props.setAddSettings(addSettings)
+    }
+  }, 500)
+  // function (event) {
+  //   let value = event.target.value
+  //   let addCheckitemValue = {...props.addCheckitemValue}
+  //   addCheckitemValue.name = value
+  //   props.setAddCheckitemValue(addCheckitemValue)
+  // }
   let handleDescriptionChange = function (event) {
     let value = event.target.value
     let addCheckitemValue = {...props.addCheckitemValue}
@@ -286,62 +336,89 @@ export default function addcheckItem (props) {
     props.setValuesData(values)
   }
   let saveCheckitem = function (event) {
-    // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let payload = {}
-    payload.name = props.addCheckitemValue.name
-    payload.description = props.addCheckitemValue.description
-    payload.type_id = props.selectedType.id || null
-    payload.values = []
-    if (props.values.length > 0) {
-      props.values.forEach(function (data, index) {
-        if (data.value) {
-          let obj = {}
-          obj.name = data.value
-          // obj.description = data.value.description
-          obj.requires_check_items = []
-          if (data.requiresCheckItems.length > 0) {
-            data.requiresCheckItems.forEach(function (checkItem, idx) {
-              let ob = {}
-              ob.id = checkItem.id
-              obj.requires_check_items.push(ob)
-            })
-          }
-          payload.values.push(obj)
-        }
-      })
-    } else {
+    if (props.addCheckitemValue.name.trim() !== '' && props.addSettings.toAdd) {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {}
+      payload.name = props.addCheckitemValue.name
+      payload.description = props.addCheckitemValue.description
+      payload.type_id = props.selectedType.id || null
       payload.values = []
-    }
-    if (props.principles.length > 0) {
-      payload.principles = props.principles.map(function (data, index) {
-        let obj = {}
-        obj.id = data.id
-        return obj
-      })
-    } else {
-      payload.principles = []
-    }
-    if (props.standards.length > 0) {
-      payload.standards = []
-      props.standards.forEach(function (data, index) {
-        if (data.type === 'OLD') {
+      if (props.values.length > 0) {
+        props.values.forEach(function (data, index) {
+          if (data.value) {
+            let obj = {}
+            obj.name = data.value
+            // obj.description = data.value.description
+            obj.requires_check_items = []
+            if (data.requiresCheckItems.length > 0) {
+              data.requiresCheckItems.forEach(function (checkItem, idx) {
+                let ob = {}
+                ob.id = checkItem.id
+                obj.requires_check_items.push(ob)
+              })
+            }
+            payload.values.push(obj)
+          }
+        })
+      } else {
+        payload.values = []
+      }
+      if (props.principles.length > 0) {
+        payload.principles = props.principles.map(function (data, index) {
           let obj = {}
           obj.id = data.id
-          payload.standards.push(obj)
-        } else if (data.type === 'NEW') {
-          let obj = {}
-          obj.name = data.name
-          obj.description = data.description
-          obj.reference = data.reference
-          payload.standards.push(obj)
+          return obj
+        })
+      } else {
+        payload.principles = []
+      }
+      if (props.standards.length > 0) {
+        payload.standards = []
+        props.standards.forEach(function (data, index) {
+          if (data.type === 'OLD') {
+            let obj = {}
+            obj.id = data.id
+            payload.standards.push(obj)
+          } else if (data.type === 'NEW') {
+            let obj = {}
+            obj.name = data.name
+            obj.description = data.description
+            obj.reference = data.reference
+            payload.standards.push(obj)
+          }
+        })
+      } else {
+        payload.standards = []
+      }
+      if (props.selectedTags) {
+        let value = ''
+        let tagLength = props.selectedTags.length
+        if (tagLength > 0) {
+          props.selectedTags.forEach(function (data, index) {
+            value = value + data.value
+            if (index !== tagLength - 1) {
+              value = value + ' '
+            }
+          })
         }
-      })
+        payload.tag = value
+      }
+      console.log('createPAyload', payload)
+      props.createCheckItem(payload)
     } else {
-      payload.standards = []
+      let addSettings = {...props.addSettings, 'validationClass': 'form-group row has-danger'}
+      props.setAddSettings(addSettings)
     }
-    console.log('createPAyload', payload)
-    props.createCheckItem(payload)
+  }
+  if (props.tags && props.tags !== '') {
+    tagOptions = props.tags.resources.map(function (data, index) {
+      let option = {}
+      option.id = index
+      option.value = data
+      option.label = data
+      return option
+    })
   }
     return (
       <div>
@@ -350,12 +427,27 @@ export default function addcheckItem (props) {
           <div className='m-portlet__head' style={{'height': '50%'}}>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
-                <div className='row' style={{width: '100%'}}>
+                <div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
-                    <div className='form-group m-form__group has-danger'>
-                      <input type='text' className='form-control m-input m--margin-top-10' value={props.addCheckitemValue.name} onChange={handleNameChange} placeholder='Check Item Name' aria-describedby='basic-addon2' />
+                    <div className={props.addSettings.validationClass}>
+                      <input type='text' className='form-control m-input m--margin-top-10' onKeyUp={handleNameChange} ref={input => (checkItemName = input)} placeholder='Check Item Name' aria-describedby='basic-addon2' />
+                      {props.addSettings.showValidation && (<div style={props.addSettings.color} className='form-control-feedback has-danger'>{props.addSettings.message}</div>)}
+                    </div>
+                    <div className='form-group row'>
                       <input type='text' className='form-control m-input m--margin-top-10' value={props.addCheckitemValue.description} placeholder='Check Item Description' onChange={handleDescriptionChange} aria-describedby='basic-addon2' />
                     </div>
+                    <div className='form-group row'>
+                      <CreatableSelect
+                        className='form-control m-input m--margin-top-10'
+                        placeholder='Enter Tags'
+                        isClearable
+                        isMulti
+                        onChange={handleEditTag}
+                        value={props.selectedTags}
+                        options={tagOptions}
+                      />
+                    </div>
+                    <br />
                   </div>
                   <div className='col-4 float-right m--margin-top-10'>
                     <div className='pull-right'>
@@ -601,10 +693,14 @@ export default function addcheckItem (props) {
     principles: PropTypes.any,
     standards: PropTypes.any,
     values: PropTypes.any,
+    // eslint-disable-next-line
     selectedType: PropTypes.any,
     addCheckitemValue: PropTypes.any,
     // newStandardValue: PropTypes.any,
-    createCheckItem: PropTypes.func,
+    // createCheckItem: PropTypes.func,
     // addStandard: PropTypes.func,
-    modalIsOpen: PropTypes.any
+    modalIsOpen: PropTypes.any,
+    tags: PropTypes.any,
+    selectedTags: PropTypes.any,
+    addSettings: PropTypes.any
  }

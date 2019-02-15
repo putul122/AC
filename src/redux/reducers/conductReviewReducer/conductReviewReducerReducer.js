@@ -13,6 +13,7 @@ const SET_VALIDATION_CLASS = 'ConductReviewReducer/SET_VALIDATION_CLASS'
 const SET_COMPLAINT = 'ConductReviewReducer/SET_COMPLAINT'
 const SET_CHECKITEMS = 'ConductReviewReducer/SET_CHECKITEMS'
 const PROCESS_CHECKITEMS = 'ConductReviewReducer/PROCESS_CHECKITEMS'
+const SET_ACTIVE_TAB = 'ConductReviewReducer/SET_ACTIVE_TAB'
 
 export const actions = {
   RESET_RESPONSE,
@@ -27,7 +28,8 @@ export const actions = {
   SET_VALIDATION_CLASS,
   CREATE_DISCUSSION_SUCCESS,
   SET_COMPLAINT,
-  PROCESS_CHECKITEMS
+  PROCESS_CHECKITEMS,
+  SET_ACTIVE_TAB
 }
 
 export const actionCreators = {
@@ -40,7 +42,8 @@ export const actionCreators = {
   setValidationClass: createAction(SET_VALIDATION_CLASS),
   setComplaint: createAction(SET_COMPLAINT),
   setCheckItems: createAction(SET_CHECKITEMS),
-  processCheckItems: createAction(PROCESS_CHECKITEMS)
+  processCheckItems: createAction(PROCESS_CHECKITEMS),
+  setActiveTab: createAction(SET_ACTIVE_TAB)
 }
 
 export const initialState = {
@@ -50,6 +53,7 @@ export const initialState = {
   returnToDraft: false,
   cancelReview: false,
   reviewData: '',
+  activeTab: '',
   checkItems: [],
   checkItemFlag: false,
   complaint: '',

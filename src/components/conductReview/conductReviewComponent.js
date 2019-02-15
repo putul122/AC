@@ -3,12 +3,14 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import ViewAttachments from '../../containers/viewAttachments/viewAttachmentsContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import Select from 'react-select'
+import styles from './conductReviewComponent.scss'
 import api from '../../constants'
 
 export default function ConductReview (props) {
-  console.log('props conduct', props)
+  console.log('props conduct', props.activeTab)
   let reviewName = ''
   let ReviewStatus = ''
   let ReviewReason = ''
@@ -509,103 +511,181 @@ export default function ConductReview (props) {
           </div>
         </div>
         <br />
-        <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          <div className='m-portlet__body'>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  {/* {messageBlock} */}
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Name</b></label>
-                    <div className='col-8'>
-                      <span className='m-input' >{reviewName}</span>
+        <div className={styles.borderline} style={{'marginTop': '20px'}}>
+          <ul className='nav nav-tabs nav-fill' role='tablist' style={{'marginBottom': '0px'}}>
+            <li className='nav-item'>
+              <a className='nav-link active' onClick={() => { props.setActiveTab('reviewsdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Reviews Details</a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link' onClick={() => { props.setActiveTab('reviewsattachments') }} data-toggle='tab' href='#m_tabs_2_1'>Reviews Attachments</a>
+            </li>
+          </ul>
+          <div className='tab-content'>
+            <div className='tab-pane active' id='m_tabs_2_4' role='tabpanel'>
+              <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
+                <div className='m-portlet__body'>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        {/* {messageBlock} */}
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4'><b>Name</b></label>
+                          <div className='col-8'>
+                            <span className='m-input' >{reviewName}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
-                    <div className='col-8'>
-                      {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
-                      {!Artefact && (<span>Not Connected</span>)}
-                      {/* <a href={'/review_artefact/' + Artefectid}>{Artefact}</a> */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Review Type</b></label>
-                    <div className='col-8'>
-                      <span className='m-input'>{Category}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
-                    <div className='col-8'>
-                      <span className='m-input' >{documentReference && (<a href={documentHyperLink} >{documentReference}</a>)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Compliant?</b></label>
-                    <div className='col-8'>
-                      <div className='m-radio-inline'>
-                        <label htmlFor='example-email-input' className=''>
-                          &nbsp;<input type='radio' name='example_8' value='Yes' checked={props.complaint === 'Yes'} onChange={(e) => onRadioChange('Yes')} /> Yes
-                          <span />
-                        </label>&nbsp;&nbsp;&nbsp;
-                        <label htmlFor='example-email-input' className=''>
-                          &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'Partial'} onChange={(e) => onRadioChange('Partial')} /> Partial
-                          <span />
-                        </label>&nbsp;&nbsp;&nbsp;
-                        <label htmlFor='example-email-input' className=''>
-                          &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'No'} onChange={(e) => onRadioChange('No')} /> No
-                          <span />
-                        </label>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4'><b>Review Artefact</b></label>
+                          <div className='col-8'>
+                            {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
+                            {!Artefact && (<span>Not Connected</span>)}
+                            {/* <a href={'/review_artefact/' + Artefectid}>{Artefact}</a> */}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className='col-md-6'>
-                <div className='col-12'>
-                  <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4'><b>Review Document Version</b></label>
-                    <div className='col-8'>
-                      <span className='m-input' >{documentVersion}</span>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4'><b>Review Type</b></label>
+                          <div className='col-8'>
+                            <span className='m-input'>{Category}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4'><b>Review Document No</b></label>
+                          <div className='col-8'>
+                            <span className='m-input' >{documentReference && (<a href={documentHyperLink} >{documentReference}</a>)}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-md-12'>
-                <div className='m-section m-section--last'>
-                  <div className='m-section__content'>
-                    <div className='m-demo'>
-                      <div className='m-demo__preview'>
-                        <div className='m-list-search'>
-                          <div className='m-list-search__results'>
-                            <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                        Check Items
-                                    </span>
-                            {checkItemList}
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Compliant?</b></label>
+                          <div className='col-8'>
+                            <div className='m-radio-inline'>
+                              <label htmlFor='example-email-input' className=''>
+                                &nbsp;<input type='radio' name='example_8' value='Yes' checked={props.complaint === 'Yes'} onChange={(e) => onRadioChange('Yes')} /> Yes
+                                <span />
+                              </label>&nbsp;&nbsp;&nbsp;
+                              <label htmlFor='example-email-input' className=''>
+                                &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'Partial'} onChange={(e) => onRadioChange('Partial')} /> Partial
+                                <span />
+                              </label>&nbsp;&nbsp;&nbsp;
+                              <label htmlFor='example-email-input' className=''>
+                                &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'No'} onChange={(e) => onRadioChange('No')} /> No
+                                <span />
+                              </label>
+                            </div>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='col-md-6'>
+                      <div className='col-12'>
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='example-email-input' className='col-4'><b>Review Document Version</b></label>
+                          <div className='col-8'>
+                            <span className='m-input' >{documentVersion}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-md-12'>
+                      <div className='m-section m-section--last'>
+                        <div className='m-section__content'>
+                          <div className='m-demo'>
+                            <div className='m-demo__preview'>
+                              <div className='m-list-search'>
+                                <div className='m-list-search__results'>
+                                  <span className='m-list-search__result-category m-list-search__result-category--first'>
+                                              Check Items
+                                          </span>
+                                  {checkItemList}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {ReviewStatus === 'Not Accepted' && (<div className='row' style={{width: '100%'}}>
+                    <div className='col-md-12'>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-4'><b>Not Accepted Reason</b></label>
+                        <div className='col-8'>
+                          {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                          <span className='m-input m-input--air'>{ReviewReason}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>)}
+                  <div className='m-form m-form--state m-form--fit'>
+                    <div className='row' style={{width: '100%'}}>
+                      <div className='col-md-12'>
+                        {/* m-checkbox m-checkbox--danger */}
+                        &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                          <input type='checkbox' checked={props.checkboxSelected.draft} onChange={(event) => { handleCheckbox('Draft') }} /> <b>Return to Draft</b>
+                          <span />
+                        </label>
+                      </div>
+                      {props.checkboxSelected.draft && (<div className='col-md-12 m-demo'>
+                        <div className={props.validationClass.draft}>
+                          <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
+                          <div className='col-8 m-demo__preview'>
+                            {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                            <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                          </div>
+                        </div>
+                      </div>)}
+                    </div>
+                    <div className='row' style={{width: '100%'}}>
+                      <div className='col-md-12'>
+                        &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
+                          <input type='checkbox' checked={props.checkboxSelected.cancel} onChange={(event) => { handleCheckbox('Cancel') }} /> <b>Cancel Review</b>
+                          <span />
+                        </label>
+                      </div>
+                      {props.checkboxSelected.cancel && (<div className='col-md-12'>
+                        <div className={props.validationClass.cancel}>
+                          <label htmlFor='example-email-input' className='col-2 col-form-label'>Cancel Reason<span className='text-danger'>*</span></label>
+                          <div className='col-8'>
+                            {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
+                            <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
+                          </div>
+                        </div>
+                      </div>)}
+                    </div>
+                  </div>
+                  <div className='row' style={{width: '100%'}}>
+                    <div className='col-6' />
+                    <div className='col-6 float-right'>
+                      <div className='pull-right'>
+                        {/* <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
+                        <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
+                        <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button> */}
+                        <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
+                          <button type='button' onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='m-btn btn btn-secondary'>Close</button>
+                          <button type='button' onClick={saveReview} className='m-btn btn btn-secondary'>Save</button>
+                          <button onClick={submitReview} className='m-btn btn btn-secondary'>Submit</button>&nbsp;&nbsp;
                         </div>
                       </div>
                     </div>
@@ -613,69 +693,8 @@ export default function ConductReview (props) {
                 </div>
               </div>
             </div>
-
-            {ReviewStatus === 'Not Accepted' && (<div className='row' style={{width: '100%'}}>
-              <div className='col-md-12'>
-                <div className='form-group m-form__group row'>
-                  <label htmlFor='example-email-input' className='col-4'><b>Not Accepted Reason</b></label>
-                  <div className='col-8'>
-                    {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                    <span className='m-input m-input--air'>{ReviewReason}</span>
-                  </div>
-                </div>
-              </div>
-            </div>)}
-            <div className='m-form m-form--state m-form--fit'>
-              <div className='row' style={{width: '100%'}}>
-                <div className='col-md-12'>
-                  {/* m-checkbox m-checkbox--danger */}
-                  &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
-                    <input type='checkbox' checked={props.checkboxSelected.draft} onChange={(event) => { handleCheckbox('Draft') }} /> <b>Return to Draft</b>
-                    <span />
-                  </label>
-                </div>
-                {props.checkboxSelected.draft && (<div className='col-md-12 m-demo'>
-                  <div className={props.validationClass.draft}>
-                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Reason<span className='text-danger'>*</span></label>
-                    <div className='col-8 m-demo__preview'>
-                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                      <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
-                    </div>
-                  </div>
-                </div>)}
-              </div>
-              <div className='row' style={{width: '100%'}}>
-                <div className='col-md-12'>
-                  &nbsp;&nbsp;&nbsp;<label htmlFor='cancelReview' className=''>
-                    <input type='checkbox' checked={props.checkboxSelected.cancel} onChange={(event) => { handleCheckbox('Cancel') }} /> <b>Cancel Review</b>
-                    <span />
-                  </label>
-                </div>
-                {props.checkboxSelected.cancel && (<div className='col-md-12'>
-                  <div className={props.validationClass.cancel}>
-                    <label htmlFor='example-email-input' className='col-2 col-form-label'>Cancel Reason<span className='text-danger'>*</span></label>
-                    <div className='col-8'>
-                      {/* <input lassName='form-control m-input' type='email' placeholder='Enter Email' value={''} id='example-email-input' /> */}
-                      <textarea className='form-control m-input m-input--air' value={props.reason} onChange={handelReason} id='exampleTextarea' rows='3' style={{zIndex: 'auto', position: 'relative', lineHeight: '16.25px', fontSize: '13px', transition: 'none 0s ease 0s', background: 'transparent !important'}} />
-                    </div>
-                  </div>
-                </div>)}
-              </div>
-            </div>
-            <div className='row' style={{width: '100%'}}>
-              <div className='col-6' />
-              <div className='col-6 float-right'>
-                <div className='pull-right'>
-                  {/* <button onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='btn btn-outline-info btn-sm'>Close</button>&nbsp;&nbsp;
-                  <button onClick={saveReview} className='btn btn-outline-info btn-sm'>Save</button>&nbsp;&nbsp;
-                  <button onClick={submitReview} className='btn btn-outline-info btn-sm'>Submit</button> */}
-                  <div className='btn-group m-btn-group m-btn-group--pill ' role='group' aria-label='...'>
-                    <button type='button' onClick={() => { window.location.href = window.location.origin + '/reviews' }} className='m-btn btn btn-secondary'>Close</button>
-                    <button type='button' onClick={saveReview} className='m-btn btn btn-secondary'>Save</button>
-                    <button onClick={submitReview} className='m-btn btn btn-secondary'>Submit</button>&nbsp;&nbsp;
-                  </div>
-                </div>
-              </div>
+            <div className='tab-pane' id='m_tabs_2_1' role='tabpanel'>
+              <ViewAttachments type='Component' {...props} />
             </div>
           </div>
         </div>
@@ -699,5 +718,7 @@ export default function ConductReview (props) {
       updateReviews: PropTypes.func,
       createDiscussion: PropTypes.func,
       // setComplaint: PropTypes.func,
-      setValidationClass: PropTypes.func
+      setValidationClass: PropTypes.func,
+      activeTab: PropTypes.any,
+      setActiveTab: PropTypes.func
   }

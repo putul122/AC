@@ -45,6 +45,7 @@ export default function viewcheckItem (props) {
   let valuesList = ''
   let valuename = ''
   let checkitemname = ''
+  let tagName = ''
   let checkItemType = ''
   let checkItemTypeId = ''
   let NameInputBox
@@ -101,6 +102,7 @@ if (props.modalSettings.standardData !== '') {
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
     checkItemType = props.checkitembyId.resources[0].type
+    tagName = props.checkitembyId.resources[0].tag
     checkItemTypeId = props.checkitembyId.resources[0].type_id
     if (props.checkitembyId.resources.length > 0) {
       principlename = props.checkitembyId.resources[0].principles
@@ -627,11 +629,10 @@ if (props.modalSettings.standardData !== '') {
     return (
       <div>
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          {!props.editCheckItemsSettings.isEditFlag && (<br />)}
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
-                {props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
+                {props.editCheckItemsSettings.isEditFlag && (<div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className='form-group m-form__group has-danger'>
                       <input type='text' className='form-control m-input' value={props.updateCheckItemValue.name} onChange={handletitleChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
@@ -648,10 +649,20 @@ if (props.modalSettings.standardData !== '') {
                     </div>
                   </div>
                 </div>)}
-                {!props.editCheckItemsSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
+                {!props.editCheckItemsSettings.isEditFlag && (<div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className='m-portlet__head-text'>
-                      {checkitemname}
+                      <div className='col-6 form-group row'>
+                        <div className='col-12'>
+                          <span className='m-input m--margin-top-10' >{checkitemname}</span>
+                        </div>
+                      </div>
+                      <div className='col-6 form-group row'>
+                        <label htmlFor='example-email-input' className='col-4'><b>Tag</b></label>
+                        <div className='col-8'>
+                          <span className='m-input m--margin-top-10' >{tagName}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className='col-4 float-right'>

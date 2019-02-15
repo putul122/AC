@@ -34,6 +34,9 @@ export const ADD_STANDARD_FAILURE = 'saga/checkitem/ADD_STANDARD_FAILURE'
 export const UPDATE_CHECKITEM = 'saga/checkitem/UPDATE_CHECKITEM'
 export const UPDATE_CHECKITEM_SUCCESS = 'saga/checkitem/UPDATE_CHECKITEM_SUCCESS'
 export const UPDATE_CHECKITEM_FAILURE = 'saga/checkitem/UPDATE_CHECKITEM_FAILURE'
+export const VERIFY_NAME = 'saga/checkitem/VERIFY_NAME'
+export const VERIFY_NAME_SUCCESS = 'saga/checkitem/VERIFY_NAME_SUCCESS'
+export const VERIFY_NAME_FAILURE = 'saga/checkitem/VERIFY_NAME_FAILURE'
 
 export const actionCreators = {
   fetchCheckItems: createAction(FETCH_CHECKITEMS),
@@ -65,7 +68,10 @@ export const actionCreators = {
   addStandardFailure: createAction(ADD_STANDARD_FAILURE),
   updateCheckitem: createAction(UPDATE_CHECKITEM),
   updateCheckitemSuccess: createAction(UPDATE_CHECKITEM_SUCCESS),
-  updateCheckitemFailure: createAction(UPDATE_CHECKITEM_FAILURE)
+  updateCheckitemFailure: createAction(UPDATE_CHECKITEM_FAILURE),
+  verifyName: createAction(VERIFY_NAME),
+  verifyNameSuccess: createAction(VERIFY_NAME_SUCCESS),
+  verifyNameFailure: createAction(VERIFY_NAME_FAILURE)
 }
 
 export default function * watchCheckItems () {
@@ -76,13 +82,26 @@ export default function * watchCheckItems () {
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS, getComponentTypeComponentsCheckitems),
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES, getComponentTypeComponentsPrinciples),
       takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS, getComponentTypeComponentsStandards),
-      // takeLatest(FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEM_VALUES, getComponentTypeComponentscheckitemvalues),
       takeLatest(FETCH_COMPONENT_TYPE_PROPERTIES, getComponentTypeProperties),
       takeLatest(DELETE_CHECKITEM, deleteCheckitem),
       takeLatest(ADD_STANDARD, addStandard),
-      takeLatest(UPDATE_CHECKITEM, updateCheckitem)
-    //   takeLatest(FETCH_REVIEW_ARTEFACTS, getReviewArtefacts)
+      takeLatest(UPDATE_CHECKITEM, updateCheckitem),
+      takeLatest(VERIFY_NAME, getComponentTypeComponents)
     ]
+}
+
+export function * getComponentTypeComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.get,
+      api.getComponentTypeComponents(action.payload.id),
+      {params: action.payload.params}
+    )
+    yield put(actionCreators.verifyNameSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.verifyNameFailure(error))
+  }
 }
 
 export function * getCheckItems (action) {
