@@ -108,7 +108,7 @@ const api = {
     return 'https://resources-eco-dev.ecoconductor.com/attachments?context_id=' + payload.contextId + '&context_type_key=' + payload.contextType + '&name=' + payload.name
   },
   updateAttachment: function (payload) {
-    return 'https://resources-eco-dev.ecoconductor.com/attachments?attachment_id=' + payload.attachmentId + '&context_id=' + payload.contextId + '&context_type_key=' + payload.contextType + '&name=' + payload.name
+    return 'https://resources-eco-dev.ecoconductor.com/attachments/' + payload.attachmentId + '?context_id=' + payload.contextId + '&context_type_key=' + payload.contextType + '&name=' + payload.name
   }
 }
 

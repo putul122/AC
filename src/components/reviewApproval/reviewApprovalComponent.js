@@ -4,6 +4,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import ViewAttachments from '../../containers/viewAttachments/viewAttachmentsContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import api from '../../constants'
 
@@ -321,6 +322,9 @@ export default function ReviewApproval (props) {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div>
+                  <ViewAttachments type='Component' {...props} />
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import './viewReviewComponent.scss'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
+import ViewAttachments from '../../containers/viewAttachments/viewAttachmentsContainer'
 import Select from 'react-select'
 import _ from 'lodash'
 import api from '../../constants'
@@ -369,6 +370,9 @@ export default function ViewReview (props) {
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <div>
+                      <ViewAttachments type='Component' {...props} />
                     </div>
                   </div>
                 </div>

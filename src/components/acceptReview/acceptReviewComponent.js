@@ -5,6 +5,7 @@ import Select from 'react-select'
 import _ from 'lodash'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
+import ViewAttachments from '../../containers/viewAttachments/viewAttachmentsContainer'
 import CheckItemModal from '../../containers/checkItemModal/checkItemModalContainer'
 import api from '../../constants'
 
@@ -438,6 +439,9 @@ export default function ReviewAcceptance (props) {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div>
+                <ViewAttachments type='Component' {...props} />
               </div>
             </div>
           </div>
