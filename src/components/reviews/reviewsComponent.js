@@ -62,6 +62,15 @@ let clearAllFilter = function () {
   if (searchTextBox) {
     searchTextBox.value = ''
   }
+  let payload = {
+    'search': '',
+    'page_size': 10,
+    'page': 1
+  }
+  props.fetchReviews(payload)
+  // eslint-disable-next-line
+  mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  props.setCurrentPage(1)
 }
 let handleTag = function (newValue: any, actionMeta: any) {
   // console.group('Value Changed first select')
