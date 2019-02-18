@@ -582,150 +582,156 @@ export default function ReviewDraft (props) {
       }
       props.setValidationClass(validationClass)
     } else {
-      let updatePayload = []
-      let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
-      delete draftEdit.checkItems
-      delete draftEdit.isCancel
-      delete draftEdit.cancelReason
-      for (let x in draftEdit) {
-        if (draftEdit.hasOwnProperty(x)) {
-          if (x === 'category') {
-            if (props.selectedCategory) {
-              let obj = {}
-              obj.op = 'replace'
-              obj.path = '/review_category'
-              obj.value = props.selectedCategory.id || props.draftEdit.category
-              updatePayload.push(obj)
-            }
-          } else if (x === 'reviewer') {
-            if (props.selectedReviewer) {
-              let obj = {}
-              obj.op = 'replace'
-              obj.path = '/reviewer'
-              obj.value = props.selectedReviewer.first_name + ' ' + props.selectedReviewer.last_name
-              updatePayload.push(obj)
-              obj = {}
-              obj.op = 'replace'
-              obj.path = '/reviewer_id'
-              obj.value = props.selectedReviewer.id
-              updatePayload.push(obj)
+      if (props.draftEdit.name.trim() !== '' && props.updateNameSettings.toUpdate) {
+        let updatePayload = []
+        let draftEdit = JSON.parse(JSON.stringify(props.draftEdit))
+        delete draftEdit.checkItems
+        delete draftEdit.isCancel
+        delete draftEdit.cancelReason
+        for (let x in draftEdit) {
+          if (draftEdit.hasOwnProperty(x)) {
+            if (x === 'category') {
+              if (props.selectedCategory) {
+                let obj = {}
+                obj.op = 'replace'
+                obj.path = '/review_category'
+                obj.value = props.selectedCategory.id || props.draftEdit.category
+                updatePayload.push(obj)
+              }
+            } else if (x === 'reviewer') {
+              if (props.selectedReviewer) {
+                let obj = {}
+                obj.op = 'replace'
+                obj.path = '/reviewer'
+                obj.value = props.selectedReviewer.first_name + ' ' + props.selectedReviewer.last_name
+                updatePayload.push(obj)
+                obj = {}
+                obj.op = 'replace'
+                obj.path = '/reviewer_id'
+                obj.value = props.selectedReviewer.id
+                updatePayload.push(obj)
+              } else {
+                let obj = {}
+                obj.op = 'replace'
+                obj.path = '/reviewer'
+                obj.value = null
+                updatePayload.push(obj)
+                obj = {}
+                obj.op = 'replace'
+                obj.path = '/reviewer_id'
+                obj.value = null
+                updatePayload.push(obj)
+              }
+            } else if (x === 'approver') {
+              if (props.selectedApprover) {
+                let obj = {}
+                obj.op = 'replace'
+                obj.path = '/approver'
+                obj.value = props.selectedApprover.first_name + ' ' + props.selectedApprover.last_name
+                updatePayload.push(obj)
+                obj = {}
+                obj.op = 'replace'
+                obj.path = '/approver_id'
+                obj.value = props.selectedApprover.id
+                updatePayload.push(obj)
+              } else {
+                let obj = {}
+                obj.op = 'replace'
+                obj.path = '/approver'
+                obj.value = null
+                updatePayload.push(obj)
+                obj = {}
+                obj.op = 'replace'
+                obj.path = '/approver_id'
+                obj.value = null
+                updatePayload.push(obj)
+              }
             } else {
               let obj = {}
               obj.op = 'replace'
-              obj.path = '/reviewer'
-              obj.value = null
-              updatePayload.push(obj)
-              obj = {}
-              obj.op = 'replace'
-              obj.path = '/reviewer_id'
-              obj.value = null
+              obj.path = '/' + x
+              obj.value = props.draftEdit[x]
               updatePayload.push(obj)
             }
-          } else if (x === 'approver') {
-            if (props.selectedApprover) {
-              let obj = {}
-              obj.op = 'replace'
-              obj.path = '/approver'
-              obj.value = props.selectedApprover.first_name + ' ' + props.selectedApprover.last_name
-              updatePayload.push(obj)
-              obj = {}
-              obj.op = 'replace'
-              obj.path = '/approver_id'
-              obj.value = props.selectedApprover.id
-              updatePayload.push(obj)
-            } else {
-              let obj = {}
-              obj.op = 'replace'
-              obj.path = '/approver'
-              obj.value = null
-              updatePayload.push(obj)
-              obj = {}
-              obj.op = 'replace'
-              obj.path = '/approver_id'
-              obj.value = null
-              updatePayload.push(obj)
-            }
-          } else {
-            let obj = {}
-            obj.op = 'replace'
-            obj.path = '/' + x
-            obj.value = props.draftEdit[x]
-            updatePayload.push(obj)
           }
         }
-      }
-      // set reason in payload
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/reason'
-      obj.value = props.draftEdit.cancelReason
-      updatePayload.push(obj)
+        // set reason in payload
+        let obj = {}
+        obj.op = 'replace'
+        obj.path = '/reason'
+        obj.value = props.draftEdit.cancelReason
+        updatePayload.push(obj)
 
-      if (props.updatePayload.length > 0) {
-        updatePayload = updatePayload.concat(props.updatePayload)
-      }
-      if (props.draftEdit.checkItems.length > 0) {
-        props.draftEdit.checkItems.forEach(function (data, index) {
-          if (data.type === 'NEW') {
+        if (props.updatePayload.length > 0) {
+          updatePayload = updatePayload.concat(props.updatePayload)
+        }
+        if (props.draftEdit.checkItems.length > 0) {
+          props.draftEdit.checkItems.forEach(function (data, index) {
+            if (data.type === 'NEW') {
+              let obj = {}
+              obj.op = 'add'
+              obj.path = '/check_items/-'
+              obj.value = data.id
+              updatePayload.push(obj)
+            }
+          })
+        }
+        if (props.draftEdit.isCancel) {
+          console.log('if cancel')
+          if (props.draftEdit.cancelReason !== null && props.draftEdit.cancelReason !== '') {
+            console.log('if inside')
+            // eslint-disable-next-line
+            mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+            console.log('update payload', updatePayload)
+            // set stage to Completed
+            let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+              return obj.name === 'Completed'
+            }), 'id')
             let obj = {}
-            obj.op = 'add'
-            obj.path = '/check_items/-'
-            obj.value = data.id
+            obj.op = 'replace'
+            obj.path = '/stage'
+            obj.value = completedId
             updatePayload.push(obj)
+            // set status to Cancelled
+            obj = {}
+            obj.op = 'replace'
+            obj.path = '/status'
+            obj.value = 'Cancelled'
+            updatePayload.push(obj)
+            let payload = {}
+            payload.reviewId = contextId
+            payload.data = updatePayload
+            props.updateReviews(payload)
+          } else {
+            console.log('if else inside')
+            let validationClass = {...props.validationClass}
+            validationClass.cancelValidationClass = 'form-group m-form__group row has-danger'
+            console.log('validationClass', validationClass)
+            console.log(props.setValidationClass)
+            props.setValidationClass(validationClass)
           }
-        })
-      }
-      if (props.draftEdit.isCancel) {
-        console.log('if cancel')
-        if (props.draftEdit.cancelReason !== null && props.draftEdit.cancelReason !== '') {
-          console.log('if inside')
+        } else {
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-          console.log('update payload', updatePayload)
-          // set stage to Completed
-          let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-            return obj.name === 'Completed'
+          // set stage to approval
+          let acceptanceId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Acceptance'
           }), 'id')
           let obj = {}
           obj.op = 'replace'
           obj.path = '/stage'
-          obj.value = completedId
+          obj.value = acceptanceId
           updatePayload.push(obj)
-          // set status to Cancelled
-          obj = {}
-          obj.op = 'replace'
-          obj.path = '/status'
-          obj.value = 'Cancelled'
-          updatePayload.push(obj)
+          console.log('update payload', updatePayload)
           let payload = {}
           payload.reviewId = contextId
           payload.data = updatePayload
           props.updateReviews(payload)
-        } else {
-          console.log('if else inside')
-          let validationClass = {...props.validationClass}
-          validationClass.cancelValidationClass = 'form-group m-form__group row has-danger'
-          console.log('validationClass', validationClass)
-          console.log(props.setValidationClass)
-          props.setValidationClass(validationClass)
         }
       } else {
-        // eslint-disable-next-line
-        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // set stage to approval
-        let acceptanceId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Acceptance'
-        }), 'id')
-        let obj = {}
-        obj.op = 'replace'
-        obj.path = '/stage'
-        obj.value = acceptanceId
-        updatePayload.push(obj)
-        console.log('update payload', updatePayload)
-        let payload = {}
-        payload.reviewId = contextId
-        payload.data = updatePayload
-        props.updateReviews(payload)
+        let validationClass = {...props.validationClass}
+        validationClass.nameValidationClass = 'form-group m-form__group row has-danger'
+        props.setValidationClass(validationClass)
       }
     }
   }
