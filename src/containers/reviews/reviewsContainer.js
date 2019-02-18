@@ -174,8 +174,8 @@ export default compose(
         let addReviewSettings = {...this.props.addReviewSettings}
         if (nextProps.existingReviewNames.error_code === null) {
           let existingReviewNames = nextProps.existingReviewNames.resources
-          let enterReviewName = addReviewSettings.reviewName
-          let found = _.find(nextProps.existingReviewNames.resources, function (obj) { return obj.name.toLowerCase() === enterReviewName })
+          let enterReviewName = addReviewSettings.reviewName.trim().toLowerCase()
+          let found = _.find(nextProps.existingReviewNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterReviewName })
           console.log('existingReviewNames', existingReviewNames)
           console.log('enterReviewName', enterReviewName)
           console.log('found', found)

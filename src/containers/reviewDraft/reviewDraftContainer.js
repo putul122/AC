@@ -351,8 +351,8 @@ export default compose(
         let updateNameSettings = {...this.props.updateNameSettings}
         if (nextProps.existingReviewNames.error_code === null) {
           let existingReviewNames = nextProps.existingReviewNames.resources
-          let enterReviewName = nextProps.draftEdit.name
-          let found = _.find(nextProps.existingReviewNames.resources, function (obj) { return ((obj.name.toLowerCase() === enterReviewName) && (obj.id !== parseInt(nextProps.match.params.id))) })
+          let enterReviewName = nextProps.draftEdit.name.trim().toLowerCase()
+          let found = _.find(nextProps.existingReviewNames.resources, function (obj) { return ((obj.name.trim().toLowerCase() === enterReviewName) && (obj.id !== parseInt(nextProps.match.params.id))) })
           console.log('existingReviewNames', existingReviewNames)
           console.log('enterReviewName', enterReviewName)
           console.log('found', found)

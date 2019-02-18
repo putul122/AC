@@ -167,8 +167,8 @@ export default compose(
         let addSettings = {...this.props.addSettings}
         if (nextProps.existingCheckItemNames.error_code === null) {
           let existingCheckItemNames = nextProps.existingCheckItemNames.resources
-          let enterCheckItemName = nextProps.addCheckitemValue.name
-          let found = _.find(nextProps.existingCheckItemNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterCheckItemName.trim() })
+          let enterCheckItemName = nextProps.addCheckitemValue.name.trim().toLowerCase()
+          let found = _.find(nextProps.existingCheckItemNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterCheckItemName })
           console.log('existingCheckItemNames', existingCheckItemNames)
           console.log('enterCheckItemName', enterCheckItemName)
           console.log('found', found)

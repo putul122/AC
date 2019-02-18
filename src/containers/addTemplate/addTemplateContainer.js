@@ -147,8 +147,8 @@ export default compose(
         let addSettings = {...this.props.addSettings}
         if (nextProps.existingTemplateNames.error_code === null) {
           let existingTemplateNames = nextProps.existingTemplateNames.resources
-          let enterTemplateName = nextProps.addSettings.templateName
-          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterTemplateName.trim() })
+          let enterTemplateName = nextProps.addSettings.templateName.trim().toLowerCase()
+          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return obj.name.trim().toLowerCase() === enterTemplateName })
           console.log('existingTemplateNames', existingTemplateNames)
           console.log('enterTemplateName', enterTemplateName)
           console.log('found', found)

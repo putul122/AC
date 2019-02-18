@@ -203,8 +203,8 @@ export default compose(
         let editTemplateSettings = {...this.props.editTemplateSettings}
         if (nextProps.existingTemplateNames.error_code === null) {
           let existingTemplateNames = nextProps.existingTemplateNames.resources
-          let enterTemplateName = nextProps.editTemplateSettings.name
-          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return ((obj.name.toLowerCase() === enterTemplateName) && (obj.id !== parseInt(nextProps.match.params.id))) })
+          let enterTemplateName = nextProps.editTemplateSettings.name.trim().toLowerCase()
+          let found = _.find(nextProps.existingTemplateNames.resources, function (obj) { return ((obj.name.trim().toLowerCase() === enterTemplateName) && (obj.id !== parseInt(nextProps.match.params.id))) })
           console.log('existingTemplateNames', existingTemplateNames)
           console.log('enterTemplateName', enterTemplateName)
           console.log('found', found)
