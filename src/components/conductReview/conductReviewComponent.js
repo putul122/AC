@@ -46,6 +46,9 @@ export default function ConductReview (props) {
   }
   let onRadioChange = function (value) {
     props.setComplaint(value)
+    let validationClass = {...props.validationClass}
+    validationClass.compliant = 'form-group m-form__group row '
+    props.setValidationClass(validationClass)
   }
   let handleCommentChange = function (comment, data) {
     console.log(data, comment)
@@ -362,61 +365,117 @@ export default function ConductReview (props) {
     console.log(payload)
   }
   let submitReview = function (event) {
-    // eslint-disable-next-line
-    // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let updatePayload = []
-    let obj = {}
-    if (props.reason !== '') {
+    if (props.checkboxSelected.draft || props.checkboxSelected.cancel || props.complaint !== '') {
+      console.log('happy')
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let updatePayload = []
       let obj = {}
-      obj.op = 'replace'
-      obj.path = '/reason'
-      obj.value = props.reason
-      updatePayload.push(obj)
-    }
-    if (props.complaint !== '') {
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/compliance_status'
-      obj.value = props.complaint
-      updatePayload.push(obj)
-    }
-    // Set payload for checkItems Value
-    if (props.checkItems.length > 0) {
-      props.checkItems.forEach(function (data, index) {
-        obj = {}
+      if (props.reason !== '') {
+        let obj = {}
         obj.op = 'replace'
-        obj.path = '/check_items/' + index + '/compliance'
-        obj.value = data.compliance
+        obj.path = '/reason'
+        obj.value = props.reason
         updatePayload.push(obj)
-        obj = {}
+      }
+      if (props.complaint !== '') {
+        let obj = {}
         obj.op = 'replace'
-        obj.path = '/check_items/' + index + '/compliance_comment'
-        obj.value = data.compliance_comment
+        obj.path = '/compliance_status'
+        obj.value = props.complaint
         updatePayload.push(obj)
-      })
-    }
-    if (props.checkboxSelected.draft) {
-      let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Draft'
-      }), 'id')
-      // set Return to Draft stage
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/stage'
-      obj.value = draftId
-      updatePayload.push(obj)
-      // set Return to Draft status
-      obj = {}
-      obj.op = 'replace'
-      obj.path = '/status'
-      obj.value = 'Returned'
-      updatePayload.push(obj)
-      if (props.reason.trim() === '') {
-        let validationClass = {...props.validationClass}
-        validationClass.draft = 'form-group m-form__group row has-danger'
-        validationClass.cancel = 'form-group m-form__group row'
-        props.setValidationClass(validationClass)
       } else {
+        let validationClass = {...props.validationClass}
+        validationClass.compliant = 'form-group m-form__group row '
+        props.setValidationClass(validationClass)
+      }
+      // Set payload for checkItems Value
+      if (props.checkItems.length > 0) {
+        props.checkItems.forEach(function (data, index) {
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/check_items/' + index + '/compliance'
+          obj.value = data.compliance
+          updatePayload.push(obj)
+          obj = {}
+          obj.op = 'replace'
+          obj.path = '/check_items/' + index + '/compliance_comment'
+          obj.value = data.compliance_comment
+          updatePayload.push(obj)
+        })
+      }
+      if (props.checkboxSelected.draft) {
+        let draftId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Draft'
+        }), 'id')
+        // set Return to Draft stage
+        let obj = {}
+        obj.op = 'replace'
+        obj.path = '/stage'
+        obj.value = draftId
+        updatePayload.push(obj)
+        // set Return to Draft status
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/status'
+        obj.value = 'Returned'
+        updatePayload.push(obj)
+        if (props.reason.trim() === '') {
+          let validationClass = {...props.validationClass}
+          validationClass.draft = 'form-group m-form__group row has-danger'
+          validationClass.cancel = 'form-group m-form__group row'
+          validationClass.compliant = 'form-group m-form__group row '
+          props.setValidationClass(validationClass)
+        } else {
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          console.log('update payload', updatePayload)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+        }
+      } else if (props.checkboxSelected.cancel) {
+        let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Completed'
+        }), 'id')
+        // set Completed stage
+        let obj = {}
+        obj.op = 'replace'
+        obj.path = '/stage'
+        obj.value = completedId
+        updatePayload.push(obj)
+        // set Cancel status
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/status'
+        obj.value = 'Cancelled'
+        updatePayload.push(obj)
+        if (props.reason.trim() === '') {
+          let validationClass = {...props.validationClass}
+          validationClass.draft = 'form-group m-form__group row'
+          validationClass.cancel = 'form-group m-form__group row has-danger'
+          validationClass.compliant = 'form-group m-form__group row '
+          props.setValidationClass(validationClass)
+        } else {
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          console.log('update payload', updatePayload)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+        }
+      } else {
+        let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+          return obj.name === 'Approval'
+        }), 'id')
+        // set Approved stage
+        let obj = {}
+        obj.op = 'replace'
+        obj.path = '/stage'
+        obj.value = approvalId
+        updatePayload.push(obj)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         console.log('update payload', updatePayload)
@@ -425,76 +484,33 @@ export default function ConductReview (props) {
         payload.data = updatePayload
         props.updateReviews(payload)
       }
-    } else if (props.checkboxSelected.cancel) {
-      let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Completed'
-      }), 'id')
-      // set Completed stage
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/stage'
-      obj.value = completedId
-      updatePayload.push(obj)
-      // set Cancel status
-      obj = {}
-      obj.op = 'replace'
-      obj.path = '/status'
-      obj.value = 'Cancelled'
-      updatePayload.push(obj)
-      if (props.reason.trim() === '') {
-        let validationClass = {...props.validationClass}
-        validationClass.draft = 'form-group m-form__group row'
-        validationClass.cancel = 'form-group m-form__group row has-danger'
-        props.setValidationClass(validationClass)
-      } else {
-        // eslint-disable-next-line
-        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        console.log('update payload', updatePayload)
-        let payload = {}
-        payload.reviewId = contextId
-        payload.data = updatePayload
-        props.updateReviews(payload)
+      if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '') {
+        let discussionPayload = {}
+        if (props.checkboxSelected.draft) {
+          discussionPayload.name = 'Return to Draft'
+        } else if (props.checkboxSelected.cancel) {
+          discussionPayload.name = 'Cancel Review'
+        }
+        discussionPayload.context = {}
+        discussionPayload.context.artefact_type = {}
+        discussionPayload.context.artefact_type.key = 'Component'
+        discussionPayload.context.id = contextId
+        discussionPayload.discussion_type = {}
+        discussionPayload.discussion_type.key = 'User'
+        discussionPayload.messages = []
+        let message = {}
+        message.name = props.reason
+        message.mentions = []
+        message.references = []
+        message.tags = []
+        discussionPayload.messages.push(message)
+        console.log('discussion message', discussionPayload)
+        props.createDiscussion(discussionPayload)
       }
     } else {
-      let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-        return obj.name === 'Approval'
-      }), 'id')
-      // set Approved stage
-      let obj = {}
-      obj.op = 'replace'
-      obj.path = '/stage'
-      obj.value = approvalId
-      updatePayload.push(obj)
-      // eslint-disable-next-line
-      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      console.log('update payload', updatePayload)
-      let payload = {}
-      payload.reviewId = contextId
-      payload.data = updatePayload
-      props.updateReviews(payload)
-    }
-    if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '') {
-      let discussionPayload = {}
-      if (props.checkboxSelected.draft) {
-        discussionPayload.name = 'Return to Draft'
-      } else if (props.checkboxSelected.cancel) {
-        discussionPayload.name = 'Cancel Review'
-      }
-      discussionPayload.context = {}
-      discussionPayload.context.artefact_type = {}
-      discussionPayload.context.artefact_type.key = 'Component'
-      discussionPayload.context.id = contextId
-      discussionPayload.discussion_type = {}
-      discussionPayload.discussion_type.key = 'User'
-      discussionPayload.messages = []
-      let message = {}
-      message.name = props.reason
-      message.mentions = []
-      message.references = []
-      message.tags = []
-      discussionPayload.messages.push(message)
-      console.log('discussion message', discussionPayload)
-      props.createDiscussion(discussionPayload)
+      let validationClass = {...props.validationClass}
+      validationClass.compliant = 'form-group m-form__group row has-danger'
+      props.setValidationClass(validationClass)
     }
   }
   console.log(reviewName)
@@ -574,19 +590,19 @@ export default function ConductReview (props) {
                   <div className='row' style={{width: '100%'}}>
                     <div className='col-md-6'>
                       <div className='col-12'>
-                        <div className='form-group m-form__group row'>
+                        <div className={props.validationClass.compliant}>
                           <label htmlFor='example-email-input' className='col-4 col-form-label'><b>Compliant?</b></label>
                           <div className='col-8'>
                             <div className='m-radio-inline'>
-                              <label htmlFor='example-email-input' className=''>
+                              <label htmlFor='example-email-input' className='col-form-label'>
                                 &nbsp;<input type='radio' name='example_8' value='Yes' checked={props.complaint === 'Yes'} onChange={(e) => onRadioChange('Yes')} /> Yes
                                 <span />
                               </label>&nbsp;&nbsp;&nbsp;
-                              <label htmlFor='example-email-input' className=''>
+                              <label htmlFor='example-email-input' className='col-form-label'>
                                 &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'Partial'} onChange={(e) => onRadioChange('Partial')} /> Partial
                                 <span />
                               </label>&nbsp;&nbsp;&nbsp;
-                              <label htmlFor='example-email-input' className=''>
+                              <label htmlFor='example-email-input' className='col-form-label'>
                                 &nbsp;<input type='radio' name='example_8' value='Partial' checked={props.complaint === 'No'} onChange={(e) => onRadioChange('No')} /> No
                                 <span />
                               </label>

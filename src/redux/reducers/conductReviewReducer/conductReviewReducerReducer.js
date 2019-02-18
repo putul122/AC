@@ -60,7 +60,8 @@ export const initialState = {
   reason: '',
   validationClass: {
     draft: 'form-group m-form__group row',
-    cancel: 'form-group m-form__group row'
+    cancel: 'form-group m-form__group row',
+    compliant: 'form-group m-form__group row'
   },
   checkboxSelected: {
     draft: false,
