@@ -487,7 +487,7 @@ export default function TemplateDetail (props) {
           </ReactModal>
           <ReactModal isOpen={props.checkItemsSettings.isModalOpen}
             onRequestClose={closeCheckItemModal}
-            className='modal-dialog'
+            className='modal-dialog modal-lg'
             style={{'content': {'top': '20%'}}}
             >
             <div className={''}>
@@ -499,7 +499,7 @@ export default function TemplateDetail (props) {
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
-                  <div className='modal-body'>
+                  <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
                     <div className='col-lg-12'>
                       <div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-3 col-form-label'>Tags</label>
