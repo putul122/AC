@@ -312,7 +312,7 @@ if (props.modalSettings.standardData !== '') {
         let appPackage = JSON.parse(localStorage.getItem('packages'))
         let componentTypes = appPackage.resources[0].component_types
         let componentTypeId = _.result(_.find(componentTypes, function (obj) {
-            return obj.key === 'Check Item'
+            return obj.key === 'Check Item Template'
         }), 'component_type')
         let payload = {}
         payload.id = componentTypeId
