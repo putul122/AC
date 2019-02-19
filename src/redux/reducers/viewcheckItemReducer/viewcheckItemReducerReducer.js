@@ -1,9 +1,15 @@
 import { createAction, handleActions } from 'redux-actions'
-import {FETCH_CHECKITEM_BY_ID_SUCCESS, DELETE_CHECKITEM_SUCCESS, UPDATE_CHECKITEM_SUCCESS,
+import {
+  FETCH_CHECKITEM_BY_ID_SUCCESS,
+  DELETE_CHECKITEM_SUCCESS,
+  UPDATE_CHECKITEM_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_CHECKITEMS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_PRINCIPLES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_FOR_STANDARDS_SUCCESS,
-  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS} from '../../sagas/checkItem/checkItemSaga'
+  FETCH_COMPONENT_TYPE_PROPERTIES_SUCCESS,
+  VERIFY_NAME_SUCCESS
+} from '../../sagas/checkItem/checkItemSaga'
+import { FETCH_TAGS_SUCCESS } from '../../sagas/review/reviewSaga'
 // Name Spaced Action Types
 const SET_EDIT_CHECKITEM_SETTINGS = 'ViewCheckItemReducer/SET_EDIT_CHECKITEM_SETTINGS'
 const RESET_RESPONSE = 'ViewCheckItemReducer/RESET_RESPONSE'
@@ -20,6 +26,9 @@ const SET_CHECKITEMS_DATA = 'ViewCheckItemReducer/SET_CHECKITEMS_DATA'
 const SET_PAYLOAD = 'ViewCheckItemReducer/SET_PAYLOAD'
 const SET_SELECTED_TYPE = 'ViewCheckItemReducer/SET_SELECTED_TYPE'
 const SET_MODAL_SETTING = 'ViewCheckItemReducer/SET_MODAL_SETTING'
+const SET_CHECK_VALIDITY = 'ViewCheckItemReducer/SET_CHECK_VALIDITY'
+const SET_SELECTED_TAGS = 'ViewCheckItemReducer/SET_SELECTED_TAGS'
+const SET_PROCESS_TAG = 'ViewCheckItemReducer/SET_PROCESS_TAG'
 
 export const actions = {
     FETCH_CHECKITEM_BY_ID_SUCCESS,
@@ -43,7 +52,12 @@ export const actions = {
     SET_SELECTED_CHECKITEM,
     SET_CHECKITEMS_DATA,
     SET_SELECTED_TYPE,
-    SET_MODAL_SETTING
+    SET_MODAL_SETTING,
+    VERIFY_NAME_SUCCESS,
+    FETCH_TAGS_SUCCESS,
+    SET_CHECK_VALIDITY,
+    SET_SELECTED_TAGS,
+    SET_PROCESS_TAG
 }
 
 export const actionCreators = {
@@ -61,7 +75,10 @@ export const actionCreators = {
   setCheckitemsData: createAction(SET_CHECKITEMS_DATA),
   setPayload: createAction(SET_PAYLOAD),
   setSelectedType: createAction(SET_SELECTED_TYPE),
-  setModalSetting: createAction(SET_MODAL_SETTING)
+  setModalSetting: createAction(SET_MODAL_SETTING),
+  setCheckValidity: createAction(SET_CHECK_VALIDITY),
+  setSelectedTags: createAction(SET_SELECTED_TAGS),
+  setProcessTags: createAction(SET_PROCESS_TAG)
 }
 
 export const initialState = {
@@ -84,8 +101,17 @@ export const initialState = {
   componentTypeProperties: '',
   editCheckItemsSettings: {
     isDeleteModalOpen: false,
-    isEditFlag: false
+    isEditFlag: false,
+    validationClass: 'form-group row',
+    showValidation: false,
+    message: '',
+    color: {},
+    toUpdate: true
   },
+  tags: '',
+  existingCheckItemNames: '',
+  checkValidity: false,
+  selectedTags: null,
   modalSettings: {
     isViewCheckItemOpen: false,
     isStandardModalOpen: false,
@@ -102,7 +128,8 @@ export const initialState = {
     'originalValues': [],
     'originalPrinciples': [],
     'originalCategory': null
-  }
+  },
+  processTags: false
 }
 
 export default handleActions(
@@ -195,6 +222,28 @@ export default handleActions(
     [SET_MODAL_SETTING]: (state, action) => ({
       ...state,
       modalSettings: action.payload
+    }),
+    [VERIFY_NAME_SUCCESS]: (state, action) => ({
+      ...state,
+      existingCheckItemNames: action.payload,
+      checkValidity: true
+    }),
+    [SET_CHECK_VALIDITY]: (state, action) => ({
+      ...state,
+      checkValidity: action.payload
+    }),
+    [FETCH_TAGS_SUCCESS]: (state, action) => ({
+      ...state,
+      tags: action.payload,
+      processTags: true
+    }),
+    [SET_SELECTED_TAGS]: (state, action) => ({
+      ...state,
+      selectedTags: action.payload
+    }),
+    [SET_PROCESS_TAG]: (state, action) => ({
+      ...state,
+      processTags: action.payload
     })
   },
   initialState

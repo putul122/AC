@@ -85,7 +85,7 @@ export const initialState = {
   principles: [],
   selectedPrinciple: null,
   values: [],
-  selectedValue: null,
+  selectedValue: '',
   selectedType: null,
   checkitems: [],
   selectedCheckitem: [],

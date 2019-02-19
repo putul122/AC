@@ -198,7 +198,8 @@ export default function addcheckItem (props) {
         let payload = {}
         payload.id = componentTypeId
         payload.params = {}
-        payload.params.search = value
+        // value = value.replace(' ', '%20')
+        payload.params.search = value.trim()
         props.verifyName(payload)
         let addSettings = {...props.addSettings, 'validationClass': 'form-group row'}
         // eslint-disable-next-line
@@ -302,7 +303,7 @@ export default function addcheckItem (props) {
     let obj = {}
     obj.value = props.selectedValue
     obj.requiresCheckItems = []
-    if (props.selectedValue !== null) {
+    if (props.selectedValue !== '') {
       values.push(obj)
       props.setValuesData(values)
     }

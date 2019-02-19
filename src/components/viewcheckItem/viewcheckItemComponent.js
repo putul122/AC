@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 import ReactModal from 'react-modal'
 import _ from 'lodash'
+import debounce from 'lodash/debounce'
+import CreatableSelect from 'react-select/lib/Creatable'
 import styles from './viewcheckItemComponent.scss'
 ReactModal.setAppElement('#root')
 const customStyles = {
@@ -20,7 +22,7 @@ const customStyles = {
 }
 
 export default function viewcheckItem (props) {
-  // console.log('***', props.selectedStandard, props.setUpdateCheckItemValue, props.setStandardsData, props.setValuesData, props.setCheckitemsData)
+  console.log('***', props)
   let principleName = ''
   let principleStatement = ''
   let principleRationale = ''
@@ -45,12 +47,15 @@ export default function viewcheckItem (props) {
   let valuesList = ''
   let valuename = ''
   let checkitemname = ''
+  let checkItemDescription = ''
   let tagName = ''
   let checkItemType = ''
   let checkItemTypeId = ''
   let NameInputBox
   let DescriptionBox
   let ReferenceBox
+  let tagOptions = []
+  let refCheckItemName
   let openPrincipleModal = function (data) {
     let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': true, 'principleData': data}
     props.setModalSetting(modalSettings)
@@ -63,6 +68,19 @@ export default function viewcheckItem (props) {
       event.preventDefault()
       let modalSettings = {...props.modalSettings, 'isViewCheckItemOpen': false, 'isStandardModalOpen': false, 'isPrincipleModalOpen': false, 'principleData': '', 'standardData': ''}
       props.setModalSetting(modalSettings)
+  }
+  let handleEditTag = function (newValue: any, actionMeta: any) {
+    console.log('props', props)
+    console.log('newValue', newValue)
+    console.log('actionMeta', actionMeta)
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+      let selectedTags = newValue
+      props.setSelectedTags(selectedTags)
+    }
+    if (actionMeta.action === 'clear') {
+      let selectedTags = null
+      props.setSelectedTags(selectedTags)
+    }
   }
   let handleCheckItemSelect = function (index) {
     console.log('index', index)
@@ -101,6 +119,7 @@ if (props.modalSettings.standardData !== '') {
 }
   if (props.checkitembyId && props.checkitembyId !== '') {
     checkitemname = props.checkitembyId.resources[0].name
+    checkItemDescription = props.checkitembyId.resources[0].description
     checkItemType = props.checkitembyId.resources[0].type
     tagName = props.checkitembyId.resources[0].tag
     checkItemTypeId = props.checkitembyId.resources[0].type_id
@@ -281,10 +300,52 @@ if (props.modalSettings.standardData !== '') {
    console.log('standardList', valueListforedit)
  }
   console.log('&&&', principleList)
-  let handletitleChange = function (event) {
+  let handleNameChange = debounce((e) => {
+    console.log(e, refCheckItemName)
+    let updateCheckItemValue = {...props.updateCheckItemValue}
+    if (refCheckItemName) {
+      console.log('if ', refCheckItemName.value)
+      let value = refCheckItemName.value
+      updateCheckItemValue.name = value
+      props.setUpdateCheckItemValue(updateCheckItemValue)
+      if (value.trim() !== '') {
+        let appPackage = JSON.parse(localStorage.getItem('packages'))
+        let componentTypes = appPackage.resources[0].component_types
+        let componentTypeId = _.result(_.find(componentTypes, function (obj) {
+            return obj.key === 'Check Item'
+        }), 'component_type')
+        let payload = {}
+        payload.id = componentTypeId
+        payload.params = {}
+        // value = value.replace(' ', '%20')
+        payload.params.search = value.trim()
+        props.verifyName(payload)
+        let editCheckItemsSettings = {...props.editCheckItemsSettings, 'validationClass': 'form-group row'}
+        // eslint-disable-next-line
+        mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        props.setEditCheckItemSettings(editCheckItemsSettings)
+      } else {
+        let editCheckItemsSettings = {...props.editCheckItemsSettings, 'showValidation': false, 'message': ''}
+        props.setEditCheckItemSettings(editCheckItemsSettings)
+      }
+    } else {
+      updateCheckItemValue.name = ''
+      props.setUpdateCheckItemValue(updateCheckItemValue)
+      console.log('else')
+      let editCheckItemsSettings = {...props.editCheckItemsSettings, 'showValidation': false, 'message': '', 'validationClass': 'form-group row'}
+      props.setEditCheckItemSettings(editCheckItemsSettings)
+    }
+  }, 500)
+  // function (event) {
+  //   let value = event.target.value
+  //   let updateCheckItemValue = {...props.updateCheckItemValue}
+  //   updateCheckItemValue.name = value
+  //   props.setUpdateCheckItemValue(updateCheckItemValue)
+  // }
+  let handleDescriptionChange = function (event) {
     let value = event.target.value
     let updateCheckItemValue = {...props.updateCheckItemValue}
-    updateCheckItemValue.name = value
+    updateCheckItemValue.description = value
     props.setUpdateCheckItemValue(updateCheckItemValue)
     console.log('*&*&', updateCheckItemValue)
   }
@@ -449,12 +510,34 @@ if (props.modalSettings.standardData !== '') {
   let editCheckItemCancel = function () {
     let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': false}
     props.setEditCheckItemSettings(editCheckItemsSettings)
+    let tag = props.checkitembyId.resources[0].tag || ''
+    let selectedTags = [] // console.log('tag', tag, nextProps.tags)
+    if (tag) {
+      let parts = tag.toString().split(' ')
+      if (parts.length > 0) {
+        parts.forEach(function (data, index) {
+          console.log('data -----0', data)
+          props.tags.resources.forEach(function (element, idx) {
+            if (element === data) {
+              let option = {}
+              option.id = idx
+              option.value = element
+              option.label = element
+              option.type = 'NEW'
+              selectedTags.push(option)
+            }
+          })
+        })
+      }
+    }
+    props.setSelectedTags(selectedTags)
   }
   let CheckItemEdit = function () {
     let editCheckItemsSettings = {...props.editCheckItemsSettings, 'isEditFlag': true}
     props.setEditCheckItemSettings(editCheckItemsSettings)
     let updateCheckItemValue = {...props.updateCheckItemValue}
     updateCheckItemValue.name = checkitemname
+    updateCheckItemValue.description = checkItemDescription
     let typeObject = null
     if (checkItemTypeId !== '') {
       typeObject = _.find(reviewCategoryOptions, function (obj) {
@@ -520,7 +603,7 @@ if (props.modalSettings.standardData !== '') {
     props.setEditCheckItemSettings(editCheckItemsSettings)
   }
   let saveEditCheckitem = function (event) {
-    if (props.updateCheckItemValue.name.trim() !== '') {
+    if (props.updateCheckItemValue.name.trim() !== '' && props.editCheckItemsSettings.toUpdate) {
       let payload = []
       let obj = {}
       // edit name payload
@@ -532,7 +615,7 @@ if (props.modalSettings.standardData !== '') {
       obj = {}
       obj.op = 'replace'
       obj.path = '/description'
-      obj.value = ''
+      obj.value = props.updateCheckItemValue.description
       payload.push(obj)
       if (props.updateCheckItemValue.typeSelected !== null) {
         obj = {}
@@ -616,6 +699,23 @@ if (props.modalSettings.standardData !== '') {
           }
         })
       }
+      if (props.selectedTags) {
+        let value = ''
+        let tagLength = props.selectedTags.length
+        if (tagLength > 0) {
+          props.selectedTags.forEach(function (data, index) {
+            value = value + data.value
+            if (index !== tagLength - 1) {
+              value = value + ' '
+            }
+          })
+        }
+        obj = {}
+        obj.op = 'replace'
+        obj.path = '/tag'
+        obj.value = value
+        payload.push(obj)
+      }
       let updatePayload = {}
       updatePayload.urlPart = {}
       updatePayload.urlPart.check_item_template_id = parseInt(props.match.params.id)
@@ -624,19 +724,48 @@ if (props.modalSettings.standardData !== '') {
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.updateCheckitem(updatePayload)
       console.log('payload', payload, props)
+    } else {
+      let editCheckItemsSettings = {...props.editCheckItemsSettings, 'validationClass': 'form-group row has-danger'}
+      props.setEditCheckItemSettings(editCheckItemsSettings)
     }
+  }
+  if (props.tags && props.tags !== '') {
+    tagOptions = props.tags.resources.map(function (data, index) {
+      let option = {}
+      option.id = index
+      option.value = data
+      option.label = data
+      return option
+    })
   }
     return (
       <div>
         <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-          <div className='m-portlet__head'>
+          <br />
+          <div className='m-portlet__head' style={{'height': '50%'}}>
             <div className='m-portlet__head-caption' style={{width: '100%'}}>
               <div className='m-portlet__head-title' style={{width: '100%'}}>
                 {props.editCheckItemsSettings.isEditFlag && (<div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
-                    <div className='form-group m-form__group has-danger'>
-                      <input type='text' className='form-control m-input' value={props.updateCheckItemValue.name} onChange={handletitleChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
+                    <div className={props.editCheckItemsSettings.validationClass}>
+                      <input type='text' className='form-control m-input' ref={input => (refCheckItemName = input)} defaultValue={props.updateCheckItemValue.name} onKeyUp={handleNameChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
+                      {props.editCheckItemsSettings.showValidation && (<div style={props.editCheckItemsSettings.color} className='form-control-feedback has-danger'>{props.editCheckItemsSettings.message}</div>)}
                     </div>
+                    <div className='form-group row'>
+                      <input type='text' className='form-control m-input m--margin-top-10' value={props.updateCheckItemValue.description} placeholder='Check Item Description' onChange={handleDescriptionChange} aria-describedby='basic-addon2' />
+                    </div>
+                    <div className='form-group row'>
+                      <CreatableSelect
+                        className='form-control m-input m--margin-top-10'
+                        placeholder='Enter Tags'
+                        isClearable
+                        isMulti
+                        onChange={handleEditTag}
+                        value={props.selectedTags}
+                        options={tagOptions}
+                      />
+                    </div>
+                    <br />
                   </div>
                   <div className='col-4 float-right'>
                     <div className='pull-right'>
@@ -1173,27 +1302,30 @@ if (props.modalSettings.standardData !== '') {
       </div>
       )
     }
-    viewcheckItem.propTypes = {
-      editCheckItemsSettings: PropTypes.any,
-      updateCheckItemValue: PropTypes.any,
-      // deleteCheckitem: PropTypes.func,
-      updateCheckitem: PropTypes.func,
-      checkitembyId: PropTypes.any,
-      // eslint-disable-next-line
-      match: PropTypes.any,
-      componentTypeComponentCheckitems: PropTypes.any,
-      componentTypeComponentPrinciples: PropTypes.any,
-      componentTypeComponentStandards: PropTypes.any,
-      reviewCategories: PropTypes.any,
-      selectedStandard: PropTypes.any,
-      selectedPrinciple: PropTypes.any,
-      selectedValue: PropTypes.any,
-      // eslint-disable-next-line
-      selectedCheckitem: PropTypes.any,
-      modalSettings: PropTypes.any,
-      principles: PropTypes.any,
-      standards: PropTypes.any,
-      values: PropTypes.any,
-      payload: PropTypes.any,
-      modalIsOpen: PropTypes.any
- }
+  viewcheckItem.propTypes = {
+    editCheckItemsSettings: PropTypes.any,
+    updateCheckItemValue: PropTypes.any,
+    // deleteCheckitem: PropTypes.func,
+    // updateCheckitem: PropTypes.func,
+    checkitembyId: PropTypes.any,
+    // eslint-disable-next-line
+    match: PropTypes.any,
+    componentTypeComponentCheckitems: PropTypes.any,
+    componentTypeComponentPrinciples: PropTypes.any,
+    componentTypeComponentStandards: PropTypes.any,
+    reviewCategories: PropTypes.any,
+    selectedStandard: PropTypes.any,
+    selectedPrinciple: PropTypes.any,
+    selectedValue: PropTypes.any,
+    // eslint-disable-next-line
+    selectedCheckitem: PropTypes.any,
+    modalSettings: PropTypes.any,
+    principles: PropTypes.any,
+    standards: PropTypes.any,
+    values: PropTypes.any,
+    // eslint-disable-next-line
+    payload: PropTypes.any,
+    modalIsOpen: PropTypes.any,
+    tags: PropTypes.any,
+    selectedTags: PropTypes.any
+  }

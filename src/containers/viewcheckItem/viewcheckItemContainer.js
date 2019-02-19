@@ -31,7 +31,12 @@ export function mapStateToProps (state, props) {
     payload: state.viewcheckItemReducer.payload,
     selectedType: state.addcheckItemReducer.selectedType,
     modalIsOpen: state.basicReducer.modalIsOpen,
-    modalSettings: state.viewcheckItemReducer.modalSettings
+    modalSettings: state.viewcheckItemReducer.modalSettings,
+    tags: state.viewcheckItemReducer.tags,
+    existingCheckItemNames: state.viewcheckItemReducer.existingCheckItemNames,
+    checkValidity: state.viewcheckItemReducer.checkValidity,
+    selectedTags: state.viewcheckItemReducer.selectedTags,
+    processTags: state.viewcheckItemReducer.processTags
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -58,7 +63,12 @@ export const propsMapping: Callbacks = {
   setPayload: actionCreators.setPayload,
   setSelectedType: actionCreators.setSelectedType,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setModalSetting: actionCreators.setModalSetting
+  setModalSetting: actionCreators.setModalSetting,
+  verifyName: sagaActions.checkitemActions.verifyName,
+  fetchTags: sagaActions.reviewActions.fetchTags,
+  setCheckValidity: actionCreators.setCheckValidity,
+  setSelectedTags: actionCreators.setSelectedTags,
+  setProcessTags: actionCreators.setProcessTags
 }
 
 // If you want to use the function mapping
@@ -110,6 +120,7 @@ export default compose(
       let standardId = _.result(_.find(componentTypes, function (obj) {
         return obj.key === 'Standard'
       }), 'component_type')
+      this.props.fetchTags && this.props.fetchTags()
       this.props.fetchComponentTypeComponentsforstandards && this.props.fetchComponentTypeComponentsforstandards(standardId)
       this.props.fetchComponentTypeProperties && this.props.fetchComponentTypeProperties(checkItemTemplatesId)
     },
@@ -130,6 +141,37 @@ export default compose(
       if (nextProps.checkitembyId && nextProps.checkitembyId !== this.props.checkitembyId && this.props.checkitembyId === '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
+        if (nextProps.checkitembyId.error_code !== null) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.checkitembyId.error_message, nextProps.checkitembyId.error_code)
+          this.props.history.push('/checkitems')
+        }
+      }
+      if (nextProps.tags && nextProps.tags !== '' && nextProps.checkitembyId && nextProps.checkitembyId !== '' && nextProps.processTags) {
+        console.log('call', nextProps)
+        if (nextProps.tags.error_code === null) {
+          let tag = nextProps.checkitembyId.resources[0].tag || ''
+          let selectedTags = [] // console.log('tag', tag, nextProps.tags)
+          if (tag) {
+            let parts = tag.toString().split(' ')
+            if (parts.length > 0) {
+              parts.forEach(function (data, index) {
+                console.log('data -----0', data)
+                nextProps.tags.resources.forEach(function (element, idx) {
+                  if (element === data) {
+                    let option = {}
+                    option.id = idx
+                    option.value = element
+                    option.label = element
+                    selectedTags.push(option)
+                  }
+                })
+              })
+            }
+          }
+          nextProps.setSelectedTags(selectedTags)
+          nextProps.setProcessTags(false)
+        }
       }
       if (nextProps.componentTypeProperties && nextProps.componentTypeProperties !== '') {
         if (nextProps.componentTypeProperties.error_code === null) {
@@ -179,6 +221,34 @@ export default compose(
         }
         // this.props.resetResponse()
         this.props.history.push('/checkitems')
+      }
+      if (nextProps.existingCheckItemNames && nextProps.existingCheckItemNames !== '' && nextProps.checkValidity) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        let editCheckItemsSettings = {...this.props.editCheckItemsSettings}
+        if (nextProps.existingCheckItemNames.error_code === null) {
+          let existingCheckItemNames = nextProps.existingCheckItemNames.resources
+          let enterCheckItemName = nextProps.updateCheckItemValue.name.trim().toLowerCase()
+          let found = _.find(nextProps.existingCheckItemNames.resources, function (obj) { return ((obj.name.trim().toLowerCase() === enterCheckItemName) && (obj.id !== parseInt(nextProps.match.params.id))) })
+          console.log('existingCheckItemNames', existingCheckItemNames)
+          console.log('enterCheckItemName', enterCheckItemName)
+          console.log('found', found)
+          editCheckItemsSettings.showValidation = true
+          if (found) {
+            editCheckItemsSettings.message = enterCheckItemName + ' name already exist'
+            editCheckItemsSettings.color = {color: 'red'}
+            editCheckItemsSettings.toUpdate = false
+          } else {
+            editCheckItemsSettings.message = 'Valid Name'
+            editCheckItemsSettings.color = {color: 'green'}
+            editCheckItemsSettings.toUpdate = true
+          }
+          nextProps.setEditCheckItemSettings(editCheckItemsSettings)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.existingCheckItemNames.error_message, nextProps.existingCheckItemNames.error_code)
+        }
+        nextProps.setCheckValidity(false)
       }
     }
   })
