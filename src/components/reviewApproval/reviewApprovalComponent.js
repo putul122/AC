@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import Select from 'react-select'
 import moment from 'moment'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
@@ -11,17 +12,18 @@ import api from '../../constants'
 export default function ReviewApproval (props) {
   console.log(props)
   let reviewName = ''
+  // let reviewComplaint = ''
   let Description = ''
   let Category = ''
-  let Reviewer = ''
-  let Approver = ''
+  // let Reviewer = ''
+  // let Approver = ''
   let Artefact = ''
   let DocumentReference = ''
   let DocumentVersion = ''
   let documentHyperLink = 'javascript:void(0);'
   let reviewArtefactId
   let checkItemList = ''
-  let Compliant = ''
+  // let Compliant = ''
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -183,21 +185,157 @@ export default function ReviewApproval (props) {
     reviewName = props.reviewData.resources[0].name
     Description = props.reviewData.resources[0].description
     Category = props.reviewData.resources[0].review_category
-    Reviewer = props.reviewData.resources[0].reviewer
-    Approver = props.reviewData.resources[0].approver
+    // Reviewer = props.reviewData.resources[0].reviewer
+    // Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
-    Compliant = props.reviewData.resources[0].compliance_status
+    // Compliant = props.reviewData.resources[0].compliance_status
     reviewArtefactId = props.reviewData.resources[0].review_artefact_id
     DocumentReference = props.reviewData.resources[0].document_reference
     DocumentVersion = props.reviewData.resources[0].document_version
+    // reviewComplaint = props.reviewData.resources[0].complaint
     if (DocumentReference !== '' && DocumentReference !== null) {
       documentHyperLink = api.documentReferenceLink + DocumentReference
     }
     if (props.reviewData.resources[0].check_items.length > 0) {
-      checkItemList = props.reviewData.resources[0].check_items.map(function (data, index) {
-        return (<span className='m-list-search__result-item' key={index}>
-          <span className='m-list-search__result-item-text'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></span>
-        </span>)
+      let notToDisplay = []
+      props.reviewData.resources[0].check_items.forEach(function (data, index) {
+        let compliance = data.compliance
+        if (data.values.length > 0) {
+          data.values.forEach(function (value, idx) {
+            if (compliance === value.name) {
+              // remove id from notToDisplay
+              let notToDisplayIndex = notToDisplay.indexOf(data.id)
+              if (notToDisplayIndex > -1) {
+                notToDisplay.splice(notToDisplayIndex, 1)
+              }
+            } else {
+              // add id to notToDisplay
+              if (value.requires_check_items.length > 0) {
+                value.requires_check_items.forEach(function (requireCheckItem, ix) {
+                  notToDisplay.push(requireCheckItem.id)
+                })
+              }
+            }
+          })
+        }
+      })
+      let checkItems = props.reviewData.resources[0].check_items.map(function (data, index) {
+        if (notToDisplay.includes(data.id)) {
+          data.display = false
+        } else {
+          data.display = true
+        }
+        return data
+      }) || []
+      checkItemList = _.filter(checkItems, function (checkItem) {
+          return checkItem.display
+      }).map(function (data, index) {
+        if (data.type === null || data.type === 'Radio') {
+          let valueList = ''
+          if (data.values.length > 0) {
+            valueList = data.values.map(function (valueData, valueIndex) {
+              return (<span><label htmlFor='example-email-input' className='m-radio'>
+                <input type='radio' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} /> {valueData.name}
+                <span />
+              </label>&nbsp;&nbsp;&nbsp;</span>)
+            })
+          }
+          console.log('valueList', valueList, typeof valueList)
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='m-radio-inline pull-left row' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    {valueList}
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
+        if (data.type === 'Check') {
+          let valueList = ''
+          if (data.values.length > 0) {
+            valueList = data.values.map(function (valueData, valueIndex) {
+              return (<span><label htmlFor='example-email-input' className='m-checkbox'>
+                <input type='checkbox' name={'checkitems_' + index + '_' + valueIndex} value={valueData.name} checked={data.compliance === valueData.name} /> {valueData.name}
+                <span />
+              </label>&nbsp;&nbsp;&nbsp;</span>)
+            })
+          }
+          console.log('valueList', valueList, typeof valueList)
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='m-radio-inline pull-left row' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    {valueList}
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
+        if (data.type === 'Dropdown') {
+          let dropdownOptions = []
+          let defaultValue = null
+          if (data.values.length > 0) {
+            dropdownOptions = data.values.map(function (value, index) {
+              value.label = value.name
+              return value
+            })
+            defaultValue = _.find(dropdownOptions, function (obj) { return obj.name === data.compliance })
+          }
+          return (<span className='m-list-search__result-item' key={index}>
+            <div className='form-group m-form__group row'>
+              <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+              <div className='col-9 float-left' >
+                <div className='row pull-left' style={{width: '100%'}}>
+                  <div className='col-md-4'>
+                    <Select
+                      // className='col-7 input-sm m-input'
+                      placeholder='Select Options'
+                      isClearable
+                      defaultValue={defaultValue}
+                      // value={props.userActionSettings.selectedRole}
+                      // onChange={handleCheckItemSelectOption(data)}
+                      // isSearchable={false}
+                      // isDisabled
+                      name={'dropdown'}
+                      options={dropdownOptions}
+                    />
+                  </div>
+                  <div className='col-md-8'>
+                    <div className='form-group m-form__group row'>
+                      <label htmlFor='example-email-input' className='col-3'><b>Comment:</b></label>
+                      <div className='col-9'>
+                        <span className=' m-input'>{data.compliance_comment || ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>)
+        }
       })
     } else {
       checkItemList = ''
@@ -206,7 +344,7 @@ export default function ReviewApproval (props) {
     return (
       <div className=''>
         <div className='row clearfix'>
-          <div className='col-xs-4 col-sm-6 col-md-8' ><h2> Approve Review</h2></div>
+          <div className='col-xs-4 col-sm-6 col-md-8' ><h2>Approve Review</h2></div>
           <div className='col-xs-8 col-sm-6 col-md-4'>
             <span className='pull-right' >
               {/* <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm'>Initiate Discussion</button> */}
@@ -224,89 +362,75 @@ export default function ReviewApproval (props) {
                 <div className='col-12'>
                   {/* {messageBlock} */}
                   <div className='form-group m-form__group row'>
-                    <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
-                    <div className='col-8 m--margin-top-10'>
-                      <span>{reviewName}</span>
-                    </div>
-                  </div>
-                  <div className='m-section m-section--last'>
-                    <div className='m-section__content'>
-                      <div className='m-demo'>
-                        <div className='m-demo__preview'>
-                          <div className='m-list-search'>
-                            <div className='m-list-search__results'>
-                              <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                          Review Details
-                                      </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Description</b></div>
-                                  <div className='col-8'><p>{Description}</p></div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Review Category</b></div>
-                                  <div className='col-8'><p>{Category}</p></div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Reviewer</b></div>
-                                  <div className='col-8'><p>{Reviewer}</p></div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Approver</b></div>
-                                  <div className='col-8'><p>{Approver}</p></div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Review Artefact</b></div>
-                                  <div className='col-8'>
-                                    {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
-                                    {!Artefact && (<span>Not Connected</span>)}
-                                    {/* <a href={'/review_artefact/' + reviewArtefactId}>{Artefact}</a> */}
-                                  </div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Review Document No</b></div>
-                                  <div className='col-8'>{DocumentReference && (<a href={documentHyperLink} >{DocumentReference}</a>)}</div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Review Document Version</b></div>
-                                  <div className='col-8'>{DocumentVersion}</div>
-                                </div>
-                              </span>
-                              <span className='m-list-search__result-item'>
-                                <div className='form-group m-form__group row'>
-                                  {/* <label htmlFor='example-email-input' className='col-4 col-form-label'>Description</label> */}
-                                  <div className='col-4'><b>Compliant</b></div>
-                                  <div className='col-8'><p>{Compliant}</p></div>
-                                </div>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                    <label htmlFor='example-email-input' className='col-5'><b>Name</b></label>
+                    <div className='col-7'>
+                      <span className='m-input' >{reviewName}</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className='col-md-6 m--margin-top-50'>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Review Artefact</b></label>
+                    <div className='col-7'>
+                      <span lassName='m-input' >
+                        {Artefact && (<a href='javascript:void(0);' onClick={openComponentModal} >{Artefact}</a>)}
+                        {!Artefact && (<span>Not Connected</span>)}
+                        {/* <a href={'/review_artefact/' + ArtefactId}>{Artefact}</a> */}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='row' style={{width: '100%'}}>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Review Type</b></label>
+                    <div className='col-7'>
+                      <span className='m-input'>{Category}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Review Document No</b></label>
+                    <div className='col-7'>
+                      <span className='m-input' >{DocumentReference && (<a href={documentHyperLink} >{DocumentReference}</a>)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='row' style={{width: '100%'}}>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  {/* {messageBlock} */}
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Description</b></label>
+                    <div className='col-7'>
+                      <span className='m-input' >{Description}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Review Document Version</b></label>
+                    <div className='col-7'>
+                      <span className='m-input' >{DocumentVersion}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='row' style={{width: '100%'}}>
+              <div className='col-md-12'>
                 <div className='m-section m-section--last'>
                   <div className='m-section__content'>
                     <div className='m-demo'>
@@ -314,7 +438,7 @@ export default function ReviewApproval (props) {
                         <div className='m-list-search'>
                           <div className='m-list-search__results'>
                             <span className='m-list-search__result-category m-list-search__result-category--first'>
-                                        Selected Check Items
+                                        Check Items
                                     </span>
                             {checkItemList}
                           </div>

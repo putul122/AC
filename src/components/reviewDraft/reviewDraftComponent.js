@@ -821,10 +821,10 @@ export default function ReviewDraft (props) {
         <div className={styles.borderline} style={{'marginTop': '20px'}}>
           <ul className='nav nav-tabs nav-fill' role='tablist' style={{'marginBottom': '0px'}}>
             <li className='nav-item'>
-              <a className='nav-link active' onClick={() => { props.setActiveTab('reviewsdetail') }} data-toggle='tab' href='#m_tabs_2_4'>Reviews Details</a>
+              <a className='nav-link active' onClick={() => { props.setActiveTab('reviewsdetail') }} data-toggle='tab' href='#m_tabs_2_4'><b>Review Details</b></a>
             </li>
             <li className='nav-item'>
-              <a className='nav-link' onClick={() => { props.setActiveTab('reviewsattachments') }} data-toggle='tab' href='#m_tabs_2_1'>Reviews Attachments</a>
+              <a className='nav-link' onClick={() => { props.setActiveTab('reviewsattachments') }} data-toggle='tab' href='#m_tabs_2_1'><b>Review Attachments</b></a>
             </li>
           </ul>
           <div className='tab-content'>
