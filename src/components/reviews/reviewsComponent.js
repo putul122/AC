@@ -1215,7 +1215,7 @@ return (
                   <div className={props.addReviewSettings.nameValidationClass}>
                     <label htmlFor='example-email-input' className='col-2 col-form-label'>Name<span style={{'fontSize': '20px'}} className='text-danger'>*</span></label>
                     <div className='col-8'>
-                      <input className='form-control m-input' type='text' placeholder='Enter Review Name' onKeyUp={handleReviewName} ref={input => (reviewName = input)} />
+                      <input className='form-control m-input' type='text' placeholder='Enter Review Name' onBlur={handleReviewName} ref={input => (reviewName = input)} />
                       {props.addReviewSettings.showValidation && (<div style={props.addReviewSettings.color} className='form-control-feedback has-danger'>{props.addReviewSettings.message}</div>)}
                     </div>
                   </div>

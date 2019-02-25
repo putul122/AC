@@ -431,7 +431,7 @@ export default function addcheckItem (props) {
                 <div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className={props.addSettings.validationClass}>
-                      <input type='text' className='form-control m-input m--margin-top-10' onKeyUp={handleNameChange} ref={input => (checkItemName = input)} placeholder='Check Item Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input m--margin-top-10' onBlur={handleNameChange} ref={input => (checkItemName = input)} placeholder='Check Item Name' aria-describedby='basic-addon2' />
                       {props.addSettings.showValidation && (<div style={props.addSettings.color} className='form-control-feedback has-danger'>{props.addSettings.message}</div>)}
                     </div>
                     <div className='form-group row'>

@@ -1,18 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 import debounce from 'lodash/debounce'
-import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
 import styles from './checkItemsComponent.scss'
-ReactModal.setAppElement('#root')
-// const formatAmount = (x) => {
-//   let parts = x.toString().split('.')
-//   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-//   if (typeof parts[1] !== 'undefined') {
-//     parts[1] = parts[1].substring(0, 2)
-//   }
-//   return parts.join('.')
-// }
 
 export default function CheckItems (props) {
   console.log(props.currentPage, props.componentTypeComponents)
@@ -28,18 +18,6 @@ export default function CheckItems (props) {
   let listPage = []
   let paginationLimit = 6
   let totalCheckItem
-   // let contextId = ''
-  // let appPackage = JSON.parse(localStorage.getItem('packages'))
-  // let componentTypes = appPackage.resources[0].component_types
-  // let componentId = _.result(_.find(componentTypes, function (obj) {
-  //     return obj.key === 'Entitlement'
-  // }), 'component_type')
-  // contextId = componentId
-  // let openDiscussionModal = function (event) {
-  //   event.preventDefault()
-  //   props.setDiscussionModalOpenStatus(true)
-  // }
-  console.log('props', props.setModalOpenStatus)
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
@@ -53,12 +31,6 @@ export default function CheckItems (props) {
       return (
         <tr key={index}>
           <td><a href={'/checkitems/' + data.id}>{data.name}</a></td>
-          {/* <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
-          <td>{data.purchased}</td>
-          <td>{data.consumed}</td>
-          <td>{'R ' + formatAmount(data.cost)}</td>
-          <td>{'R ' + formatAmount(data.total_cost)}</td> */}
-          {/* <td>{data.cost}</td> */}
         </tr>
       )
     })
@@ -88,7 +60,6 @@ export default function CheckItems (props) {
   }
 
   let handleInputChange = debounce((e) => {
-    console.log(e)
     const value = searchTextBox.value
     // entitlementsList = ''
     let payload = {
@@ -268,38 +239,13 @@ return (
           </div>
         </div>
       </div>
-      {/* The table structure ends */}
-      {/* <div className='row col-md-12' id='scrolling_vertical'>
-        <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-          <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
-            <ul className='m-datatable__pager-nav'>
-              <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
-              {listPage[0] && listPage[0].map(function (page, index) {
-                        if (page.number === currentPage) {
-                                page.class = 'm-datatable__pager-link--active'
-                            } else {
-                                page.class = ''
-                            }
-                            return (<li key={index} >
-                              <a href='' className={'m-datatable__pager-link m-datatable__pager-link-number ' + page.class} data-page={page.number} title={page.number} onClick={(event) => { event.preventDefault(); handlePage(page.number) }} >{page.number}</a>
-                            </li>)
-                            })}
-              <li><a href='' title='Next' className={'m-datatable__pager-link m-datatable__pager-link--next ' + nextClass} onClick={handleNext} data-page='4'><i className='la la-angle-right' /></a></li>
-            </ul>
-          </div>
-        </div>
-      </div> */}
     </div>
-    {/* <Discussion name={'Entitlements'} TypeKey='Entitlement' type='ComponentType' {...props} />
-    <NewDiscussion contextId={contextId} name={'Entitlements'} type='ComponentType' {...props} /> */}
   </div>
       )
   }
   CheckItems.propTypes = {
-  // entitlementsSummary: PropTypes.any,
   componentTypeComponents: PropTypes.any,
   checkitems: PropTypes.any,
   currentPage: PropTypes.any,
-  setModalOpenStatus: PropTypes.func,
   perPage: PropTypes.any
  }

@@ -838,7 +838,7 @@ export default function ReviewDraft (props) {
                         <div className={props.validationClass.nameValidationClass}>
                           <label htmlFor='example-email-input' className='col-4 col-form-label'>Name</label>
                           <div className='col-8'>
-                            {reviewNameSet !== '' && (<input className='form-control m-input' type='text' placeholder='Enter Review Name' defaultValue={reviewNameSet} onKeyUp={handleNameChange} ref={input => (reviewName = input)} />)}
+                            {reviewNameSet !== '' && (<input className='form-control m-input' type='text' placeholder='Enter Review Name' defaultValue={reviewNameSet} onBlur={handleNameChange} ref={input => (reviewName = input)} />)}
                             {props.updateNameSettings.showValidation && (<div style={props.updateNameSettings.color} className='form-control-feedback has-danger'>{props.updateNameSettings.message}</div>)}
                           </div>
                         </div>

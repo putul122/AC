@@ -748,7 +748,7 @@ if (props.modalSettings.standardData !== '') {
                 {props.editCheckItemsSettings.isEditFlag && (<div className='row m-form m-form--state m-form--fit' style={{width: '100%'}}>
                   <div className='col-8'>
                     <div className={props.editCheckItemsSettings.validationClass}>
-                      <input type='text' className='form-control m-input' ref={input => (refCheckItemName = input)} defaultValue={props.updateCheckItemValue.name} onKeyUp={handleNameChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input' ref={input => (refCheckItemName = input)} defaultValue={props.updateCheckItemValue.name} onBlur={handleNameChange} placeholder='CheckItem Name' aria-describedby='basic-addon2' />
                       {props.editCheckItemsSettings.showValidation && (<div style={props.editCheckItemsSettings.color} className='form-control-feedback has-danger'>{props.editCheckItemsSettings.message}</div>)}
                     </div>
                     <div className='form-group row'>

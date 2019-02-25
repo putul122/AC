@@ -242,7 +242,7 @@ export default function AddTemplate (props) {
                 <div className='row ' style={{width: '100%'}}>
                   <div className='col-8 m-form m-form--state m-form--fit'>
                     <div className={props.addSettings.validationClass}>
-                      <input type='text' className='form-control m-input' onKeyUp={handleNameChange} ref={input => (templateName = input)} placeholder='Template Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input' onBlur={handleNameChange} ref={input => (templateName = input)} placeholder='Template Name' aria-describedby='basic-addon2' />
                       {props.addSettings.showValidation && (<div style={props.addSettings.color} className='form-control-feedback has-danger'>{props.addSettings.message}</div>)}
                     </div>
                   </div>

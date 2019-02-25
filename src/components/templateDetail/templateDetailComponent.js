@@ -307,7 +307,7 @@ export default function TemplateDetail (props) {
                 {props.editTemplateSettings.isEditFlag && (<div className='row' style={{width: '100%'}}>
                   <div className='col-8 m-form m-form--state m-form--fit'>
                     <div className={props.editTemplateSettings.validationClass}>
-                      <input type='text' className='form-control m-input' defaultValue={props.editTemplateSettings.name} onKeyUp={handleTitleChange} ref={input => (refTemplateName = input)} placeholder='Template Name' aria-describedby='basic-addon2' />
+                      <input type='text' className='form-control m-input' defaultValue={props.editTemplateSettings.name} onBlur={handleTitleChange} ref={input => (refTemplateName = input)} placeholder='Template Name' aria-describedby='basic-addon2' />
                       {props.editTemplateSettings.showValidation && (<div style={props.editTemplateSettings.color} className='form-control-feedback has-danger'>{props.editTemplateSettings.message}</div>)}
                     </div>
                   </div>
