@@ -16,7 +16,6 @@ export default function AddTemplate (props) {
   let tagOptions = []
   let checkItemModalList = ''
   let handleCheckbox = function (value, index) {
-    console.log('handle group checkbox', value, index)
     let checkItemsSettings = {...props.checkItemsSettings}
     let checkItems = checkItemsSettings.checkItems
     checkItems[index].isChecked = value
@@ -25,7 +24,6 @@ export default function AddTemplate (props) {
   }
   let selectCheckItems = function () {
     let checkItemsSettings = {...props.checkItemsSettings}
-    console.log(checkItemsSettings.checkItems)
     let checkItems = props.checkItems
     let selectedCheckItems = checkItemsSettings.checkItems
     selectedCheckItems.forEach(function (data, index) {

@@ -23,7 +23,7 @@ export default function ReviewApproval (props) {
   let documentHyperLink = 'javascript:void(0);'
   let reviewArtefactId
   let checkItemList = ''
-  // let Compliant = ''
+  let Compliant = ''
   let contextId = props.match.params.id
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -188,7 +188,7 @@ export default function ReviewApproval (props) {
     // Reviewer = props.reviewData.resources[0].reviewer
     // Approver = props.reviewData.resources[0].approver
     Artefact = props.reviewData.resources[0].review_artefact_name
-    // Compliant = props.reviewData.resources[0].compliance_status
+    Compliant = props.reviewData.resources[0].compliance_status
     reviewArtefactId = props.reviewData.resources[0].review_artefact_id
     DocumentReference = props.reviewData.resources[0].document_reference
     DocumentVersion = props.reviewData.resources[0].document_version
@@ -428,6 +428,20 @@ export default function ReviewApproval (props) {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className='row' style={{width: '100%'}}>
+              <div className='col-md-6'>
+                <div className='col-12'>
+                  {/* {messageBlock} */}
+                  <div className='form-group m-form__group row'>
+                    <label htmlFor='example-email-input' className='col-5'><b>Compliant</b></label>
+                    <div className='col-7'>
+                      <span className='m-input' >{Compliant}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='col-md-6' />
             </div>
             <div className='row' style={{width: '100%'}}>
               <div className='col-md-12'>
