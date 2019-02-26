@@ -246,7 +246,7 @@ export default compose(
         let stageIndex = 0
         let payload = {
           'search': '',
-          'page_size': 10,
+          'page_size': nextProps.perPage,
           'page': 1
         }
         if (filterSettings.myTask) {

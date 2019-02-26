@@ -2,11 +2,11 @@ import React from 'react'
 import _ from 'lodash'
 import debounce from 'lodash/debounce'
 import PropTypes from 'prop-types'
+import CreatableSelect from 'react-select/lib/Creatable'
 import styles from './checkItemsComponent.scss'
 
 export default function CheckItems (props) {
-  console.log(props.currentPage, props.componentTypeComponents)
-  console.log(props.checkitems)
+  console.log('props', props)
   let searchTextBox
   let checkitemList = ''
   let totalNoPages
@@ -18,12 +18,31 @@ export default function CheckItems (props) {
   let listPage = []
   let paginationLimit = 6
   let totalCheckItem
+  let tagOptions = []
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
   }
   let handledropdownChange = function (event) {
     console.log('handle change', event.target.value, typeof event.target.value)
     props.setPerPage(parseInt(event.target.value))
+  }
+  let handleTag = function (newValue: any, actionMeta: any) {
+    // console.group('Value Changed first select')
+    // console.log(newValue)
+    // console.log(`action: ${actionMeta.action}`)
+    // console.groupEnd()
+    // eslint-disable-next-line
+    mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let filterSettings = {...props.filterSettings}
+    filterSettings.callApi = true
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+      filterSettings.selectedTags = newValue
+      props.setFilterSettings(filterSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      filterSettings.selectedTags = null
+      props.setFilterSettings(filterSettings)
+    }
   }
 
   if (props.checkitems && props.checkitems !== '') {
@@ -60,23 +79,28 @@ export default function CheckItems (props) {
   }
 
   let handleInputChange = debounce((e) => {
-    const value = searchTextBox.value
-    // entitlementsList = ''
-    let payload = {
-      'search': value || '',
-      'page_size': props.perPage,
-      'page': currentPage
+    if (searchTextBox) {
+      const value = searchTextBox.value
+      // entitlementsList = ''
+      let payload = {
+        'search': value || '',
+        'page_size': props.perPage,
+        'page': currentPage
+      }
+      let filterSettings = {...props.filterSettings}
+      filterSettings.selectedTags = null
+      props.setFilterSettings(filterSettings)
+      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+        props.fetchCheckItems(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        // props.setComponentTypeLoading(true)
+      // }
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
     }
-    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.fetchCheckItems(payload)
-      // eslint-disable-next-line
-      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      // props.setComponentTypeLoading(true)
-    // }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
   }, 500)
   let handlePrevious = function (event) {
     event.preventDefault()
@@ -141,7 +165,15 @@ export default function CheckItems (props) {
       if (found.length > 0) { return group }
     })
   }
-
+  if (props.tags && props.tags !== '') {
+    tagOptions = props.tags.resources.map(function (data, index) {
+      let option = {}
+      option.id = index
+      option.value = data
+      option.label = data
+      return option
+    })
+  }
 return (
   <div>
     <div className='row'>
@@ -168,7 +200,7 @@ return (
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row' style={{'marginBottom': '20px'}}>
-                        <div className='col-sm-12 col-md-6'>
+                        <div className='col-sm-6 col-md-3'>
                           <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
                             <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
@@ -181,7 +213,23 @@ return (
                             {/* </label> */}
                           </div>
                         </div>
-                        <div className='col-sm-12 col-md-6'>
+                        <div className='col-sm-6 col-md-5'>
+                          <div className='dataTables_length' style={{'display': 'flex'}}>
+                            <h5 style={{'margin': '10px'}}>Tag</h5>
+                            <div className='m-input-icon'>
+                              <CreatableSelect
+                                className='input-sm m-input'
+                                placeholder='Enter Tags'
+                                isClearable
+                                isMulti
+                                onChange={handleTag}
+                                value={props.filterSettings.selectedTags}
+                                options={tagOptions}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-sm-12 col-md-4'>
                           <div className='dataTables_length pull-right' id='m_table_1_length' style={{'display': 'flex'}}>
                             <div style={{'display': 'flex'}}>
                               <h5 style={{'margin': '10px'}}>Search</h5>
@@ -243,9 +291,10 @@ return (
   </div>
       )
   }
-  CheckItems.propTypes = {
-  componentTypeComponents: PropTypes.any,
+CheckItems.propTypes = {
   checkitems: PropTypes.any,
   currentPage: PropTypes.any,
-  perPage: PropTypes.any
+  perPage: PropTypes.any,
+  tags: PropTypes.any,
+  filterSettings: PropTypes.any
  }

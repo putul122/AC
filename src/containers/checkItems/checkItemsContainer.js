@@ -8,16 +8,14 @@ import { actionCreators as basicActionCreators } from '../../redux/reducers/basi
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    // entitlementsSummary: state.checkItemsReducer.entitlementsSummary,
-    // entitlements: state.checkItemsReducer.entitlements,
-    // currentPage: state.checkItemsReducer.currentPage,
-    // addEntitlementResponse: state.checkItemsReducer.addEntitlementResponse,
+    authenticateUser: state.basicReducer.authenticateUser,
+    tags: state.checkItemsReducer.tags,
     modalIsOpen: state.basicReducer.modalIsOpen,
     componentTypeComponents: state.basicReducer.componentTypeComponents,
     checkitems: state.checkItemsReducer.checkitems,
     currentPage: state.checkItemsReducer.currentPage,
-    perPage: state.checkItemsReducer.perPage
-    // perPage: state.checkItemsReducer.perPage
+    perPage: state.checkItemsReducer.perPage,
+    filterSettings: state.checkItemsReducer.filterSettings
    }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -27,7 +25,9 @@ export const propsMapping: Callbacks = {
   fetchCheckItems: sagaActions.checkitemActions.fetchCheckItems,
   setCurrentPage: actionCreators.setCurrentPage,
   setPerPage: actionCreators.setPerPage,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  fetchTags: sagaActions.reviewActions.fetchTags,
+  setFilterSettings: actionCreators.setFilterSettings
  }
 
 // If you want to use the function mapping
@@ -60,6 +60,7 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('my props', this.props)
+      this.props.fetchTags && this.props.fetchTags()
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       let appPackage = JSON.parse(localStorage.getItem('packages'))
       let componentTypes = appPackage.resources[0].component_types
@@ -102,6 +103,35 @@ export default compose(
           'page': 1
         }
         this.props.fetchCheckItems && this.props.fetchCheckItems(payload)
+      }
+      if (nextProps.filterSettings.callApi) {
+        console.log('search call api')
+        nextProps.setCurrentPage(1)
+        let filterSettings = {...nextProps.filterSettings}
+        filterSettings.callApi = false
+        let payload = {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1
+        }
+        if (filterSettings.selectedTags) {
+          let search = ''
+          let tagLength = filterSettings.selectedTags.length
+          if (tagLength > 0) {
+            filterSettings.selectedTags.forEach(function (data, index) {
+              search = search + '#' + data.value
+              if (index !== tagLength - 1) {
+                search = search + ' '
+              }
+            })
+          }
+          console.log('search', search)
+          payload.search = search
+        }
+        this.props.fetchCheckItems && this.props.fetchCheckItems(payload)
+        // eslint-disable-next-line
+        mApp && mApp.block('#softwareList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        nextProps.setFilterSettings(filterSettings)
       }
     }
   })
