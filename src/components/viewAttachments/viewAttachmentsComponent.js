@@ -24,13 +24,13 @@ export default function ViewAttachments (props) {
     // console.log(attachmentlink)
     return (
       <div className='col-2' style={{'textAlign': 'center'}}>
-        <div className='m-list-search'>
+        {/* <div className='m-list-search'>
           <div className='m-list-search__results'>
             <span className='m-list-search__result-category m-list-search__result-category--first'>
             Attachments
             </span>
           </div>
-        </div>
+        </div> */}
         <div className='m-widget24'>
           <div className='m-widget24__item' style={{'marginBottom': '40px'}}>
             <h4 className='m-widget24__title' style={{'marginLeft': '0px', 'marginTop': '0px'}}>
@@ -50,12 +50,16 @@ export default function ViewAttachments (props) {
   return (
     <div>
       <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
-        <br />
-        {/* <div className='m-portlet__head' />
-        </div> */}
         <div className='m-portlet__body'>
           <div className='row m-row--no-padding m-row--col-separator-xl'>
             <div className='col-xl-12'>
+              <div className='m-list-search'>
+                <div className='m-list-search__results'>
+                  <span className='m-list-search__result-category m-list-search__result-category--first'>
+                  Attachments
+                  </span>
+                </div>
+              </div>
               <div className='row m-row--no-padding m-row--col-separator-xl' style={{width: '100%'}}>
                 {attachmentsList}
               </div>
