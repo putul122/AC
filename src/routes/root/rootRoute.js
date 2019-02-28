@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import AppWrapper from '../../components/appWrapper/appWrapperComponent'
 import { runWithAdal } from 'react-adal'
+import {isAllowed} from '../../config/authorization'
 import { authContext } from '../../config/adal'
 const DO_NOT_LOGIN = false
+let userRoles = localStorage.getItem('accessRight')
 
 if (module.hot) {
   module.hot.accept()
@@ -51,76 +53,116 @@ export default class Root extends Component {
             resolve(require('../dashboard/dashboardRoute').default)
             break
           case 'templates':
-            if (module.hot) {
-              module.hot.accept('../templatesPage/templatesPageRoute', () => {
-                require('../templatesPage/templatesPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Templates'])) {
+              if (module.hot) {
+                module.hot.accept('../templatesPage/templatesPageRoute', () => {
+                  require('../templatesPage/templatesPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../templatesPage/templatesPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../templatesPage/templatesPageRoute').default)
             break
           case 'templateDetail':
-            if (module.hot) {
-              module.hot.accept('../templateDetailPage/templateDetailPageRoute', () => {
-                        require('../templateDetailPage/templateDetailPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Templates'])) {
+              if (module.hot) {
+                module.hot.accept('../templateDetailPage/templateDetailPageRoute', () => {
+                          require('../templateDetailPage/templateDetailPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../templateDetailPage/templateDetailPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../templateDetailPage/templateDetailPageRoute').default)
             break
           case 'add_template':
-            if (module.hot) {
-              module.hot.accept('../addTemplatePage/addTemplatePageRoute', () => {
-                require('../addTemplatePage/addTemplatePageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Templates'])) {
+              if (module.hot) {
+                module.hot.accept('../addTemplatePage/addTemplatePageRoute', () => {
+                  require('../addTemplatePage/addTemplatePageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../addTemplatePage/addTemplatePageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../addTemplatePage/addTemplatePageRoute').default)
             break
           case 'users':
-            if (module.hot) {
-              module.hot.accept('../usersPage/usersPageRoute', () => {
-                require('../usersPage/usersPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Users'])) {
+              if (module.hot) {
+                module.hot.accept('../usersPage/usersPageRoute', () => {
+                  require('../usersPage/usersPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../usersPage/usersPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../usersPage/usersPageRoute').default)
             break
           case 'reviews':
-            if (module.hot) {
-              module.hot.accept('../reviewsPage/reviewsPageRoute', () => {
-                        require('../reviewsPage/reviewsPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Reviews'])) {
+              if (module.hot) {
+                module.hot.accept('../reviewsPage/reviewsPageRoute', () => {
+                          require('../reviewsPage/reviewsPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../reviewsPage/reviewsPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../reviewsPage/reviewsPageRoute').default)
             break
           case 'review_draft':
-            if (module.hot) {
-              module.hot.accept('../reviewDraftPage/reviewDraftPageRoute', () => {
-                        require('../reviewDraftPage/reviewDraftPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Draft'])) {
+              if (module.hot) {
+                module.hot.accept('../reviewDraftPage/reviewDraftPageRoute', () => {
+                          require('../reviewDraftPage/reviewDraftPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../reviewDraftPage/reviewDraftPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../reviewDraftPage/reviewDraftPageRoute').default)
             break
           case 'review_approval':
-            if (module.hot) {
-              module.hot.accept('../reviewApprovalPage/reviewApprovalPageRoute', () => {
-                        require('../reviewApprovalPage/reviewApprovalPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Approval'])) {
+              if (module.hot) {
+                module.hot.accept('../reviewApprovalPage/reviewApprovalPageRoute', () => {
+                          require('../reviewApprovalPage/reviewApprovalPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../reviewApprovalPage/reviewApprovalPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../reviewApprovalPage/reviewApprovalPageRoute').default)
             break
           case 'conduct_review':
-            if (module.hot) {
-              module.hot.accept('../conductReviewPage/conductReviewPageRoute', () => {
-                        require('../conductReviewPage/conductReviewPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['In Progress'])) {
+              if (module.hot) {
+                module.hot.accept('../conductReviewPage/conductReviewPageRoute', () => {
+                          require('../conductReviewPage/conductReviewPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../conductReviewPage/conductReviewPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../conductReviewPage/conductReviewPageRoute').default)
             break
           case 'account':
             runWithAdal(authContext, () => {
@@ -133,7 +175,7 @@ export default class Root extends Component {
               resolve(require('../accountPage/accountPageRoute').default)
             }, DO_NOT_LOGIN)
             break
-            case 'viewReview':
+          case 'viewReview':
             if (module.hot) {
               module.hot.accept('../viewReviewPage/viewReviewPageRoute', () => {
                 require('../viewReviewPage/viewReviewPageRoute').default // eslint-disable-line
@@ -143,40 +185,60 @@ export default class Root extends Component {
             resolve(require('../viewReviewPage/viewReviewPageRoute').default)
             break
           case 'acceptReview':
-            if (module.hot) {
-              module.hot.accept('../acceptReviewPage/acceptReviewPageRoute', () => {
-                require('../acceptReviewPage/acceptReviewPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['Acceptance'])) {
+              if (module.hot) {
+                module.hot.accept('../acceptReviewPage/acceptReviewPageRoute', () => {
+                  require('../acceptReviewPage/acceptReviewPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../acceptReviewPage/acceptReviewPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../acceptReviewPage/acceptReviewPageRoute').default)
             break
           case 'checkitems':
-            if (module.hot) {
-              module.hot.accept('../checkItemsPage/checkItemsPageRoute', () => {
-                        require('../checkItemsPage/checkItemsPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['CheckItems'])) {
+              if (module.hot) {
+                module.hot.accept('../checkItemsPage/checkItemsPageRoute', () => {
+                          require('../checkItemsPage/checkItemsPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../checkItemsPage/checkItemsPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../checkItemsPage/checkItemsPageRoute').default)
             break
           case 'addcheckItem':
-            if (module.hot) {
-              module.hot.accept('../addcheckItemPage/addcheckItemPageRoute', () => {
-                        require('../addcheckItemPage/addcheckItemPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['CheckItems'])) {
+              if (module.hot) {
+                module.hot.accept('../addcheckItemPage/addcheckItemPageRoute', () => {
+                          require('../addcheckItemPage/addcheckItemPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../addcheckItemPage/addcheckItemPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../addcheckItemPage/addcheckItemPageRoute').default)
             break
           case 'viewCheckItem':
-            if (module.hot) {
-              module.hot.accept('../viewcheckItemPage/viewcheckItemPageRoute', () => {
-                require('../viewcheckItemPage/viewcheckItemPageRoute').default // eslint-disable-line
-                this.forceUpdate()
-              })
+            if (isAllowed(userRoles, ['CheckItems'])) {
+              if (module.hot) {
+                module.hot.accept('../viewcheckItemPage/viewcheckItemPageRoute', () => {
+                  require('../viewcheckItemPage/viewcheckItemPageRoute').default // eslint-disable-line
+                  this.forceUpdate()
+                })
+              }
+              resolve(require('../viewcheckItemPage/viewcheckItemPageRoute').default)
+            } else {
+              localStorage.setItem('showAccessControlMessage', true)
+              window.location.href = window.location.origin + '/dashboard'
             }
-            resolve(require('../viewcheckItemPage/viewcheckItemPageRoute').default)
             break
           case 'review_artefact':
             if (module.hot) {

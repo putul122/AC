@@ -10,6 +10,12 @@ export default function Dashboard (props) {
   let reviewsInDraft = ''
   let reviewsInProgress = ''
   // let reviewsCompleted = ''
+  let doughnutOption = {
+    legend: { display: true },
+    legendCallback: function (chart) {
+      console.log('chart', chart)
+    }
+  }
   let lineData = {}
   let pieChartData = {}
   let datasets = []
@@ -153,7 +159,7 @@ export default function Dashboard (props) {
         }
       }
       pieChartData.labels = pieLabels
-      pieChartData.legend = false
+      pieChartData.legend = true
       pieChartData.datasets = []
       datasetObject.data = pieData
       datasetObject.backgroundColor = colorData
@@ -223,7 +229,7 @@ export default function Dashboard (props) {
                       </div>
                       <div className='col'>
                         <span className='m-widget12__text2'>
-                          <Doughnut id='applicationChart' width={180} data={pieChartData} />
+                          <Doughnut id='applicationChart' data={pieChartData} options={doughnutOption} />
                         </span>
                       </div>
                     </div>

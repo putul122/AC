@@ -60,6 +60,7 @@ export default compose(
         if (nextProps.loggedInresponse.error_code === null) {
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
+          localStorage.setItem('accessRight', btoa(nextProps.loggedInresponse.resources[0]['roles']))
           // eslint-disable-next-line
           toastr.success('You are logged in', 'Success !')
           this.props.history.push('/dashboard')

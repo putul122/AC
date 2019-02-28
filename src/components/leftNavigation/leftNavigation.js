@@ -1,9 +1,10 @@
 import React from 'react'
-// import { Link } from 'react-router-dom'
+import {isAllowed} from '../../config/authorization'
 import styles from './leftNavigation.scss'
 
 class LeftNavigation extends React.Component {
 	render () {
+    let userRoles = localStorage.getItem('accessRight')
 	return (
   <div>
     <button className='m-aside-left-close  m-aside-left-close--skin-light' id='m_aside_left_close_btn'><i className='la la-close' /></button>
@@ -43,30 +44,30 @@ class LeftNavigation extends React.Component {
                 </span>
               </a>
             </li>
-            <li className={styles.navicon}>
+            {isAllowed(userRoles, ['CheckItems']) && (<li className={styles.navicon}>
               <a href='/checkitems'>
                 <i className='fa fa-check-square-o fa-2x' />
                 <span className={styles.navtext}>
                 Check Items
                 </span>
               </a>
-            </li>
-            <li className={styles.navicon}>
+            </li>)}
+            {isAllowed(userRoles, ['Templates']) && (<li className={styles.navicon}>
               <a href='/templates'>
                 <i className='fa fa-object-group fa-2x' />
                 <span className={styles.navtext}>
                 Templates
                 </span>
               </a>
-            </li>
-            <li className={styles.navicon}>
+            </li>)}
+            {isAllowed(userRoles, ['Users']) && (<li className={styles.navicon}>
               <a href='/users'>
                 <i className='fa fa-address-book-o fa-2x' />
                 <span className={styles.navtext}>
                 Users
                 </span>
               </a>
-            </li>
+            </li>)}
             {/* <li className={styles.navicon}>
               <a href='/reviews'>
                 <i className='fa 	fa-edit fa-2x' />

@@ -55,6 +55,11 @@ export default compose(
       this.props.fetchReviewsSummary && this.props.fetchReviewsSummary()
     },
     componentDidMount: function () {
+      if (localStorage.getItem('showAccessControlMessage')) {
+        // eslint-disable-next-line
+        toastr.error('you are not authorized to view this page.')
+        localStorage.setItem('showAccessControlMessage', false)
+      }
       // // eslint-disable-next-line
       // mApp.block('#supplierSummary', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       // // eslint-disable-next-line

@@ -9,6 +9,8 @@ import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer
 import Discussion from '../../containers/discussion/discussionContainer'
 import CreatableSelect from 'react-select/lib/Creatable'
 ReactModal.setAppElement('#root')
+// eslint-disable-next-line
+import {isAllowed} from '../../config/authorization'
 
 export default function Reviewslists (props) {
 console.log('JSON data for Reviews', props.reviewsSummary.count_by_status)
@@ -77,18 +79,20 @@ let handleTag = function (newValue: any, actionMeta: any) {
   // console.log(newValue)
   // console.log(`action: ${actionMeta.action}`)
   // console.groupEnd()
-  if (searchTextBox) {
-    searchTextBox.value = ''
-  }
-  let filterSettings = {...props.filterSettings}
-  filterSettings.callApi = true
-  if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
-    filterSettings.selectedTags = newValue
-    props.setFilterSettings(filterSettings)
-  }
-  if (actionMeta.action === 'clear') {
-    filterSettings.selectedTags = null
-    props.setFilterSettings(filterSettings)
+  if (actionMeta.action !== 'pop-value') {
+    if (searchTextBox) {
+      searchTextBox.value = ''
+    }
+    let filterSettings = {...props.filterSettings}
+    filterSettings.callApi = true
+    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+      filterSettings.selectedTags = newValue
+      props.setFilterSettings(filterSettings)
+    }
+    if (actionMeta.action === 'clear') {
+      filterSettings.selectedTags = null
+      props.setFilterSettings(filterSettings)
+    }
   }
 }
 let categoryOptions = []
@@ -247,18 +251,38 @@ if (props.reviews && props.reviews !== '') {
   // let sortedArray = _.orderBy(props.reviews.resources, ['name'], ['asc'])
   reviewList = sortedArray.map(function (data, index) {
     let link = ''
+    let userRoles = localStorage.getItem('accessRight')
+    isAllowed(userRoles, ['CheckItems'])
+    isAllowed(userRoles, ['Templates'])
+    isAllowed(userRoles, ['Users'])
     if (data.stage === 'In Progress') {
-      link = '/conduct_review/'
+      if (isAllowed(userRoles, ['In Progress'])) {
+        link = '/conduct_review/'
+      } else {
+        link = '/reviews/'
+      }
     } else if (data.stage === 'Draft') {
-      link = '/review_draft/'
+      if (isAllowed(userRoles, ['Draft'])) {
+        link = '/review_draft/'
+      } else {
+        link = '/reviews/'
+      }
     } else if (data.stage === 'Completed') {
       link = '/reviews/'
     } else if (data.stage === 'Approval') {
-      link = '/review_approval/'
+      if (isAllowed(userRoles, ['Approval'])) {
+        link = '/review_approval/'
+      } else {
+        link = '/reviews/'
+      }
     } else if (data.stage === 'Cancelled') {
       link = '/reviews/'
     } else if (data.stage === 'Acceptance') {
-      link = '/accept_review/'
+      if (isAllowed(userRoles, ['Acceptance'])) {
+        link = '/accept_review/'
+      } else {
+        link = '/reviews/'
+      }
     } else {
       link = '/review_draft/'
     }

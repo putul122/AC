@@ -27,21 +27,23 @@ export default function CheckItems (props) {
     props.setPerPage(parseInt(event.target.value))
   }
   let handleTag = function (newValue: any, actionMeta: any) {
-    // console.group('Value Changed first select')
-    // console.log(newValue)
-    // console.log(`action: ${actionMeta.action}`)
-    // console.groupEnd()
-    // eslint-disable-next-line
-    mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let filterSettings = {...props.filterSettings}
-    filterSettings.callApi = true
-    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
-      filterSettings.selectedTags = newValue
-      props.setFilterSettings(filterSettings)
-    }
-    if (actionMeta.action === 'clear') {
-      filterSettings.selectedTags = null
-      props.setFilterSettings(filterSettings)
+    console.group('Value Changed first select')
+    console.log(newValue)
+    console.log(`action: ${actionMeta.action}`)
+    console.groupEnd()
+    if (actionMeta.action !== 'pop-value') {
+      // eslint-disable-next-line
+      mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let filterSettings = {...props.filterSettings}
+      filterSettings.callApi = true
+      if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value' || actionMeta.action === 'create-option') {
+        filterSettings.selectedTags = newValue
+        props.setFilterSettings(filterSettings)
+      }
+      if (actionMeta.action === 'clear') {
+        filterSettings.selectedTags = null
+        props.setFilterSettings(filterSettings)
+      }
     }
   }
 

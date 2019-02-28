@@ -66,7 +66,12 @@ export const initialState = {
   updateNotificationViewStatusResponse: '',
   packages: '',
   flipInX: 'm-login--signin',
-  componentTypeComponents: ''
+  componentTypeComponents: '',
+  rules: {
+    'Compliance Review Administrator': ['Draft', 'Acceptance', 'InProgress', 'Approval', 'Reviews', 'CheckItems', 'Templates', 'Users'],
+    'Enterprise Architect': ['Draft', 'Acceptance', 'InProgress', 'Reviews'],
+    'Enterprise Architect Manager': ['Acceptance', 'Approval', 'Reviews']
+  }
 }
 
 export default handleActions(
