@@ -369,7 +369,7 @@ export default function Users (props) {
                   </div>
                   <div className='m-widget17__stats'>
                     <div className='m-widget17__items m-widget17__items-col2'>
-                      <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                      <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '86%'}}>
                         <span className='m-widget17__icon'>
                           <i className='flaticon-notes m--font-brand' />
                         </span>

@@ -739,7 +739,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinDraft}</h4>
@@ -783,7 +783,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsAcceptance}</h4>
@@ -827,7 +827,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsinProgress}</h4>
@@ -868,7 +868,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsApproved}</h4>
@@ -912,7 +912,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCompleted}</h4>
@@ -956,7 +956,7 @@ return (
               </div>
               <div className='m-widget17__stats'>
                 <div className='m-widget17__items m-widget17__items-col2'>
-                  <div className='m-widget17__item' style={{'marginTop': '-8.87rem'}}>
+                  <div className='m-widget17__item' style={{position: 'absolute', top: '96px', width: '77%'}}>
                     <span className='m-widget17__icon'>
                       <i className='flaticon-notes m--font-brand' />
                       <h4 style={{'float': 'right', 'paddingRight': '25px'}}>{reviewsCancelled}</h4>
