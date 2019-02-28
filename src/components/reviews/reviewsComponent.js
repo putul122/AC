@@ -284,7 +284,11 @@ if (props.reviews && props.reviews !== '') {
         link = '/reviews/'
       }
     } else {
-      link = '/review_draft/'
+      if (isAllowed(userRoles, ['Draft'])) {
+        link = '/review_draft/'
+      } else {
+        link = '/reviews/'
+      }
     }
     return (
       <tbody>

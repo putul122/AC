@@ -1,19 +1,45 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import './dashboardComponent.scss'
-import {defaults, Doughnut, Line} from 'react-chartjs-2'
+import {defaults, Chart, Doughnut, Line} from 'react-chartjs-2'
 import _ from 'lodash'
 defaults.global.legend.display = false
 const doughnutColor = ['#716aca', '#ffb822', '#00c5dc', '#f4516c', '#35bfa3 ', '#800000', '#808000', '#008000', '#008080', '#800080']
-
 export default function Dashboard (props) {
   let reviewsInDraft = ''
   let reviewsInProgress = ''
   // let reviewsCompleted = ''
   let doughnutOption = {
-    legend: { display: true },
-    legendCallback: function (chart) {
-      console.log('chart', chart)
+    legend: {
+      display: true,
+      labels: {
+        generateLabels: function (chart) {
+          var data = chart.data
+          if (data.labels.length && data.datasets.length) {
+            return data.labels.map(function (label, i) {
+              var meta = chart.getDatasetMeta(0)
+              var ds = data.datasets[0]
+              var arc = meta.data[i]
+              var custom = (arc && arc.custom) || {}
+              var getValueAtIndexOrDefault = Chart.helpers.getValueAtIndexOrDefault
+              var arcOpts = chart.options.elements.arc
+              var fill = custom.backgroundColor ? custom.backgroundColor : getValueAtIndexOrDefault(ds.backgroundColor, i, arcOpts.backgroundColor)
+              var stroke = custom.borderColor ? custom.borderColor : getValueAtIndexOrDefault(ds.borderColor, i, arcOpts.borderColor)
+              var bw = custom.borderWidth ? custom.borderWidth : getValueAtIndexOrDefault(ds.borderWidth, i, arcOpts.borderWidth)
+                return {
+                // And finally :
+                text: label + ' (' + ds.data[i] + ')',
+                fillStyle: fill,
+                strokeStyle: stroke,
+                lineWidth: bw,
+                hidden: isNaN(ds.data[i]) || meta.data[i].hidden,
+                index: i
+              }
+            })
+          }
+          return []
+        }
+      }
     }
   }
   let lineData = {}

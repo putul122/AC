@@ -12,7 +12,6 @@ export const hasRole = (userRoles, roles) => {
 
 export const isAllowed = (userRoles, rights) => {
     userRoles = atob(userRoles)
-    console.log('userRoles', userRoles)
     let roles = userRoles.split(',')
     if (roles.length > 0) {
         let userRights = []
@@ -21,9 +20,6 @@ export const isAllowed = (userRoles, rights) => {
                 Array.prototype.push.apply(userRights, applicationRules[userRole])
             }
         })
-        console.log('userRights', userRights)
-        console.log('rights', rights)
-        console.log('test', rights.some(right => userRights.includes(right)))
         return rights.some(right => userRights.includes(right))
     } else {
         return false
