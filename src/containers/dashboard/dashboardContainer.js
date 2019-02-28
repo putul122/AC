@@ -55,7 +55,8 @@ export default compose(
       this.props.fetchReviewsSummary && this.props.fetchReviewsSummary()
     },
     componentDidMount: function () {
-      if (localStorage.getItem('showAccessControlMessage')) {
+      let showAccessControlMessage = localStorage.getItem('showAccessControlMessage')
+      if (showAccessControlMessage === 'true') {
         // eslint-disable-next-line
         toastr.error('you are not authorized to view this page.')
         localStorage.setItem('showAccessControlMessage', false)
