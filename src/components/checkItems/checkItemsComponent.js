@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import debounce from 'lodash/debounce'
 import PropTypes from 'prop-types'
-import CreatableSelect from 'react-select/lib/Creatable'
+import Select from 'react-select'
 import styles from './checkItemsComponent.scss'
 
 export default function CheckItems (props) {
@@ -219,7 +219,7 @@ return (
                           <div className='dataTables_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '10px'}}>Tag</h5>
                             <div className='m-input-icon'>
-                              <CreatableSelect
+                              <Select
                                 className='input-sm m-input'
                                 placeholder='Enter Tags'
                                 isClearable

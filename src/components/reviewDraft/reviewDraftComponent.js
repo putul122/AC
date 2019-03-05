@@ -72,34 +72,36 @@ export default function ReviewDraft (props) {
     // let componentTypeIdForComponents = _.result(_.find(componentTypes, function (obj) {
     //     return obj.key === 'Check Item Template'
     // }), 'component_type')
-    // eslint-disable-next-line
-    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    let checkItemPayload = {}
-    // checkItemPayload.id = componentTypeIdForComponents
-    let checkItemsSettings = {...props.checkItemsSettings}
-    if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
-      checkItemPayload.params = {}
-      let search = ''
-      let newValueLength = newValue.length
-      if (newValueLength > 0) {
-        newValue.forEach(function (data, index) {
-          search = search + '#' + data.value
-          if (index !== newValueLength - 1) {
-            search = search + ' '
-          }
-        })
+    if (actionMeta.action !== 'pop-value') {
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let checkItemPayload = {}
+      // checkItemPayload.id = componentTypeIdForComponents
+      let checkItemsSettings = {...props.checkItemsSettings}
+      if (actionMeta.action === 'select-option' || actionMeta.action === 'remove-value') {
+        checkItemPayload.params = {}
+        let search = ''
+        let newValueLength = newValue.length
+        if (newValueLength > 0) {
+          newValue.forEach(function (data, index) {
+            search = search + '#' + data.value
+            if (index !== newValueLength - 1) {
+              search = search + ' '
+            }
+          })
+        }
+        console.log('search', search)
+        checkItemPayload.params.search = search
+        props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
+        checkItemsSettings.selectedCheckItems = newValue
       }
-      console.log('search', search)
-      checkItemPayload.params.search = search
-      props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
-      checkItemsSettings.selectedCheckItems = newValue
+      if (actionMeta.action === 'clear') {
+        checkItemPayload.params = {}
+        props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
+        checkItemsSettings.selectedCheckItems = null
+      }
+      props.setCheckitemsSettings(checkItemsSettings)
     }
-    if (actionMeta.action === 'clear') {
-      checkItemPayload.params = {}
-      props.fetchCheckItemTemplates && props.fetchCheckItemTemplates(checkItemPayload)
-      checkItemsSettings.selectedCheckItems = null
-    }
-    props.setCheckitemsSettings(checkItemsSettings)
   }
   let openDiscussionModal = function (event) {
     event.preventDefault()
@@ -784,11 +786,21 @@ export default function ReviewDraft (props) {
       checkItemList = ''
     }
   }
-  if (props.checkItemsSettings.checkItems.length > 0) {
-    checkItemModalList = props.checkItemsSettings.checkItems.map(function (data, index) {
-      return (<span className='m-list-search__result-item' key={index}>
-        <span className='m-list-search__result-item-text'><input onChange={(event) => { handleCheckbox(event.target.checked, index) }} type='checkbox' style={{cursor: 'pointer'}} />{data.name}</span>
-      </span>)
+  if (props.checkItemsSettings.checkItems.length > 0 && props.draftEdit) {
+    let excludeCheckItems = []
+    props.draftEdit.checkItems.forEach(function (data, index) {
+      excludeCheckItems.push(data.name)
+    })
+    let filterList = []
+    filterList = _.filter(props.checkItemsSettings.checkItems, (v) => !_.includes(excludeCheckItems, v.name))
+    filterList = _.map(filterList, 'name')
+    checkItemModalList = []
+    props.checkItemsSettings.checkItems.forEach(function (data, index) {
+      if (filterList.includes(data.name)) {
+        checkItemModalList.push(<span className='m-list-search__result-item' key={index}>
+          <span className='m-list-search__result-item-text'><input onChange={(event) => { handleCheckbox(event.target.checked, index) }} type='checkbox' style={{cursor: 'pointer'}} />{data.name}</span>
+        </span>)
+      } else {}
     })
   } else {
     checkItemModalList = []
@@ -1075,7 +1087,7 @@ export default function ReviewDraft (props) {
                       <div className='form-group m-form__group row'>
                         <label htmlFor='example-email-input' className='col-3 col-form-label'>Tags</label>
                         <div className='col-9'>
-                          <CreatableSelect
+                          <Select
                             className='input-sm m-input'
                             placeholder='Enter Tags'
                             isClearable

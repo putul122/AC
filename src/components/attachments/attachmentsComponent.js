@@ -18,7 +18,6 @@ ReactModal.setAppElement('#root')
 //   }
 // }
 export default function Attachments (props) {
- console.log('data for attachments', props.attachments, props.updateAttachmentValue, props.setAttachmentsActionSettings, props.deleteAttachment, props.createAttachments, props.updateAttachment, props.createAttachmentResponse)
  let attachments = props.attachments.resources
  let attachmentsList = ''
  let newFileName = ''
@@ -118,16 +117,13 @@ let removeAttachment = function () {
   closeDeleteAttachmentModal()
 }
 let editAttachmentName = function (event) {
-  console.log('****', event.target.value)
   event.preventDefault()
   let updateAttachmentValue = {...props.updateAttachmentValue, 'name': event.target.value}
   props.setUpdateAttachmentValue(updateAttachmentValue)
-  console.log('*&*&*&', updateAttachmentValue)
 }
 
 if (typeof attachments !== 'undefined') {
   attachmentsList = attachments.map(function (data, index) {
-    console.log(index)
     let iconlink = data.links.find(function (link) { return link.rel === 'icon' })
     // let attachmentLink = data.links.find(function (link) { return link.rel === 'self' })
     // console.log('########', attachmentLink)
@@ -299,11 +295,5 @@ if (typeof attachments !== 'undefined') {
 Attachments.propTypes = {
   attachments: PropTypes.any,
   attachmentsActionSettings: PropTypes.any,
-  setAttachmentsActionSettings: PropTypes.func,
-  createAttachments: PropTypes.func,
-  createAttachmentResponse: PropTypes.any,
-  deleteAttachment: PropTypes.func,
-  updateAttachment: PropTypes.func,
   updateAttachmentValue: PropTypes.any
-  // setUpdateAttachmentValue: PropTypes.func
 }

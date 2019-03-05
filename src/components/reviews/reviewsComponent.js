@@ -7,7 +7,7 @@ import ReactModal from 'react-modal'
 import debounce from 'lodash/debounce'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Discussion from '../../containers/discussion/discussionContainer'
-import CreatableSelect from 'react-select/lib/Creatable'
+// import CreatableSelect from 'react-select/lib/Creatable'
 ReactModal.setAppElement('#root')
 // eslint-disable-next-line
 import {isAllowed} from '../../config/authorization'
@@ -997,85 +997,6 @@ return (
                   <div className='m-portlet__body'>
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row clearfix' style={{'marginBottom': '20px'}}>
-                        {/* <div className='col-md-12 row'>
-                          <div className='col-md-6 row'>
-                            <div className='col-md-3'>
-                              <div className='dataTables_length' style={{'display': 'flex'}}>
-                                <h5 style={{'margin': '8px'}}>Show</h5>
-                                <select value={props.perPage} onBlur={handleBlurdropdownChange} onChange={handledropdownChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
-                                  <option value={10}>10</option>
-                                  <option value={25}>25</option>
-                                  <option value={50}>50</option>
-                                  <option value={100}>100</option>
-                                </select>
-                                <h5 style={{'margin': '8px'}}>Entries</h5>
-                              </div>
-                            </div>
-                            <div className='col-md-2'>
-                              <div className='dataTables_length' style={{'display': 'flex', width: '100%'}}>
-                                <h5 style={{'margin': '8px'}}><input checked={props.filterSettings.myTask} type='checkbox' onChange={handleCheckbox} />&nbsp;My Task</h5>
-                              </div>
-                            </div>
-                            <div className='col-md-7'>
-                              <div className='dataTables_length' style={{'display': 'flex'}}>
-                                <h5 style={{'margin': '10px'}}>Tag</h5>
-                                <div className='m-input-icon'>
-                                  <CreatableSelect
-                                    className='input-sm m-input'
-                                    placeholder='Enter Tags'
-                                    isClearable
-                                    isMulti
-                                    onChange={handleTag}
-                                    value={props.filterSettings.selectedTags}
-                                    options={tagOptions}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='col-md-6 row'>
-                            <div className='col-md-6'>
-                              <div className='dataTables_length' style={{'display': 'flex'}}>
-                                <div className='col-md-6'><h5 style={{'margin': '10px'}}>Review Category</h5></div>
-                                <div className='col-md-6'>
-                                  <div className='m-input-icon'>
-                                    <Select
-                                      className='input-sm m-input'
-                                      placeholder='Select Category'
-                                      isClearable
-                                      defaultValue={props.filterSettings.selectedCategory}
-                                      // value={props.filterSettings.selectedCategory}
-                                      onChange={handleCategorySelect}
-                                      isSearchable={false}
-                                      name={'categorySelected'}
-                                      options={categoryOptions}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className='col-md-5'>
-                              <div className='dataTables_length' style={{'display': 'flex'}}>
-                                <div style={{'display': 'flex'}}>
-                                  <h5 style={{'margin': '10px'}}>Search</h5>
-                                  <div className='m-input-icon m-input-icon--left'>
-                                    <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
-                                    <span className='m-input-icon__icon m-input-icon__icon--left'>
-                                      <span>
-                                        <i className='la la-search' />
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className='col-md-1'>
-                              <div className='dataTables_length ' style={{'display': 'flex'}}>
-                                <button type='button' className='m-btn btn btn-secondary'>Clear text</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div> */}
                         <div className='col-sm-6 col-md-2'>
                           <div className='dataTables_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
@@ -1097,7 +1018,7 @@ return (
                           <div className='dataTables_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '10px'}}>Tag</h5>
                             <div className='m-input-icon'>
-                              <CreatableSelect
+                              <Select
                                 className='input-sm m-input'
                                 placeholder='Enter Tags'
                                 isClearable

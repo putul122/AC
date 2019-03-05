@@ -117,13 +117,13 @@ export default function HeaderComponent (props) {
                       </li> */}
                       <li className={'m-nav__item m-topbar__user-profile  m-dropdown  m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right  m-dropdown--mobile-full-width m-dropdown--skin-light ' + loginSlideClass}>
                         <a href='' className='m-nav__link' onClick={openLoginSlide}>
-                          <span className='m-topbar__userpic m--hide'>
+                          {/* <span className='m-topbar__userpic m--hide'>
                             <img src='assets/app/media/img/users/user4.jpg' className='m--img-rounded m--marginless m--img-centered' alt='' />
-                          </span>
+                          </span> */}
                           <span className='m-nav__link-icon m-topbar__usericon'>
                             <span className='m-nav__link-icon-wrapper'><i className='flaticon-user-ok' /></span>
                           </span>
-                          <span className='m-topbar__username m--hide'>Nick</span>
+                          {/* <span className='m-topbar__username m--hide'>Nick</span> */}
                         </a>
                         <div className='m-dropdown__wrapper'>
                           <span className='m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust' />

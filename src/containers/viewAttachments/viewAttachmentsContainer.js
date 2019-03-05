@@ -12,7 +12,7 @@ export function mapStateToProps (state, props) {
     //   modalIsOpen: state.basicReducer.modalIsOpen
     attachments: state.viewAttachmentsReducer.attachments,
     attachmentById: state.viewAttachmentsReducer.attachmentById,
-    downloadAttachmentSettings: state.attachmentsReducer.downloadAttachmentSettings
+    downloadAttachmentSettings: state.viewAttachmentsReducer.downloadAttachmentSettings
     }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -48,30 +48,25 @@ export default compose(
       console.log('component will receive props', nextProps)
       if (nextProps.attachmentById && nextProps.attachmentById !== '') {
         let fileName = ''
-        console.log('**&&^&', nextProps.attachmentById)
-         if (nextProps.attachments && nextProps.attachments !== '') {
-            fileName = nextProps.attachments.resources[0].name
-         }
-        console.log('&*&&', fileName)
-        const url = window.URL.createObjectURL(new Blob([nextProps.attachmentById]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `${fileName}`)
-        document.body.appendChild(link)
-        link.click()
-        // if (nextProps.attachmentById.type === 'image/png') {
-        //   if (nextProps.attachments && nextProps.attachments !== '') {
-        //     fileName = nextProps.attachments.resources[0].name
-        //   }
-        //   console.log('HIIIIIII')
-        //   const url = window.URL.createObjectURL(new Blob([nextProps.attachmentById]))
-        //   const link = document.createElement('a')
-        //   link.href = url
-        //   // link.setAttribute('target', 'blank', `${fileName}`)
-        //   window.open(url + '/' + `${fileName}`)
-        //   document.body.appendChild(link)
-        //   link.click()
-        // }
+        if (nextProps.downloadAttachmentSettings.attachmentData && nextProps.downloadAttachmentSettings.attachmentData !== '') {
+          fileName = nextProps.downloadAttachmentSettings.attachmentData.file_name
+        }
+        console.log('fileName', fileName)
+        if (nextProps.attachmentById.type === 'image/png' || nextProps.attachmentById.type === 'image/gif' || nextProps.attachmentById.type === 'image/jpg' || nextProps.attachmentById.type === 'image/jpeg') {
+          const url = window.URL.createObjectURL(new Blob([nextProps.attachmentById], {type: 'image/png'}, {type: 'image/gif'}, {type: 'image/jpg'}, {type: 'image/jpeg'}))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('target', '_blank', `${fileName}`)
+          document.body.appendChild(link)
+          link.click()
+        } else {
+          const url = window.URL.createObjectURL(new Blob([nextProps.attachmentById]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `${fileName}`)
+          document.body.appendChild(link)
+          link.click()
+        }
         this.props.resetResponse()
       }
     }

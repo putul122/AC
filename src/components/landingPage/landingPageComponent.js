@@ -38,7 +38,7 @@ export default function Landing (props) {
         {/* <Header {...this.props} /> */}
         <div className='m-grid m-grid--hor m-grid--root m-page'>
           {/* <LeftNavigation /> */}
-          <div className={'m-login m-login--5 ' + props.flipInX} id='m_login' style={{'backgroundImage': 'url(./assets/app/media/img//bg/bg-3.jpg)'}}>
+          <div className={'m-login m-login--5 ' + props.flipInX} id='m_login' >
             <div className='m-login__wrapper-1 m-portlet-full-height'>
               <div className='m-login__wrapper-1-1'>
                 <div className='m-login__contanier'>
