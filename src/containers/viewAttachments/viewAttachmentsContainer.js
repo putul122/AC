@@ -49,7 +49,15 @@ export default compose(
       if (nextProps.attachmentById && nextProps.attachmentById !== '') {
         let fileName = ''
         if (nextProps.downloadAttachmentSettings.attachmentData && nextProps.downloadAttachmentSettings.attachmentData !== '') {
-          fileName = nextProps.downloadAttachmentSettings.attachmentData.file_name
+          let fileExtension = nextProps.downloadAttachmentSettings.attachmentData.name.split('.').pop()
+          let name = nextProps.downloadAttachmentSettings.attachmentData.name
+          if (name === fileExtension) {
+            // no extension
+            let extension = nextProps.downloadAttachmentSettings.attachmentData.file_name.split('.').pop()
+            fileName = name + '.' + extension
+          } else {
+            fileName = nextProps.downloadAttachmentSettings.attachmentData.name
+          }
         }
         console.log('fileName', fileName)
         if (nextProps.attachmentById.type === 'image/png' || nextProps.attachmentById.type === 'image/gif' || nextProps.attachmentById.type === 'image/jpg' || nextProps.attachmentById.type === 'image/jpeg') {
