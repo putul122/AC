@@ -151,7 +151,7 @@ export default class Root extends Component {
             }
             break
           case 'conduct_review':
-            if (isAllowed(userRoles, ['In Progress'])) {
+            if (isAllowed(userRoles, ['InProgress'])) {
               if (module.hot) {
                 module.hot.accept('../conductReviewPage/conductReviewPageRoute', () => {
                           require('../conductReviewPage/conductReviewPageRoute').default // eslint-disable-line

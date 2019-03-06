@@ -256,7 +256,7 @@ if (props.reviews && props.reviews !== '') {
     isAllowed(userRoles, ['Templates'])
     isAllowed(userRoles, ['Users'])
     if (data.stage === 'In Progress') {
-      if (isAllowed(userRoles, ['In Progress'])) {
+      if (isAllowed(userRoles, ['InProgress'])) {
         link = '/conduct_review/'
       } else {
         link = '/reviews/'
