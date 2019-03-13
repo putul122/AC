@@ -181,14 +181,26 @@ if (props.modalSettings.standardData !== '') {
     })
   }
   if (props.componentTypeComponentPrinciples && props.componentTypeComponentPrinciples !== '') {
-    principlesOptions = props.componentTypeComponentPrinciples.resources.map(function (data, index) {
+    let excludePrinciples = []
+    props.principles.forEach(function (data, index) {
+      excludePrinciples.push(data.name)
+    })
+    let filterList = []
+    filterList = _.filter(props.componentTypeComponentPrinciples.resources, (v) => !_.includes(excludePrinciples, v.name))
+    principlesOptions = filterList.map(function (data, index) {
       data.label = data.name
       data.type = 'NEW'
       return data
     })
   }
   if (props.componentTypeComponentStandards && props.componentTypeComponentStandards !== '') {
-    standardsOptions = props.componentTypeComponentStandards.resources.map(function (data, index) {
+    let excludeStandards = []
+    props.standards.forEach(function (data, index) {
+      excludeStandards.push(data.name)
+    })
+    let filterList = []
+    filterList = _.filter(props.componentTypeComponentStandards.resources, (v) => !_.includes(excludeStandards, v.name))
+    standardsOptions = filterList.map(function (data, index) {
       data.label = data.name
       data.type = 'NEW'
       return data
