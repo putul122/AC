@@ -67,7 +67,7 @@ export default function ConductReview (props) {
   }
   let onCheckItemRadioChange = function (compliance, data) {
     console.log(data, compliance)
-    props.setSubmitClickFlag(false)
+    // props.setSubmitClickFlag(false)
     let checkItems = JSON.parse(JSON.stringify(props.checkItems))
     data.compliance = compliance
     let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
@@ -101,7 +101,7 @@ export default function ConductReview (props) {
     props.processCheckItems(true)
   }
   let handleCheckItemSelectOption = function (data) {
-    props.setSubmitClickFlag(false)
+    // props.setSubmitClickFlag(false)
     return function (newValue: any, actionMeta: any) {
       // console.group('Value Changed first select')
       // console.log(newValue)
