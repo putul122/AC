@@ -23,7 +23,9 @@ export function mapStateToProps (state, props) {
     complaint: state.conductReviewReducer.complaint,
     checkItems: state.conductReviewReducer.checkItems,
     checkItemFlag: state.conductReviewReducer.checkItemFlag,
-    activeTab: state.reviewDraftReducer.activeTab
+    activeTab: state.reviewDraftReducer.activeTab,
+    isAllCheckItemSet: state.conductReviewReducer.isAllCheckItemSet,
+    isSubmitClick: state.conductReviewReducer.isSubmitClick
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -47,7 +49,9 @@ export const propsMapping: Callbacks = {
   setModalSetting: checkItemModalActionCreators.setModalSetting,
   setCheckItemData: checkItemModalActionCreators.setCheckItemData,
   setModalSettings: componentModalViewActionCreators.setModalSettings,
-  setActiveTab: actionCreators.setActiveTab
+  setActiveTab: actionCreators.setActiveTab,
+  setAllCheckItemFlag: actionCreators.setAllCheckItemFlag,
+  setSubmitClickFlag: actionCreators.setSubmitClickFlag
 }
 
 // If you want to use the function mapping
@@ -107,6 +111,7 @@ export default compose(
       $('[data-toggle="m-tooltip"]').tooltip()
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('next props', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -122,9 +127,13 @@ export default compose(
           let complaint = nextProps.reviewData.resources[0].compliance_status || ''
           this.props.setComplaint(complaint)
           let notToDisplay = []
+          let checkItemSet = []
           if (nextProps.reviewData.resources[0].check_items.length > 0) {
             nextProps.reviewData.resources[0].check_items.forEach(function (data, index) {
               let compliance = data.compliance
+              if (compliance !== null) {
+                checkItemSet.push(compliance)
+              }
               if (data.values.length > 0) {
                 data.values.forEach(function (value, idx) {
                   if (compliance === value.name) {
@@ -145,15 +154,23 @@ export default compose(
               }
             })
           }
+          console.log('checkItemSet.length', checkItemSet)
+          let displayCheckitem = 0
           let checkitems = nextProps.reviewData.resources[0].check_items.map(function (data, index) {
             if (notToDisplay.includes(data.id)) {
               data.display = false
             } else {
               data.display = true
+              displayCheckitem++
             }
             return data
           }) || []
-          this.props.setCheckItems(checkitems)
+          nextProps.setCheckItems(checkitems)
+          if (checkItemSet.length === displayCheckitem) {
+            nextProps.setAllCheckItemFlag(true)
+          } else {
+            nextProps.setAllCheckItemFlag(false)
+          }
         }
       }
       if (nextProps.updateReviewResponse && nextProps.updateReviewResponse !== '') {
@@ -208,6 +225,54 @@ export default compose(
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.componentTypeProperties.error_message, nextProps.componentTypeProperties.error_code)
+        }
+      }
+      if (nextProps.checkItemFlag) {
+        console.log('process in flag')
+        nextProps.processCheckItems(false)
+        let notToDisplay = []
+        let checkItemSet = []
+        nextProps.checkItems.forEach(function (data, index) {
+          // if (!notToDisplay.includes(data.id)) {
+            let compliance = data.compliance
+            if (compliance !== null) {
+              checkItemSet.push(compliance)
+            }
+            if (data.values.length > 0) {
+              data.values.forEach(function (value, idx) {
+                if (compliance === value.name) {
+                  // remove id from notToDisplay
+                  let notToDisplayIndex = notToDisplay.indexOf(data.id)
+                  if (notToDisplayIndex > -1) {
+                    notToDisplay.splice(notToDisplayIndex, 1)
+                  }
+                } else {
+                  // add id to notToDisplay
+                  if (value.requires_check_items.length > 0) {
+                    value.requires_check_items.forEach(function (requireCheckItem, ix) {
+                      notToDisplay.push(requireCheckItem.id)
+                    })
+                  }
+                }
+              })
+            }
+          // }
+        })
+        let displayCheckitem = 0
+        let checkItems = nextProps.checkItems.map(function (data, index) {
+          if (notToDisplay.includes(data.id)) {
+            data.display = false
+          } else {
+            data.display = true
+            displayCheckitem++
+          }
+          return data
+        }) || []
+        nextProps.setCheckItems(checkItems)
+        if (checkItemSet.length === displayCheckitem) {
+          nextProps.setAllCheckItemFlag(true)
+        } else {
+          nextProps.setAllCheckItemFlag(false)
         }
       }
     }

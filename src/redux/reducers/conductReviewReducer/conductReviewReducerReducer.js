@@ -14,6 +14,8 @@ const SET_COMPLAINT = 'ConductReviewReducer/SET_COMPLAINT'
 const SET_CHECKITEMS = 'ConductReviewReducer/SET_CHECKITEMS'
 const PROCESS_CHECKITEMS = 'ConductReviewReducer/PROCESS_CHECKITEMS'
 const SET_ACTIVE_TAB = 'ConductReviewReducer/SET_ACTIVE_TAB'
+const SET_ALL_CHECKITEM_FLAG = 'ConductReviewReducer/SET_ALL_CHECKITEM_FLAG'
+const SET_SUBMIT_CLICK_FLAG = 'ConductReviewReducer/SET_SUBMIT_CLICK_FLAG'
 
 export const actions = {
   RESET_RESPONSE,
@@ -29,7 +31,9 @@ export const actions = {
   CREATE_DISCUSSION_SUCCESS,
   SET_COMPLAINT,
   PROCESS_CHECKITEMS,
-  SET_ACTIVE_TAB
+  SET_ACTIVE_TAB,
+  SET_ALL_CHECKITEM_FLAG,
+  SET_SUBMIT_CLICK_FLAG
 }
 
 export const actionCreators = {
@@ -43,7 +47,9 @@ export const actionCreators = {
   setComplaint: createAction(SET_COMPLAINT),
   setCheckItems: createAction(SET_CHECKITEMS),
   processCheckItems: createAction(PROCESS_CHECKITEMS),
-  setActiveTab: createAction(SET_ACTIVE_TAB)
+  setActiveTab: createAction(SET_ACTIVE_TAB),
+  setAllCheckItemFlag: createAction(SET_ALL_CHECKITEM_FLAG),
+  setSubmitClickFlag: createAction(SET_SUBMIT_CLICK_FLAG)
 }
 
 export const initialState = {
@@ -70,7 +76,9 @@ export const initialState = {
   reviewProperties: {
     category: [],
     stages: []
-  }
+  },
+  isAllCheckItemSet: false,
+  isSubmitClick: false
 }
 
 export default handleActions(
@@ -130,6 +138,14 @@ export default handleActions(
     [PROCESS_CHECKITEMS]: (state, action) => ({
       ...state,
       checkItemFlag: action.payload
+    }),
+    [SET_ALL_CHECKITEM_FLAG]: (state, action) => ({
+      ...state,
+      isAllCheckItemSet: action.payload
+    }),
+    [SET_SUBMIT_CLICK_FLAG]: (state, action) => ({
+      ...state,
+      isSubmitClick: action.payload
     })
   },
   initialState

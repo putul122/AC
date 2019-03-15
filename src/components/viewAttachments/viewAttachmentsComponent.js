@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export default function ViewAttachments (props) {
- console.log('data for attachments', props.attachments, props.downloadAttachmentSettings, props.setDownloadAttachmentsActionSettings, props.fetchAttachmentById)
+ console.log('data for attachments', props.attachments, props.downloadAttachmentSettings, props.setDownloadAttachmentsActionSettings)
  let attachments = props.attachments.resources
  let attachmentsList = ''
 
@@ -18,7 +18,6 @@ export default function ViewAttachments (props) {
 
  if (typeof attachments !== 'undefined') {
   attachmentsList = attachments.map(function (data, index) {
-    console.log(index)
     let iconlink = data.links.find(function (link) { return link.rel === 'icon' })
     // let attachmentlink = data.links.find(function (link) { return link.rel === 'self' })
     // console.log(attachmentlink)
@@ -73,7 +72,6 @@ export default function ViewAttachments (props) {
 
 ViewAttachments.propTypes = {
   attachments: PropTypes.any,
-  fetchAttachmentById: PropTypes.func,
   setDownloadAttachmentsActionSettings: PropTypes.func,
   downloadAttachmentSettings: PropTypes.any
 }

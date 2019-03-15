@@ -67,6 +67,7 @@ export default function ConductReview (props) {
   }
   let onCheckItemRadioChange = function (compliance, data) {
     console.log(data, compliance)
+    props.setSubmitClickFlag(false)
     let checkItems = JSON.parse(JSON.stringify(props.checkItems))
     data.compliance = compliance
     let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
@@ -79,8 +80,10 @@ export default function ConductReview (props) {
     } else {
       console.log('else')
     }
+    props.processCheckItems(true)
   }
   let onCheckItemCheckboxChange = function (isChecked, compliance, data) {
+    props.setSubmitClickFlag(false)
     let checkItems = JSON.parse(JSON.stringify(props.checkItems))
     if (isChecked) {
       data.compliance = compliance
@@ -95,14 +98,16 @@ export default function ConductReview (props) {
     } else {
       console.log('else')
     }
+    props.processCheckItems(true)
   }
   let handleCheckItemSelectOption = function (data) {
+    props.setSubmitClickFlag(false)
     return function (newValue: any, actionMeta: any) {
-      console.group('Value Changed first select')
-      console.log(newValue)
-      console.log(`action: ${actionMeta.action}`)
-      console.groupEnd()
-      console.log('data', data)
+      // console.group('Value Changed first select')
+      // console.log(newValue)
+      // console.log(`action: ${actionMeta.action}`)
+      // console.groupEnd()
+      // console.log('data', data)
       let checkItems = JSON.parse(JSON.stringify(props.checkItems))
       let index = _.findIndex(checkItems, function (obj) { return obj.id === data.id })
       console.log('index', index)
@@ -125,6 +130,7 @@ export default function ConductReview (props) {
           console.log('else')
         }
       }
+      props.processCheckItems(true)
     }
   }
   let handelReason = function (event) {
@@ -178,40 +184,53 @@ export default function ConductReview (props) {
     Artefectid = props.reviewData.resources[0].review_artefact_id
   }
   if (props.checkItems.length > 0) {
-    let notToDisplay = []
-    props.checkItems.forEach(function (data, index) {
-      let compliance = data.compliance
-      if (data.values.length > 0) {
-        data.values.forEach(function (value, idx) {
-          if (compliance === value.name) {
-            // remove id from notToDisplay
-            let notToDisplayIndex = notToDisplay.indexOf(data.id)
-            if (notToDisplayIndex > -1) {
-              notToDisplay.splice(notToDisplayIndex, 1)
-            }
-          } else {
-            // add id to notToDisplay
-            if (value.requires_check_items.length > 0) {
-              value.requires_check_items.forEach(function (requireCheckItem, ix) {
-                notToDisplay.push(requireCheckItem.id)
-              })
-            }
-          }
-        })
-      }
-    })
-    let checkItems = props.checkItems.map(function (data, index) {
-      if (notToDisplay.includes(data.id)) {
-        data.display = false
-      } else {
-        data.display = true
-      }
-      return data
-    }) || []
+    // let notToDisplay = []
+    // props.checkItems.forEach(function (data, index) {
+    //   // if (!notToDisplay.includes(data.id)) {
+    //     let compliance = data.compliance
+    //     if (data.values.length > 0) {
+    //       data.values.forEach(function (value, idx) {
+    //         if (compliance === value.name) {
+    //           // remove id from notToDisplay
+    //           let notToDisplayIndex = notToDisplay.indexOf(data.id)
+    //           if (notToDisplayIndex > -1) {
+    //             notToDisplay.splice(notToDisplayIndex, 1)
+    //           }
+    //         } else {
+    //           // add id to notToDisplay
+    //           if (value.requires_check_items.length > 0) {
+    //             value.requires_check_items.forEach(function (requireCheckItem, ix) {
+    //               notToDisplay.push(requireCheckItem.id)
+    //             })
+    //           }
+    //         }
+    //       })
+    //     }
+    //   // }
+    // })
+    // let checkItems = props.checkItems.map(function (data, index) {
+    //   if (notToDisplay.includes(data.id)) {
+    //     data.display = false
+    //   } else {
+    //     data.display = true
+    //   }
+    //   return data
+    // }) || []
+    let checkItems = props.checkItems
     console.log('check item render', checkItems)
     checkItemList = _.filter(checkItems, function (checkItem) {
           return checkItem.display
       }).map(function (data, index) {
+      let compliance = data.compliance
+      let mFontClass = ''
+      let hasDangerClass = ''
+      if (compliance === null && !props.isAllCheckItemSet && props.isSubmitClick) {
+        mFontClass = 'm--font-danger'
+        hasDangerClass = 'has-danger'
+      } else {
+        mFontClass = ''
+        hasDangerClass = ''
+      }
       console.log('checkitem data', data)
       if (data.type === null || data.type === 'Radio') {
         let valueList = ''
@@ -225,8 +244,8 @@ export default function ConductReview (props) {
         }
         console.log('valueList', valueList, typeof valueList)
         return (<span className='m-list-search__result-item' key={index}>
-          <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+          <div className={'form-group m-form__group row ' + hasDangerClass + ' ' + mFontClass}>
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' className={mFontClass} onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
             <div className='col-9 float-left' >
               <div className='m-radio-inline pull-left' style={{width: '100%'}}>
                 <div className='row pull-left' style={{width: '100%'}}>
@@ -234,7 +253,7 @@ export default function ConductReview (props) {
                     {valueList}
                   </div>
                   <div className='col-md-8'>
-                    <div className='form-group m-form__group row'>
+                    <div className='row'>
                       <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
                       <div className='col-10'>
                         <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
@@ -259,15 +278,15 @@ export default function ConductReview (props) {
         }
         console.log('valueList', valueList, typeof valueList)
         return (<span className='m-list-search__result-item' key={index}>
-          <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+          <div className={'form-group m-form__group row ' + hasDangerClass + ' ' + mFontClass}>
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' className={mFontClass} onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
             <div className='col-9 float-left' >
               <div className='row pull-left' style={{width: '100%'}}>
                 <div className='col-md-4'>
                   {valueList}
                 </div>
                 <div className='col-md-8'>
-                  <div className='form-group m-form__group row'>
+                  <div className='row'>
                     <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
                     <div className='col-10'>
                       <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
@@ -290,13 +309,13 @@ export default function ConductReview (props) {
           defaultValue = _.find(dropdownOptions, function (obj) { return obj.name === data.compliance })
         }
         return (<span className='m-list-search__result-item' key={index}>
-          <div className='form-group m-form__group row'>
-            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
+          <div className={'form-group m-form__group row ' + hasDangerClass + ' ' + mFontClass}>
+            <label htmlFor='example-email-input' className='col-3 col-form-label'><a href='' className={mFontClass} onClick={(event) => { event.preventDefault(); openModal(data) }} >{data.name}</a></label>
             <div className='col-9 float-left' >
               <div className='row pull-left' style={{width: '100%'}}>
                 <div className='col-md-4'>
                   <Select
-                    // className='col-7 input-sm m-input'
+                    className='form-control form-control-danger m-input form-control-sm'
                     placeholder='Select Options'
                     isClearable
                     defaultValue={defaultValue}
@@ -308,7 +327,7 @@ export default function ConductReview (props) {
                   />
                 </div>
                 <div className='col-md-8'>
-                  <div className='form-group m-form__group row'>
+                  <div className='row'>
                     <label htmlFor='example-email-input' className='col-2'><b>Comment</b></label>
                     <div className='col-10'>
                       <input type='text' className='form-control lg-input' value={data.compliance_comment || ''} onChange={(event) => { handleCommentChange(event.target.value, data) }} name='example_8' />
@@ -325,6 +344,7 @@ export default function ConductReview (props) {
     checkItemList = ''
   }
   let saveReview = function (event) {
+    props.setSubmitClickFlag(false)
     // eslint-disable-next-line
     mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     let updatePayload = []
@@ -365,7 +385,8 @@ export default function ConductReview (props) {
     console.log(payload)
   }
   let submitReview = function (event) {
-    if (props.checkboxSelected.draft || props.checkboxSelected.cancel || props.complaint !== '') {
+    props.setSubmitClickFlag(true)
+    if ((props.checkboxSelected.draft || props.checkboxSelected.cancel || props.complaint !== '')) {
       console.log('happy')
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
@@ -427,13 +448,15 @@ export default function ConductReview (props) {
           validationClass.compliant = 'form-group m-form__group row '
           props.setValidationClass(validationClass)
         } else {
-          // eslint-disable-next-line
-          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-          console.log('update payload', updatePayload)
-          let payload = {}
-          payload.reviewId = contextId
-          payload.data = updatePayload
-          props.updateReviews(payload)
+          if (props.isAllCheckItemSet) {
+            // eslint-disable-next-line
+            mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+            console.log('update payload', updatePayload)
+            let payload = {}
+            payload.reviewId = contextId
+            payload.data = updatePayload
+            props.updateReviews(payload)
+          }
         }
       } else if (props.checkboxSelected.cancel) {
         let completedId = _.result(_.find(props.reviewProperties.stages, function (obj) {
@@ -458,6 +481,27 @@ export default function ConductReview (props) {
           validationClass.compliant = 'form-group m-form__group row '
           props.setValidationClass(validationClass)
         } else {
+          if (props.isAllCheckItemSet) {
+            // eslint-disable-next-line
+            mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+            console.log('update payload', updatePayload)
+            let payload = {}
+            payload.reviewId = contextId
+            payload.data = updatePayload
+            props.updateReviews(payload)
+          }
+        }
+      } else {
+        if (props.isAllCheckItemSet) {
+          let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
+            return obj.name === 'Approval'
+          }), 'id')
+          // set Approved stage
+          let obj = {}
+          obj.op = 'replace'
+          obj.path = '/stage'
+          obj.value = approvalId
+          updatePayload.push(obj)
           // eslint-disable-next-line
           mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
           console.log('update payload', updatePayload)
@@ -466,25 +510,8 @@ export default function ConductReview (props) {
           payload.data = updatePayload
           props.updateReviews(payload)
         }
-      } else {
-        let approvalId = _.result(_.find(props.reviewProperties.stages, function (obj) {
-          return obj.name === 'Approval'
-        }), 'id')
-        // set Approved stage
-        let obj = {}
-        obj.op = 'replace'
-        obj.path = '/stage'
-        obj.value = approvalId
-        updatePayload.push(obj)
-        // eslint-disable-next-line
-        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        console.log('update payload', updatePayload)
-        let payload = {}
-        payload.reviewId = contextId
-        payload.data = updatePayload
-        props.updateReviews(payload)
       }
-      if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '') {
+      if ((props.checkboxSelected.draft || props.checkboxSelected.cancel) && props.reason.trim() !== '' && props.isAllCheckItemSet) {
         let discussionPayload = {}
         if (props.checkboxSelected.draft) {
           discussionPayload.name = 'Return to Draft'
@@ -536,7 +563,7 @@ export default function ConductReview (props) {
               <a className='nav-link' onClick={() => { props.setActiveTab('reviewsattachments') }} data-toggle='tab' href='#m_tabs_2_1'><b>Review Attachments</b></a>
             </li>
           </ul>
-          <div className='tab-content'>
+          <div className='tab-content m-form m-form--state m-form--fit'>
             <div className='tab-pane active' id='m_tabs_2_4' role='tabpanel'>
               <div className='m-portlet m-portlet--mobile m-portlet--body-progress-'>
                 <div className='m-portlet__body'>
@@ -736,5 +763,7 @@ export default function ConductReview (props) {
       // setComplaint: PropTypes.func,
       setValidationClass: PropTypes.func,
       activeTab: PropTypes.any,
-      setActiveTab: PropTypes.func
+      setActiveTab: PropTypes.func,
+      setSubmitClickFlag: PropTypes.func,
+      isAllCheckItemSet: PropTypes.any
   }
