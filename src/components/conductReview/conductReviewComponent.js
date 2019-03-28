@@ -157,6 +157,7 @@ export default function ConductReview (props) {
   // }
   let handleCheckbox = function (type) {
     props.setReason('')
+    props.setSubmitClickFlag(false)
     let checkboxSelected = {...props.checkboxSelected}
     if (type === 'Cancel') {
       checkboxSelected.cancel = !checkboxSelected.cancel
@@ -224,7 +225,7 @@ export default function ConductReview (props) {
       let compliance = data.compliance
       let mFontClass = ''
       let hasDangerClass = ''
-      if (compliance === null && !props.isAllCheckItemSet && props.isSubmitClick) {
+      if (compliance === null && !props.isAllCheckItemSet && props.isSubmitClick && !props.checkboxSelected.cancel) {
         mFontClass = 'm--font-danger'
         hasDangerClass = 'has-danger'
       } else {
@@ -387,7 +388,6 @@ export default function ConductReview (props) {
   let submitReview = function (event) {
     props.setSubmitClickFlag(true)
     if ((props.checkboxSelected.draft || props.checkboxSelected.cancel || props.complaint !== '')) {
-      console.log('happy')
       // eslint-disable-next-line
       // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let updatePayload = []
@@ -481,15 +481,15 @@ export default function ConductReview (props) {
           validationClass.compliant = 'form-group m-form__group row '
           props.setValidationClass(validationClass)
         } else {
-          if (props.isAllCheckItemSet) {
-            // eslint-disable-next-line
-            mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-            console.log('update payload', updatePayload)
-            let payload = {}
-            payload.reviewId = contextId
-            payload.data = updatePayload
-            props.updateReviews(payload)
-          }
+          // if (props.isAllCheckItemSet) {
+          // eslint-disable-next-line
+          mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+          console.log('update payload', updatePayload)
+          let payload = {}
+          payload.reviewId = contextId
+          payload.data = updatePayload
+          props.updateReviews(payload)
+          // }
         }
       } else {
         if (props.isAllCheckItemSet) {
